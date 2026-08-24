@@ -1,0 +1,13 @@
+<!-- MapServer Template -->
+	<DZIALKA>
+		[include src="common_gfi.xml"]
+		<DZI_ID_DZIALKI>[dzi_id_dzialki]</DZI_ID_DZIALKI>
+		<DZI_NR_DZIALKI>[dzi_nr_dzialki]</DZI_NR_DZIALKI>
+		<DZI_PRZEZN_WMPZP>[dzi_przezn_wmpzp]</DZI_PRZEZN_WMPZP>
+		<DZI_POW_EWID>[dzi_pow_ewid]</DZI_POW_EWID>
+		<DZI_SPOSOB_UZYT>[dzi_sposob_uzyt]</DZI_SPOSOB_UZYT>
+		<DZI_CENA_BRUTTO>[dzi_cena_brutto]</DZI_CENA_BRUTTO>
+		<DZI_VAT>[dzi_vat]</DZI_VAT>
+		<DZI_INFO>[dzi_info]</DZI_INFO>
+		<DZI_ADRES>[dzi_adres]</DZI_ADRES>
+	</DZIALKA>

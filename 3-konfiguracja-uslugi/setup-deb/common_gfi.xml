@@ -1,0 +1,23 @@
+﻿<!-- MapServer Template -->
+		<SERWIS_RCN>[serwis_rcn]</SERWIS_RCN>
+		<TERYT>[teryt]</TERYT>
+		<TRAN_PRZESTRZEN_NAZW>[tran_przestrzen_nazw]</TRAN_PRZESTRZEN_NAZW>
+		<TRAN_LOKALNY_ID_IIP>[tran_lokalny_id_iip]</TRAN_LOKALNY_ID_IIP>
+		<TRAN_WERSJA_ID>[tran_wersja_id]</TRAN_WERSJA_ID>
+		<TRAN_OZNACZENIE_TRANS>[tran_oznaczenie_trans]</TRAN_OZNACZENIE_TRANS>
+		<TRAN_RODZAJ_TRANS>[tran_rodzaj_trans]</TRAN_RODZAJ_TRANS>
+		<TRAN_RODZAJ_RYNKU>[tran_rodzaj_rynku]</TRAN_RODZAJ_RYNKU>
+		<TRAN_SPRZEDAJACY>[tran_sprzedajacy]</TRAN_SPRZEDAJACY>
+		<TRAN_KUPUJACY>[tran_kupujacy]</TRAN_KUPUJACY>
+		<TRAN_CENA_BRUTTO>[tran_cena_brutto]</TRAN_CENA_BRUTTO>
+		<TRAN_VAT>[tran_vat]</TRAN_VAT>
+		<DOK_OZNACZENIE>[dok_oznaczenie]</DOK_OZNACZENIE>
+		<DOK_DATA>[dok_data]</DOK_DATA>
+		<DOK_TWORCA>[dok_tworca]</DOK_TWORCA>
+		<NIER_RODZAJ>[nier_rodzaj]</NIER_RODZAJ>
+		<NIER_PRAWO>[nier_prawo]</NIER_PRAWO>
+		<NIER_UDZIAL>[nier_udzial]</NIER_UDZIAL>
+		<NIER_POW_GRUNTU>[nier_pow_gruntu]</NIER_POW_GRUNTU>
+		<NIER_OPIS>[nier_opis]</NIER_OPIS>
+		<NIER_CENA_BRUTTO>[nier_cena_brutto]</NIER_CENA_BRUTTO>
+		<NIER_VAT>[nier_vat]</NIER_VAT>

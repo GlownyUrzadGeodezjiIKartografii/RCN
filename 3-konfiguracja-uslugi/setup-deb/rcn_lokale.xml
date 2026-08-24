@@ -1,0 +1,15 @@
+<!-- MapServer Template -->
+	<LOKAL>
+		[include src="common_gfi.xml"]
+		<LOK_ID_LOKALU>[lok_id_lokalu]</LOK_ID_LOKALU>
+		<LOK_NR_LOKALU>[lok_nr_lokalu]</LOK_NR_LOKALU>
+		<LOK_FUNKCJA>[lok_funkcja]</LOK_FUNKCJA>
+		<LOK_LICZBA_IZB>[lok_liczba_izb]</LOK_LICZBA_IZB>
+		<LOK_NR_KOND>[lok_nr_kond]</LOK_NR_KOND>
+		<LOK_POW_UZYT>[lok_pow_uzyt]</LOK_POW_UZYT>
+		<LOK_POW_PRZYN>[lok_pow_przyn]</LOK_POW_PRZYN>
+		<LOK_CENA_BRUTTO>[lok_cena_brutto]</LOK_CENA_BRUTTO>
+		<LOK_VAT>[lok_vat]</LOK_VAT>
+		<LOK_INFO>[lok_info]</LOK_INFO>
+		<LOK_ADRES>[lok_adres]</LOK_ADRES>
+	</LOKAL>

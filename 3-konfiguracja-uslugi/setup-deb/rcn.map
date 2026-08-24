@@ -1,0 +1,233 @@
+MAP
+    NAME ""
+    CONFIG "MS_ERRORFILE" "logs/rcn_log.txt"
+
+    EXTENT 171698.709735 133223.349644 861895.762914 797228.497229 # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+    UNITS meters
+    SIZE 640 480
+    STATUS on
+    FONTSET "Fontset.txt"
+    
+    PROJECTION
+        "init=epsg:2180"
+    END
+
+    WEB
+        METADATA
+            "ows_title" "Rejestr Cen Nieruchomości - [WPISZ_NAZWĘ_POWIATU]"
+            "ows_abstract" "Usługa Rejestr Cen Nieruchomości umożliwiająca przeglądanie (WMS) i pobieranie (WFS) danych z Rejestru Cen Nieruchomości w zakresie działek, budynków i lokali."
+            "ows_srs" "EPSG:2180 EPSG:2176 EPSG:2177 EPSG:2178 EPSG:2179 EPSG:4326 EPSG:3857"
+            # "ows_onlineresource" "[PRZY_PUBLIKACJI_WPISZ_DOCELOWY_ADRES_URL_USŁUGI]"
+            "ows_encoding" "UTF-8"
+            "wms_getfeatureinfo_formatlist" "text/xml,text/plain,application/vnd.ogc.gml"
+            "ows_enable_request" "*"
+            
+            "ows_inspire_capabilities" "embed"
+            "ows_languages" "pol"
+            "ows_inspire_temporal_reference" "2026-09-30" # np. uruchomienie usługi
+            "ows_inspire_mpoc_name" "[WPISZ_PEŁNĄ_NAZWĘ_URZĘDU]"
+            "ows_inspire_mpoc_email" "[WPISZ_OFICJALNY_EMAIL_URZĘDU]"
+            "ows_inspire_metadatadate" "2026-08-04" # np. modyfikacja metadanych
+            # "wms_inspire_resourcelocator" "[PRZY_PUBLIKACJI_WPISZ_DOCELOWY_ADRES_URL_USŁUGI]?SERVICE=WMS&REQUEST=GetCapabilities"
+            # "wfs_inspire_resourcelocator" "[PRZY_PUBLIKACJI_WPISZ_DOCELOWY_ADRES_URL_USŁUGI]?SERVICE=WFS&REQUEST=GetCapabilities"
+            "ows_inspire_keyword" "infoMapAccessService"
+
+            "ows_keywordlist" "Rejestr Cen Nieruchomości,RCN,ceny nieruchomości,transakcje"
+            "ows_fees" "no conditions apply"
+            "ows_accessconstraints" "None"
+            
+            "ows_contactorganization" "[WPISZ_PEŁNĄ_NAZWĘ_URZĘDU]"  
+            "ows_contactposition" "owner"
+            "ows_contactperson" "[WPISZ_IMIĘ_I_NAZWISKO_LUB_ZOSTAW_PUSTE]"
+            "ows_stateorprovince" "[WPISZ_WOJEWÓDZTWO]"
+            "ows_address" "[WPISZ_ULICĘ_I_NUMER]"
+            "ows_addresstype" "postal"
+            "ows_city" "[WPISZ_MIASTO]"
+            "ows_postcode" "[WPISZ_KOD_POCZTOWY_XX-XXX]"
+            "ows_country" "Poland"
+            "ows_contactelectronicmailaddress" "[WPISZ_OFICJALNY_EMAIL_URZĘDU]"
+            "ows_contactvoicetelephone" "[WPISZ_NUMER_TELEFONU]"
+            "ows_hoursofservice" "[WPISZ_GODZINY_PRACY_NP_7:30-15:30]"
+            "ows_contactinstructions" "during hours of service"
+
+            # Atrybucja (opcjonalnie lub do usunięcia)
+            "wms_attribution_title" "[WPISZ_NAZWĘ_POWIATU]"
+            "wms_attribution_onlineresource" "[WPISZ_ADRES_WWW_STAROSTWA_LUB_GEOPORTALU]"
+            "wms_attribution_logourl_href" "[WPISZ_LINK_DO_HERBU_NP_https://powiat.pl/herb.png]"
+            "wms_attribution_logourl_format" "image/png"
+            "wms_attribution_logourl_width" "25"
+            "wms_attribution_logourl_height" "25"
+        END
+        HEADER "header.xml"
+        FOOTER "footer.xml"
+    END
+    
+    SYMBOL
+        NAME "wms_punkt"
+        TYPE ellipse
+        POINTS
+            1 1
+        END
+        FILLED true
+    END
+
+LAYER
+    NAME "dzialki"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=[ADRES_IP_BAZY_DANYCH] dbname=[NAZWA_BAZY_DANYCH] user=[UŻYTKOWNIK_BAZY_DANYCH] password=[HASŁO_UŻYTKOWNIKA_BAZY_DANYCH]"
+    DATA "geom FROM uslugi_rcn.mv_dzialki USING UNIQUE gid USING SRID=2180"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    EXTENT 171698.709735 133223.349644 861895.762914 797228.497229 # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+    MAXSCALEDENOM 5000
+    LABELITEM "dzi_nr_dzialki"
+    LABELMAXSCALEDENOM 2000
+    TEMPLATE "rcn_dzialki.xml"
+    
+    CLASS
+        NAME "dzialki"
+        STYLE
+            OUTLINECOLOR 255 0 127
+            WIDTH 2
+        END
+        LABEL
+            TYPE truetype
+            FONT "arial"
+            SIZE 10
+            COLOR 255 0 127
+            OUTLINECOLOR 255 255 255
+            BUFFER 2
+            POSITION auto
+            MINDISTANCE 8
+        END
+    END
+    
+    METADATA
+        INCLUDE "common_md.inc"
+        "ows_title" "działki"
+        "ows_extent" "171698.709735 133223.349644 861895.762914 797228.497229" # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+        "gml_include_items" "all"
+        "gml_exclude_items" "dzi_centroid"
+        "gml_optional_items" "tran_rodzaj_rynku,tran_vat,nier_pow_gruntu,nier_opis,nier_cena_brutto,nier_vat,dzi_przezn_wmpzp,dzi_vat,dzi_info,dzi_adres"
+        "gml_dzi_pow_ewid_type" "Real"
+        "gml_dzi_cena_brutto_type" "Real"
+        "gml_dzi_vat_type" "Real"
+        "gml_dzi_id_dzialki_alias" "DZI_ID_DZIALKI"
+        "gml_dzi_nr_dzialki_alias" "DZI_NR_DZIALKI"
+        "gml_dzi_przezn_wmpzp_alias" "DZI_PRZEZN_WMPZP"
+        "gml_dzi_pow_ewid_alias" "DZI_POW_EWID"
+        "gml_dzi_sposob_uzyt_alias" "DZI_SPOSOB_UZYT"
+        "gml_dzi_cena_brutto_alias" "DZI_CENA_BRUTTO"
+        "gml_dzi_vat_alias" "DZI_VAT"
+        "gml_dzi_info_alias" "DZI_INFO"
+        "gml_dzi_adres_alias" "DZI_ADRES"
+        "gml_GEOMETRIA_type" "polygon"
+        "wfs_use_default_extent_for_getfeature" "false"
+    END            
+END
+
+LAYER
+    NAME "budynki"
+    TYPE POLYGON
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=[ADRES_IP_BAZY_DANYCH] dbname=[NAZWA_BAZY_DANYCH] user=[UŻYTKOWNIK_BAZY_DANYCH] password=[HASŁO_UŻYTKOWNIKA_BAZY_DANYCH]"
+    DATA "geom FROM uslugi_rcn.mv_budynki USING UNIQUE gid USING SRID=2180"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    EXTENT 171698.709735 133223.349644 861895.762914 797228.497229 # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+    MAXSCALEDENOM 2000
+    TEMPLATE "rcn_budynki.xml"
+    
+    CLASS
+        NAME "budynki"
+        STYLE
+            COLOR 244 255 234
+            OUTLINECOLOR 127 255 0
+            WIDTH 3
+        END
+    END
+    
+    METADATA
+        INCLUDE "common_md.inc"
+        "ows_title" "budynki"
+        "ows_extent" "171698.709735 133223.349644 861895.762914 797228.497229" # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+        "gml_include_items" "all"
+        "gml_exclude_items" "bud_centroid"
+        "gml_optional_items" "tran_rodzaj_rynku,tran_vat,nier_pow_gruntu,nier_opis,nier_cena_brutto,nier_vat,bud_pow_uzyt,bud_cena_brutto,bud_vat,bud_info,bud_adres"
+        "gml_bud_pow_uzyt_type" "Real"
+        "gml_bud_cena_brutto_type" "Real"
+        "gml_bud_vat_type" "Real"
+        "gml_bud_id_budynku_alias" "BUD_ID_BUDYNKU"
+        "gml_bud_nr_budynku_alias" "BUD_NR_BUDYNKU"
+        "gml_bud_rodzaj_alias" "BUD_RODZAJ"
+        "gml_bud_pow_uzyt_alias" "BUD_POW_UZYT"
+        "gml_bud_cena_brutto_alias" "BUD_CENA_BRUTTO"
+        "gml_bud_vat_alias" "BUD_VAT"
+        "gml_bud_info_alias" "BUD_INFO"
+        "gml_bud_adres_alias" "BUD_ADRES"
+        "gml_GEOMETRIA_type" "polygon"
+        "wfs_use_default_extent_for_getfeature" "false"
+    END            
+END
+
+LAYER
+    NAME "lokale"
+    TYPE POINT
+    CONNECTIONTYPE POSTGIS
+    CONNECTION "host=[ADRES_IP_BAZY_DANYCH] dbname=[NAZWA_BAZY_DANYCH] user=[UŻYTKOWNIK_BAZY_DANYCH] password=[HASŁO_UŻYTKOWNIKA_BAZY_DANYCH]"
+    DATA "geom FROM uslugi_rcn.mv_lokale USING UNIQUE gid USING SRID=2180"
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+    EXTENT 171698.709735 133223.349644 861895.762914 797228.497229 # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+    MAXSCALEDENOM 2000
+    TEMPLATE "rcn_lokale.xml"
+    TOLERANCE 10
+    LABELCACHE OFF
+
+    CLASS
+        NAME "lokale"
+        STYLE
+            SYMBOL "wms_punkt"
+            SIZE 20
+            COLOR 127 255 0
+            OUTLINECOLOR 0 204 0
+            WIDTH 2
+        END
+    
+        LABEL
+            TEXT "L"
+            TYPE truetype
+            FONT "arial"
+            SIZE 8
+            COLOR 0 0 0
+            POSITION cc
+        END
+    END
+
+    METADATA
+        INCLUDE "common_md.inc"
+        "ows_title" "lokale"
+        "ows_extent" "171698.709735 133223.349644 861895.762914 797228.497229" # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
+        "gml_include_items" "all"
+        "gml_optional_items" "tran_rodzaj_rynku,tran_vat,nier_pow_gruntu,nier_opis,nier_cena_brutto,nier_vat,lok_liczba_izb,lok_nr_kond,lok_pow_przyn,lok_cena_brutto,lok_vat,lok_info,lok_adres"
+        "gml_lok_liczba_izb_type" "Integer"
+        "gml_lok_nr_kond_type" "Integer"
+        "gml_lok_pow_uzyt_type" "Real"
+        "gml_lok_pow_przyn_type" "Real"
+        "gml_lok_cena_brutto_type" "Real"
+        "gml_lok_vat_type" "Real"
+        "gml_lok_id_lokalu_alias" "LOK_ID_LOKALU"
+        "gml_lok_nr_lokalu_alias" "LOK_NR_LOKALU"
+        "gml_lok_funkcja_alias" "LOK_FUNKCJA"
+        "gml_lok_liczba_izb_alias" "LOK_LICZBA_IZB"
+        "gml_lok_nr_kond_alias" "LOK_NR_KOND"
+        "gml_lok_pow_uzyt_alias" "LOK_POW_UZYT"
+        "gml_lok_pow_przyn_alias" "LOK_POW_PRZYN"
+        "gml_lok_cena_brutto_alias" "LOK_CENA_BRUTTO"
+        "gml_lok_vat_alias" "LOK_VAT"
+        "gml_lok_info_alias" "LOK_INFO"
+        "gml_lok_adres_alias" "LOK_ADRES"
+        "gml_GEOMETRIA_type" "point"
+        "wfs_use_default_extent_for_getfeature" "false"
+    END        
+END
+
+END
