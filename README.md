@@ -32,41 +32,16 @@ Nieruchomości\
 
 ## Wymagania systemowe
 
-Do wdrożenia rozwiązania przygotuj serwer lub maszynę wirtualną z
-systemem:
+Do rozpoczęcia wdrożenia potrzebujesz:
 
-``` text
-Debian 13 (trixie) lub nowszy
-```
+- systemu **Debian 13 (trixie) lub nowszego** na architekturze `x86_64/amd64`,
+- konta użytkownika z możliwością wykonywania poleceń `sudo`,
+- dostępu do Internetu podczas pobierania repozytorium i instalowania pakietów,
+- programu `git` (jeżeli nie jest zainstalowany, poniżej znajduje się polecenie instalacji).
 
-Administrator wykonujący instalację powinien posiadać:
+PostgreSQL, PostGIS, RCN Importer i MapServer są przygotowywane w kolejnych etapach zgodnie z instrukcjami znajdującymi się w odpowiednich katalogach repozytorium.
 
--   konto użytkownika z możliwością wykonywania poleceń `sudo`,
--   dostęp do Internetu na czas pobierania repozytorium i instalowania
-    wymaganych pakietów,
--   zainstalowane narzędzie `git`,
--   możliwość instalowania pakietów systemowych,
--   możliwość konfiguracji PostgreSQL i -- jeżeli jest to wymagane --
-    reguł zapory sieciowej,
--   odpowiednią ilość wolnego miejsca na bazę danych, pliki GML, logi i
-    pliki robocze aplikacji.
-
-PostgreSQL 18 i PostGIS mogą zostać zainstalowane za pomocą skryptów
-znajdujących się w pakiecie RCN, dlatego **nie muszą być zainstalowane
-przed pobraniem repozytorium**.
-
-Aplikacja RCN Importer jest przygotowana do uruchomienia w środowisku
-Linux zgodnie z instrukcją znajdującą się w katalogu
-`2-aplikacja-do-ladowania-danych-z-gml`.
-
-> **Ważne**
->
-> MapServer może działać na tym samym serwerze co PostgreSQL albo na
-> osobnym serwerze. Jeżeli MapServer znajduje się na innej maszynie,
-> należy zapewnić komunikację sieciową pomiędzy serwerem MapServera i
-> serwerem PostgreSQL.
-
-------------------------------------------------------------------------
+---
 
 ## Pobranie repozytorium w Debianie
 
@@ -75,7 +50,21 @@ Linux zgodnie z instrukcją znajdującą się w katalogu
 Zaloguj się na serwer Debian na konto użytkownika posiadającego
 możliwość wykonywania poleceń `sudo`.
 
-### 2. Sprawdź, czy Git jest zainstalowany
+### 2. Sprawdź architekturę systemu
+
+Wykonaj:
+
+```bash
+uname -m
+```
+
+Dla obsługiwanej architektury wynik powinien być:
+
+```text
+x86_64
+```
+
+### 3. Sprawdź, czy Git jest zainstalowany
 
 Wykonaj:
 
@@ -92,13 +81,13 @@ sudo apt update
 sudo apt install -y git
 ```
 
-### 3. Przejdź do katalogu domowego
+### 4. Przejdź do katalogu domowego
 
 ``` bash
 cd ~
 ```
 
-### 4. Pobierz repozytorium RCN
+### 5. Pobierz repozytorium RCN
 
 Wykonaj:
 
@@ -112,7 +101,7 @@ Repozytorium zostanie pobrane do katalogu:
 ~/RCN
 ```
 
-### 5. Sprawdź pobrane pliki
+### 6. Sprawdź pobrane pliki
 
 Wykonaj:
 
@@ -128,7 +117,7 @@ Powinny być widoczne trzy główne katalogi:
 3-konfiguracja-uslugi
 ```
 
-### 6. Nadaj uprawnienia do wykonywania skryptów
+### 7. Nadaj uprawnienia do wykonywania skryptów
 
 Po pobraniu repozytorium nadaj uprawnienia do wykonywania wszystkim
 plikom `.sh` znajdującym się w repozytorium:
