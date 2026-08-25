@@ -80,6 +80,31 @@ Znaczenie katalogów:
 Katalogi są określane względem katalogu aplikacji, dlatego ta sama
 konfiguracja może być używana w systemie Linux.
 
+## Miejsce w repozytorium
+
+RCN Importer stanowi **Etap 2** wdrożenia. Repozytorium jest pobierane jeden raz do `~/RCN`, zgodnie z głównym README. Materiały tego etapu znajdują się w:
+
+```text
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml
+```
+
+## Pliki w repozytorium
+
+Materiały dotyczące aplikacji znajdują się w:
+
+```text
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml
+```
+
+Najważniejsze katalogi:
+
+```text
+gml/                — pliki testowe i count.sql
+publish/linux-x64/  — kompletna publikacja aplikacji dla Debiana x86_64
+```
+
+Do instalacji należy kopiować **całą zawartość** katalogu `publish/linux-x64`, a nie pojedynczy plik wykonywalny.
+
 ## Pierwsze uruchomienie
 
 Przed pierwszym uruchomieniem należy:
@@ -544,11 +569,11 @@ importu. Nie należy używać tego katalogu jako archiwum.
 
 ### Linux
 
-Dla wersji opublikowanej jako plik wykonywalny:
+W docelowej instalacji aplikacja działa z katalogu `/opt/gugik/rcn-importer` jako dedykowany użytkownik systemowy `rcn-importer`. Dla wersji opublikowanej jako plik wykonywalny:
 
 ``` bash
-chmod +x GUGiK.KN.EGiB.Uslugi.Rcn.Importer
-./GUGiK.KN.EGiB.Uslugi.Rcn.Importer
+chmod +x rcn-importer-1.0
+sudo -u rcn-importer ./rcn-importer-1.0
 ```
 
 Aplikacja może być również uruchamiana automatycznie przez
