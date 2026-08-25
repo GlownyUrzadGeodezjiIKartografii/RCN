@@ -9,10 +9,11 @@ set -Eeuo pipefail
 # - skrypt NIE usuwa PostgreSQL,
 # - skrypt NIE usuwa PostGIS,
 # - skrypt NIE usuwa bazy danych rcn,
-# - skrypt NIE usuwa schematu uslugi_rcn.
+# - skrypt NIE usuwa schematu uslugi_rcn,
+# - skrypt NIE usuwa repozytorium ~/RCN.
 #
 # Usuwane sa tylko elementy utworzone podczas instalacji
-# aplikacji RCN Importer.
+# aplikacji RCN Importer w Etapie 2.
 # ============================================================
 
 APP_USER="rcn-importer"
@@ -21,12 +22,6 @@ APP_DIR="/opt/gugik/rcn-importer"
 
 SERVICE_FILE="/etc/systemd/system/rcn-importer.service"
 TIMER_FILE="/etc/systemd/system/rcn-importer.timer"
-
-# Katalog roboczy utworzony zgodnie z instrukcja.
-# ${SUDO_USER:-$USER} wskazuje uzytkownika, ktory uruchomil sudo.
-ADMIN_USER="${SUDO_USER:-$USER}"
-ADMIN_HOME="$(getent passwd "${ADMIN_USER}" | cut -d: -f6)"
-STAGING_DIR="${ADMIN_HOME}/RCN/rcn-importer"
 
 info()  { printf '\n[INFO] %s\n' "$*"; }
 ok()    { printf '[OK]   %s\n' "$*"; }
@@ -43,46 +38,55 @@ echo "  - uzytkownika systemowego ${APP_USER}"
 echo "  - grupe ${APP_GROUP}, jezeli nie bedzie juz potrzebna"
 echo "  - ${SERVICE_FILE}"
 echo "  - ${TIMER_FILE}"
-echo "  - katalog roboczy ${STAGING_DIR}"
+echo "  - ewentualny crontab uzytkownika ${APP_USER}"
 echo
 echo "Skrypt NIE usuwa:"
 echo "  - PostgreSQL"
 echo "  - PostGIS"
 echo "  - bazy rcn"
 echo "  - schematu uslugi_rcn"
+echo "  - danych znajdujacych sie w bazie"
+echo "  - repozytorium ~/RCN"
 echo
 
 read -r -p "Aby kontynuowac, wpisz dokladnie: RESET_RCN_IMPORTER : " CONFIRM
-[[ "${CONFIRM}" == "RESET_RCN_IMPORTER" ]] || {
+
+if [[ "${CONFIRM}" != "RESET_RCN_IMPORTER" ]]; then
     echo "Operacja anulowana."
     exit 0
-}
+fi
 
 command -v sudo >/dev/null 2>&1 || error "Nie znaleziono polecenia sudo."
+
+info "Weryfikacja uprawnien administratora..."
 sudo -v
 
 # ------------------------------------------------------------
-# 1. Zatrzymanie i usuniecie systemd
+# 1. Zatrzymanie i usuniecie jednostek systemd
 # ------------------------------------------------------------
 
 info "Zatrzymywanie timera i uslugi systemd..."
 
-if systemctl list-unit-files 2>/dev/null | grep -q '^rcn-importer.timer'; then
+if systemctl list-unit-files --no-legend 2>/dev/null | grep -qE '^rcn-importer\.timer'; then
     sudo systemctl disable --now rcn-importer.timer || true
 fi
 
-if systemctl list-unit-files 2>/dev/null | grep -q '^rcn-importer.service'; then
+if systemctl list-unit-files --no-legend 2>/dev/null | grep -qE '^rcn-importer\.service'; then
     sudo systemctl stop rcn-importer.service || true
 fi
 
 if [[ -f "${TIMER_FILE}" ]]; then
     sudo rm -f "${TIMER_FILE}"
     ok "Usunieto ${TIMER_FILE}"
+else
+    ok "Plik ${TIMER_FILE} nie istnieje."
 fi
 
 if [[ -f "${SERVICE_FILE}" ]]; then
     sudo rm -f "${SERVICE_FILE}"
     ok "Usunieto ${SERVICE_FILE}"
+else
+    ok "Plik ${SERVICE_FILE} nie istnieje."
 fi
 
 sudo systemctl daemon-reload
@@ -95,6 +99,8 @@ sudo systemctl reset-failed rcn-importer.service 2>/dev/null || true
 if id "${APP_USER}" >/dev/null 2>&1; then
     info "Usuwanie ewentualnego crontaba uzytkownika ${APP_USER}..."
     sudo crontab -r -u "${APP_USER}" 2>/dev/null || true
+else
+    ok "Uzytkownik ${APP_USER} nie istnieje - pomijam crontab."
 fi
 
 # ------------------------------------------------------------
@@ -146,25 +152,10 @@ else
 fi
 
 # ------------------------------------------------------------
-# 6. Usuniecie katalogu roboczego z katalogu administratora
+# 6. Repozytorium pozostaje bez zmian
 # ------------------------------------------------------------
 
-if [[ -d "${STAGING_DIR}" ]]; then
-    info "Usuwanie katalogu roboczego ${STAGING_DIR}..."
-    sudo rm -rf --one-file-system "${STAGING_DIR}"
-    ok "Usunieto ${STAGING_DIR}"
-else
-    ok "Katalog ${STAGING_DIR} nie istnieje."
-fi
-
-# Usun ~/RCN tylko jezeli jest pusty.
-RCN_PARENT="${ADMIN_HOME}/RCN"
-
-if [[ -d "${RCN_PARENT}" ]] && \
-   [[ -z "$(sudo find "${RCN_PARENT}" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null)" ]]; then
-    sudo rmdir "${RCN_PARENT}"
-    ok "Usunieto pusty katalog ${RCN_PARENT}"
-fi
+info "Repozytorium ~/RCN nie jest usuwane przez reset Etapu 2."
 
 # ------------------------------------------------------------
 # 7. Weryfikacja
@@ -199,17 +190,18 @@ else
 fi
 
 if [[ -e "${SERVICE_FILE}" || -e "${TIMER_FILE}" ]]; then
-    warn "Pozostaly pliki systemd."
+    warn "Pozostaly pliki jednostek systemd RCN Importer."
     LEFT=1
 else
-    ok "Brak jednostek systemd RCN Importer."
+    ok "Brak plikow jednostek systemd RCN Importer."
 fi
 
-if [[ -e "${STAGING_DIR}" ]]; then
-    warn "Katalog roboczy ${STAGING_DIR} nadal istnieje."
+if systemctl list-unit-files --no-legend 2>/dev/null | grep -qE '^rcn-importer\.(service|timer)'; then
+    warn "Systemd nadal widzi jednostki RCN Importer."
+    systemctl list-unit-files --no-legend 2>/dev/null | grep -E '^rcn-importer\.(service|timer)' || true
     LEFT=1
 else
-    ok "Brak katalogu roboczego ${STAGING_DIR}."
+    ok "Systemd nie widzi jednostek RCN Importer."
 fi
 
 echo
@@ -218,8 +210,8 @@ if (( LEFT == 0 )); then
     echo "============================================================"
     echo " RESET ZAKONCZONY POPRAWNIE"
     echo
-    echo " Mozesz ponownie rozpoczac instrukcje instalacji"
-    echo " RCN Importer od pierwszego kroku."
+    echo " Mozesz ponownie rozpoczac instalacje RCN Importer"
+    echo " od punktu 2 instrukcji Etapu 2."
     echo "============================================================"
 else
     echo "============================================================"
