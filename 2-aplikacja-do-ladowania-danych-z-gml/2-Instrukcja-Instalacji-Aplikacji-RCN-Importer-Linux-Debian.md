@@ -1,298 +1,65 @@
-# RCN Importer — instrukcja instalacji aplikacji na Linux Debian
+# RCN Importer
 
-Dokument przeznaczony jest dla administratora odpowiedzialnego za wdrożenie, konfigurację, uruchamianie i utrzymanie aplikacji **RCN Importer** w systemie Linux Debian.
+Aplikacja konsolowa do automatycznego importu danych Rejestru Cen
+Nieruchomości (RCN) z plików GML lub ZIP do bazy PostgreSQL/PostGIS.
 
 ## Informacje o aplikacji
 
-**Nazwa:** RCN Importer  
-**Wersja:** 1.0  
-**Plik wykonywalny:** `rcn-importer-1.0`  
-**Autor:** Szymon Szczerba  
-**Jednostka:** Główny Urząd Geodezji i Kartografii (GUGiK)  
-**Rok:** 2026  
-**Technologia:** .NET 9  
+**Nazwa:** RCN Importer\
+**Jednostka:** Główny Urząd Geodezji i Kartografii (GUGiK)\
+**Autor:** Szymon Szczerba\
+**Rok:** 2026\
+**Technologia:** .NET 9\
 **Typ aplikacji:** aplikacja konsolowa  
-
-Aplikacja jest publikowana jako **self-contained dla `linux-x64`**, dlatego na docelowym serwerze Debian **nie jest wymagane instalowanie .NET Runtime**.
-
----
-
-## 1. Przeznaczenie
-
-RCN Importer służy do automatycznego importu danych Rejestru Cen Nieruchomości z plików GML lub ZIP do bazy PostgreSQL/PostGIS.
-
-Aplikacja wykonuje jeden cykl pracy:
-
-1. odczytuje konfigurację,
-2. wykonuje retencję starszych plików,
-3. wyszukuje pliki w katalogu `input`,
-4. odczytuje i diagnozuje poszczególne pliki GML oraz zawartość ZIP,
-5. scala poprawnie odczytane dane do jednej wspólnej kolekcji RCN dla powiatu wskazanego w `TerytPow`,
-6. wykonuje zapis do bazy zgodnie z trybem `REPLACE`, `UPSERT` albo `INSERT`,
-7. zapisuje informacje o błędach z przypisaniem do konkretnego pliku,
-8. przenosi pliki do `processed` albo `error`,
-9. zapisuje artefakty w `artifacts`,
-10. zapisuje logi,
-11. odświeża widoki materializowane po wykonanym zapisie,
-12. kończy działanie.
-
-Aplikacja nie działa stale jako daemon. Zalecanym sposobem automatyzacji w Debianie jest **systemd timer**.
-
----
-
-## 2. Wymagania serwera
-
-Przed instalacją należy zapewnić:
-
-- Debian 12 lub nowszy,
-- architekturę `x86_64/amd64`,
-- konto administratora lub konto z możliwością używania `sudo`,
-- przygotowaną bazę PostgreSQL/PostGIS `rcn`,
-- schemat `uslugi_rcn`,
-- odpowiednie uprawnienia użytkownika bazy danych,
-- pełny katalog publikacji aplikacji dla `linux-x64`,
-- odpowiednią ilość miejsca na katalogi `processed`, `error`, `artifacts` i `logs`.
-
-Sprawdzenie systemu:
-
-```bash
-cat /etc/os-release
-```
-
-Sprawdzenie numeru wersji Debiana:
-
-```bash
-cat /etc/debian_version
-```
-
-Sprawdzenie architektury:
-
-```bash
-uname -m
-```
-
-Dla publikacji `linux-x64` wynik powinien być:
-
-```text
-x86_64
-```
-
----
-
-## 3. Utworzenie użytkownika systemowego aplikacji
-
-Aplikacja powinna być uruchamiana z dedykowanego użytkownika systemowego `rcn-importer`, a nie jako `root`.
-
-Najpierw sprawdź, czy użytkownik już istnieje:
-
-```bash
-id rcn-importer
-```
-
-Jeżeli użytkownik nie istnieje, utwórz go:
-
-```bash
-sudo useradd \
-  --system \
-  --user-group \
-  --home-dir /opt/gugik/rcn-importer \
-  --shell /usr/sbin/nologin \
-  rcn-importer
-```
-
-Sprawdź ponownie:
-
-```bash
-id rcn-importer
-```
-
-Dodaj administratora wdrażającego aplikację do grupy `rcn-importer`, aby mógł później edytować `appsettings.json` bez używania `sudo`. Przykład dla użytkownika `sszczerba`:
-
-```bash
-sudo usermod -aG rcn-importer sszczerba
-```
-
-Po wykonaniu polecenia sprawdź, czy użytkownik został zapisany w grupie:
-
-```bash
-groups sszczerba
-```
-
-Na liście musi znajdować się grupa `rcn-importer`.
-
-### WAŻNE — wylogowanie i ponowne logowanie
-
-Samo wykonanie `usermod` nie aktualizuje grup w już otwartej sesji SSH. **Przed przejściem do kolejnego punktu instrukcji należy zakończyć bieżącą sesję SSH:**
-
-```bash
-exit
-```
-
-Następnie połącz się ponownie z serwerem, np.:
-
-```bash
-ssh sszczerba@ADRES_IP_SERWERA
-```
-
-Po ponownym zalogowaniu sprawdź grupy aktywne w bieżącej sesji:
-
-```bash
-groups
-```
-
-W wyniku **musi** znajdować się `rcn-importer`, np.:
-
-```text
-sszczerba sudo users rcn-importer
-```
-
-Jeżeli `rcn-importer` nie występuje w wyniku polecenia `groups`, **nie przechodź do punktu 4**. Ponownie sprawdź:
-
-```bash
-groups sszczerba
-```
-
-i zakończ oraz otwórz ponownie sesję SSH.
-
-> Katalog `/opt/gugik/rcn-importer` nie musi jeszcze istnieć. Zostanie utworzony dopiero po potwierdzeniu aktywnego członkostwa administratora w grupie `rcn-importer`.
-
----
-
-## 4. Utworzenie katalogu docelowego aplikacji
-
-> **Warunek rozpoczęcia tego punktu:** polecenie `groups` wykonane po ponownym zalogowaniu musi pokazywać grupę `rcn-importer`. Dzięki temu późniejsze polecenia `ls`, edycja `appsettings.json` i dostęp do katalogu aplikacji będą działały bez błędu `Permission denied`.
-
-Utwórz katalog aplikacji:
-
-```bash
-sudo mkdir -p /opt/gugik/rcn-importer
-```
-
-Ustaw właściciela katalogu:
-
-```bash
-sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer
-```
-
-Sprawdź:
-
-```bash
-ls -ld /opt/gugik/rcn-importer
-```
-
-Docelowa lokalizacja aplikacji:
-
-```text
-/opt/gugik/rcn-importer
-```
-
----
-
-## 5. Przygotowanie katalogu do przesłania plików
-
-Plików aplikacji **nie należy wgrywać przez WinSCP bezpośrednio do `/opt/gugik/rcn-importer`**.
-
-Katalog `/opt` jest katalogiem systemowym i zwykły użytkownik logujący się przez WinSCP zazwyczaj nie ma do niego prawa zapisu.
-
-Najpierw przygotuj katalog w katalogu domowym administratora:
-
-```bash
-mkdir -p ~/RCN/rcn-importer
-```
-
-Sprawdź:
-
-```bash
-ls -ld ~/RCN/rcn-importer
-```
-
-Dla użytkownika `sszczerba` pełna ścieżka będzie przykładowo:
-
-```text
-/home/sszczerba/RCN/rcn-importer
-```
-
-Do tego katalogu należy przesłać przez WinSCP **całą zawartość** katalogu publikacji:
-
-```text
-publish/linux-x64/
-```
-
-Nie należy kopiować wyłącznie pliku wykonywalnego `rcn-importer-1.0`.
-
----
-
-## 6. Sprawdzenie przesłanych plików
-
-Po przesłaniu aplikacji przejdź do katalogu:
-
-```bash
-cd ~/RCN/rcn-importer
-```
-
-Wyświetl zawartość:
-
-```bash
-ls -la
-```
-
-W katalogu powinny znajdować się m.in.:
-
-```text
-rcn-importer-1.0
-appsettings.json
-pozostałe pliki publikacji
-```
-
----
-
-## 7. Skopiowanie aplikacji do `/opt`
-
-Skopiuj całą zawartość katalogu przygotowanego w katalogu domowym:
-
-```bash
-sudo cp -a ~/RCN/rcn-importer/. /opt/gugik/rcn-importer/
-```
-
-Sprawdź zawartość:
-
-```bash
-ls -la /opt/gugik/rcn-importer
-```
-
-Po skopiowaniu ustaw ponownie właściciela całej aplikacji:
-
-```bash
-sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
-```
-
----
-
-## 8. Utworzenie katalogów roboczych
-
-Utwórz katalogi wykorzystywane przez aplikację:
-
-```bash
-sudo mkdir -p /opt/gugik/rcn-importer/input
-sudo mkdir -p /opt/gugik/rcn-importer/processed
-sudo mkdir -p /opt/gugik/rcn-importer/error
-sudo mkdir -p /opt/gugik/rcn-importer/artifacts
-sudo mkdir -p /opt/gugik/rcn-importer/logs
-```
-
-Ustaw właściciela:
-
-```bash
-sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
-```
-
-Docelowa struktura:
-
-```text
-/opt/gugik/rcn-importer/
-├── rcn-importer-1.0
+**Wersja:** 1.0  
+
+Aplikacja jest przeznaczona do cyklicznego lub ręcznego zasilania bazy
+RCN. Jedno uruchomienie programu przetwarza wszystkie obsługiwane pliki
+znajdujące się w katalogu `input`, zapisuje wynik działania i kończy
+pracę.
+
+## Jak działa aplikacja
+
+Podczas każdego uruchomienia aplikacja:
+
+1.  odczytuje konfigurację z pliku `appsettings.json`;
+2.  łączy się ze wskazaną bazą PostgreSQL/PostGIS;
+3.  wyszukuje w katalogu `input` obsługiwane pliki GML i ZIP;
+4.  odczytuje i diagnozuje każdy plik wejściowy oraz każdy plik GML
+    znajdujący się wewnątrz archiwum ZIP;
+5.  poprawnie odczytane dane scala do jednej wspólnej kolekcji RCN dla
+    powiatu wskazanego w `TerytPow`;
+6.  wykonuje zapis do bazy zgodnie z trybem ustawionym w parametrze
+    `Mode`;
+7.  zapisuje informację o błędach z przypisaniem do konkretnego pliku
+    źródłowego, a w przypadku ZIP również do konkretnego GML wewnątrz
+    archiwum;
+8.  po zakończeniu przetwarzania przenosi pliki źródłowe do `processed`
+    albo `error`, zgodnie z wynikiem przetwarzania;
+9.  zapisuje szczegółowe raporty JSON w katalogu `artifacts`;
+10. zapisuje przebieg działania w katalogu `logs`;
+11. przed rozpoczęciem importu wykonuje automatyczne czyszczenie starych
+    plików zgodnie z parametrem `RetentionDays`;
+12. po wykonaniu zapisu odświeża widoki materializowane i kończy
+    działanie.
+
+Jedno uruchomienie aplikacji obsługuje cały zestaw plików znajdujących
+się w katalogu `input`. Jeżeli w katalogu znajduje się więcej niż jeden
+plik, dane z poprawnych plików są łączone przed zapisem do bazy. Pliki
+nie są kolejno używane do niezależnego zastępowania danych powiatu.
+
+Błąd pojedynczego pliku nie kończy od razu analizy całego katalogu.
+Aplikacja sprawdza pozostałe pliki i zapisuje diagnostykę wskazującą,
+który plik był poprawny, który nie zawierał danych, a którego nie udało
+się odczytać lub przetworzyć.
+
+## Struktura katalogów
+
+Po uruchomieniu aplikacji wykorzystywana jest następująca struktura:
+
+``` text
+RCN-Importer/
 ├── appsettings.json
-├── pozostałe pliki publikacji
 ├── input/
 ├── processed/
 ├── error/
@@ -300,1030 +67,601 @@ Docelowa struktura:
 └── logs/
 ```
 
----
+Znaczenie katalogów:
 
-## 9. Nadanie uprawnień
+-   `input` -- pliki oczekujące na import (`*.gml`, `*.zip`);
+-   `processed` -- pliki, których import zakończył się poprawnie;
+-   `error` -- pliki, których nie udało się poprawnie zaimportować lub
+    które nie zawierały danych do załadowania;
+-   `artifacts` -- techniczne raporty JSON dotyczące wykonanych
+    importów;
+-   `logs` -- logi działania aplikacji.
 
-Nadaj właścicielowi aplikacji prawo odczytu, zapisu i wykonywania tam, gdzie jest to potrzebne:
+Katalogi są określane względem katalogu aplikacji, dlatego ta sama
+konfiguracja może być używana w systemie Linux.
 
-```bash
-sudo chmod -R u=rwX,g=rX,o= /opt/gugik/rcn-importer
+## Miejsce w repozytorium
+
+RCN Importer stanowi **Etap 2** wdrożenia. Repozytorium jest pobierane jeden raz do `~/RCN`, zgodnie z głównym README. Materiały tego etapu znajdują się w:
+
+```text
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml
 ```
 
-Nadaj plikowi wykonywalnemu prawo wykonania:
+## Pliki w repozytorium
 
-```bash
-sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.0
+Materiały dotyczące aplikacji znajdują się w:
+
+```text
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml
 ```
 
-Ustaw właściciela i grupę pliku konfiguracyjnego:
+Najważniejsze katalogi:
 
-```bash
-sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/appsettings.json
+```text
+gml/                — pliki testowe i count.sql
+publish/linux-x64/  — kompletna publikacja aplikacji dla Debiana x86_64
 ```
 
-Nadaj właścicielowi i członkom grupy `rcn-importer` prawo odczytu i zapisu. Dzięki temu użytkownik administracyjny dodany wcześniej do tej grupy może edytować konfigurację bez `sudo`:
+Do instalacji należy kopiować **całą zawartość** katalogu `publish/linux-x64`, a nie pojedynczy plik wykonywalny.
 
-```bash
-sudo chmod 660 /opt/gugik/rcn-importer/appsettings.json
-```
+## Pierwsze uruchomienie
 
-Uprawnienie `660` oznacza, że właściciel i członkowie grupy `rcn-importer` mogą odczytywać i edytować plik, a pozostali użytkownicy nie mają do niego dostępu.
+Przed pierwszym uruchomieniem należy:
 
-Sprawdź:
+1.  przygotować bazę `rcn` wraz ze schematem wymaganym przez aplikację i
+    rozszerzeniem PostGIS;
+2.  skonfigurować połączenie z bazą w `appsettings.json`(m.in. `TerytPow`);
+3.  wybrać właściwy tryb importu w parametrze `Mode`;
+4.  umieścić pliki GML lub ZIP w katalogu `input`;
+5.  uruchomić aplikację;
+6.  po zakończeniu sprawdzić komunikat końcowy oraz -- w razie potrzeby
+    -- katalogi `processed`, `error`, `artifacts` i `logs`.
 
-```bash
-ls -la /opt/gugik/rcn-importer
-```
+Nie należy umieszczać nowych plików bezpośrednio w `processed`, `error`
+ani `artifacts`. Pliki przeznaczone do załadowania należy zawsze
+kopiować do `input`.
 
----
+## Konfiguracja `appsettings.json`
 
-### Docelowe uprawnienia
+Przykładowa konfiguracja:
 
-Docelowo:
-
-- właścicielem katalogu aplikacji jest `rcn-importer`,
-- grupą katalogu jest `rcn-importer`,
-- użytkownik `sszczerba` należy do grupy `rcn-importer`,
-- `sszczerba` może przeglądać katalog aplikacji,
-- `sszczerba` może edytować `appsettings.json`,
-- pozostali użytkownicy nie mają dostępu do konfiguracji.
-
-Sprawdzenie:
-
-```bash
-groups
-ls -ld /opt/gugik/rcn-importer
-ls -l /opt/gugik/rcn-importer/appsettings.json
-```
-
----
-
-## 10. Konfiguracja `appsettings.json`
-
-Po ponownym zalogowaniu użytkownik administracyjny należący do grupy `rcn-importer` może edytować konfigurację bez `sudo`:
-
-```bash
-nano /opt/gugik/rcn-importer/appsettings.json
-```
-
-W razie potrzeby administrator z uprawnieniami `sudo` może również użyć:
-
-```bash
-sudo nano /opt/gugik/rcn-importer/appsettings.json
-```
-
-Przykład:
-
-```json
+``` json
 {
-    "Database": {
-        "ConnectionName": "Localhost",
-        "Schema": "uslugi_rcn"
-    },
-    "ConnectionStrings": {
-        "Localhost": "Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=UZUPELNIJ"
-    },
-    "ImportJob": {
-        "TerytPow": "1864",
-        "InputPath": "input",
-        "ProcessedPath": "processed",
-        "ErrorPath": "error",
-        "ArtifactsDir": "artifacts",
-        "LogDirectory": "logs",
-        "Mode": "REPLACE",
-        "MoveFilesAfterImport": true,
-        "RetentionDays": 7
-    }
+  "Database": {
+    "ConnectionName": "Localhost",
+    "Schema": "uslugi_rcn"
+  },
+  "ConnectionStrings": {
+    "Localhost": "Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=UZUPELNIJ"
+  },
+  "ImportJob": {
+    "TerytPow": "1864",
+    "InputPath": "input",
+    "ProcessedPath": "processed",
+    "ErrorPath": "error",
+    "ArtifactsDir": "artifacts",
+    "LogDirectory": "logs",
+    "Mode": "REPLACE",
+    "MoveFilesAfterImport": true,
+    "RetentionDays": 7
+  }
 }
 ```
 
-Ścieżki są względne względem katalogu aplikacji. Nie ma potrzeby wpisywania pełnych ścieżek typu:
+### Połączenie z bazą danych
 
-```text
-/opt/gugik/rcn-importer/input
+Sekcja `Database` wskazuje nazwę połączenia i schemat bazy:
+
+``` json
+"Database": {
+  "ConnectionName": "Localhost",
+  "Schema": "uslugi_rcn"
+}
 ```
 
-Po zapisaniu konfiguracji prawa powinny pozostać następujące:
+`ConnectionName` musi odpowiadać nazwie wpisu znajdującego się w sekcji
+`ConnectionStrings`.
 
-```bash
-sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/appsettings.json
-sudo chmod 660 /opt/gugik/rcn-importer/appsettings.json
+Przykład:
+
+``` json
+"ConnectionStrings": {
+  "Localhost": "Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=UZUPELNIJ"
+}
 ```
 
-Sprawdzenie:
+Należy ustawić:
 
-```bash
-ls -l /opt/gugik/rcn-importer/appsettings.json
+-   `Host` -- adres serwera PostgreSQL;
+-   `Port` -- port PostgreSQL, standardowo `5432`;
+-   `Database` -- nazwę bazy, domyślnie `rcn`;
+-   `Username` -- użytkownika posiadającego wymagane uprawnienia;
+-   `Password` -- hasło użytkownika.
+
+> **Ważne:** plik `appsettings.json` zawiera dane dostępowe do bazy.
+> Należy ograniczyć dostęp do tego pliku i nie publikować go wraz z
+> rzeczywistym hasłem w publicznych repozytoriach ani innych
+> ogólnodostępnych lokalizacjach.
+
+## Konfiguracja importu
+
+Sekcja:
+
+``` json
+"ImportJob": {
+  "TerytPow": "1864",
+  "InputPath": "input",
+  "ProcessedPath": "processed",
+  "ErrorPath": "error",
+  "ArtifactsDir": "artifacts",
+  "LogDirectory": "logs",
+  "Mode": "REPLACE",
+  "MoveFilesAfterImport": true,
+  "RetentionDays": 7
+}
 ```
 
-Oczekiwane uprawnienia:
+Parametry:
 
-```text
--rw-rw---- ... rcn-importer rcn-importer ... appsettings.json
+  -----------------------------------------------------------------------
+  Parametr                            Znaczenie
+  ----------------------------------- -----------------------------------
+  `TerytPow`                          Czterocyfrowy kod TERYT powiatu
+                                      obsługiwanego przez daną
+                                      instalację. Wszystkie pliki z
+                                      `InputPath` są traktowane jako dane
+                                      tego powiatu; ich nazwy mogą być
+                                      dowolne.
+
+  `InputPath`                         Katalog z plikami oczekującymi na
+                                      import.
+
+  `ProcessedPath`                     Katalog, do którego trafiają pliki
+                                      poprawnie zaimportowane.
+
+  `ErrorPath`                         Katalog dla plików zakończonych
+                                      błędem lub bez danych do
+                                      załadowania.
+
+  `ArtifactsDir`                      Katalog technicznych raportów JSON.
+
+  `LogDirectory`                      Katalog logów aplikacji.
+
+  `Mode`                              Tryb importu: `REPLACE`, `UPSERT`
+                                      lub `INSERT`.
+
+  `MoveFilesAfterImport`              Określa, czy po przetworzeniu plik
+                                      ma zostać przeniesiony z `input`.
+
+  `RetentionDays`                     Liczba dni przechowywania starszych
+                                      plików w `processed`, `error`,
+                                      `artifacts` i `logs`. Wartość `0`
+                                      wyłącza automatyczne usuwanie.
+  -----------------------------------------------------------------------
+
+Domyślnie obsługiwane są pliki `*.gml` i `*.zip`.
+
+## Wiele plików w katalogu `input`
+
+W katalogu `input` może znajdować się jeden albo wiele plików GML i ZIP.
+Dla instalacji starosty wszystkie są traktowane jako dane powiatu
+wskazanego w `ImportJob:TerytPow`.
+
+Przykład:
+
+``` text
+input/
+├── transakcje.gml
+├── nieruchomosci.gml
+├── dane_uzupelniajace.gml
+└── paczka.zip
 ```
 
----
+Nazwy plików nie muszą zawierać kodu TERYT. Kod powiatu jest pobierany z
+`appsettings.json`.
 
-## 11. Powiat obsługiwany przez instalację
+Aplikacja najpierw próbuje odczytać poszczególne pliki. Dane z plików,
+które udało się poprawnie przygotować i odczytać, są dodawane do
+wspólnej kolekcji RCN. Dopiero po zakończeniu odczytu wykonywana jest
+operacja zapisu do bazy.
 
-Parametr:
+Przykład dla dwóch poprawnych plików:
 
-```json
-"TerytPow": "1864"
+``` text
+plik_1.gml ─┐
+            ├──> wspólna kolekcja RCN ──> jeden zapis do bazy
+plik_2.gml ─┘
 ```
 
-określa czterocyfrowy kod TERYT powiatu, którego dane znajdują się w katalogu `input`.
+Oznacza to, że w trybie `REPLACE` dwa pliki nie wykonują dwóch kolejnych
+operacji REPLACE. Są scalane, a następnie cały poprawny zestaw zastępuje
+dane powiatu w jednej operacji.
 
-Wszystkie pliki znajdujące się w `InputPath` powinny dotyczyć powiatu skonfigurowanego w `TerytPow`.
+Jeżeli jeden z plików jest błędny, aplikacja nadal sprawdza pozostałe
+pliki i zapisuje informację o błędzie z nazwą konkretnego pliku.
 
----
+-   w trybach `UPSERT` i `INSERT` dane z poprawnych plików mogą zostać
+    załadowane mimo błędu innego pliku;
+-   w trybie `REPLACE` błąd części zestawu blokuje wykonanie częściowego
+    zastąpienia danych. Aplikacja nie wykonuje REPLACE z niekompletnego
+    zestawu, aby nie usunąć z bazy prawidłowych danych, których zabrakło
+    wskutek błędnego pliku.
 
-## 12. Tryb importu
+Plik bez danych RCN albo plik całkowicie odfiltrowany jest również
+wykazywany w diagnostyce. Szczegóły należy sprawdzić w `logs` i
+`artifacts`.
 
-Parametr:
+## Tryby importu
 
-```json
+### `REPLACE`
+
+Zastępuje dane powiatu kompletnym zestawem przygotowanym podczas danego
+uruchomienia. Jeżeli w `input` znajduje się kilka poprawnych plików, ich
+dane są najpierw scalane do jednej kolekcji RCN, a następnie wykonywana
+jest jedna operacja REPLACE.
+
+Jeżeli choć jeden element wymaganego zestawu zakończy się błędem
+uniemożliwiającym bezpieczne zbudowanie kompletnej kolekcji, częściowy
+REPLACE nie jest wykonywany. Pozostałe pliki są mimo to analizowane,
+dzięki czemu raport może wskazać wszystkie wykryte problemy.
+
+``` json
 "Mode": "REPLACE"
 ```
 
-obsługuje trzy wartości:
+### `UPSERT`
 
-```text
-REPLACE
-UPSERT
-INSERT
-```
-
-Znaczenie:
-
-- `REPLACE` — zastępuje dotychczasowy zestaw danych powiatu nowym zestawem,
-- `UPSERT` — aktualizuje istniejące rekordy i dodaje nowe,
-- `INSERT` — dodaje nowe dane bez aktualizacji istniejących.
-
-Administrator powinien przed uruchomieniem produkcyjnym upewnić się, że ustawiony tryb odpowiada oczekiwanemu sposobowi aktualizacji danych.
-
----
-
-## 13. Wiele plików wejściowych
-
-Jeżeli w katalogu `input` znajduje się więcej niż jeden plik, aplikacja najpierw analizuje poszczególne pliki, a następnie scala poprawne dane do jednej wspólnej kolekcji RCN dla powiatu wskazanego w `TerytPow`.
-
-Przykład:
-
-```text
-input/
-├── plik_1.gml
-├── plik_2.gml
-└── dane.zip
-```
-
-W trybie `REPLACE` poprawne pliki tworzą jeden zestaw danych przeznaczony do zastąpienia danych powiatu.
-
-Jeżeli część zestawu jest błędna, częściowy `REPLACE` nie powinien być wykonywany. Chroni to istniejące dane przed zastąpieniem niekompletnym zbiorem.
-
-W przypadku ZIP aplikacja może wskazać konkretny błędny plik GML znajdujący się wewnątrz archiwum.
-
----
-
-## 14. Retencja plików
-
-Parametr:
-
-```json
-"RetentionDays": 7
-```
-
-określa liczbę dni przechowywania plików w katalogach:
-
-```text
-processed
-error
-artifacts
-logs
-```
-
-Katalog `input` nie jest objęty retencją.
-
-Przykładowe wartości:
-
-```text
-0   → retencja wyłączona
-7   → pliki mające 7 dni lub więcej są usuwane
-30  → pliki mające 30 dni lub więcej są usuwane
-< 0 → wartość traktowana jako nieprawidłowa; retencja nie powinna usuwać plików
-```
-
----
-
-## 15. Sprawdzenie dostępu do PostgreSQL
-
-Jeżeli PostgreSQL działa na tym samym serwerze:
-
-```bash
-sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn
-```
-
-Wyświetlenie tabel w schemacie `uslugi_rcn`:
-
-```text
-\dt uslugi_rcn.*
-```
-
-Wyjście:
-
-```text
-\q
-```
-
-Jeżeli baza działa na innym serwerze, sprawdź port:
-
-```bash
-nc -vz HOST 5432
-```
-
-Jeżeli `nc` nie jest zainstalowane:
-
-```bash
-sudo apt update
-sudo apt install netcat-openbsd
-```
-
-Administrator powinien również sprawdzić:
-
-- host i port PostgreSQL,
-- `listen_addresses`,
-- `pg_hba.conf`,
-- reguły zapory,
-- użytkownika i hasło,
-- uprawnienia użytkownika,
-- istnienie bazy `rcn`,
-- istnienie schematu `uslugi_rcn`,
-- dostępność PostGIS.
-
----
-
-## 16. Pierwsze uruchomienie ręczne
-
-Przejdź do katalogu aplikacji:
-
-```bash
-cd /opt/gugik/rcn-importer
-```
-
-Uruchom aplikację jako użytkownik systemowy:
-
-```bash
-sudo -u rcn-importer ./rcn-importer-1.0
-```
-
-Po zakończeniu sprawdź kod wyjścia:
-
-```bash
-echo $?
-```
-
-Przykładowe kody:
-
-```text
-0 - sukces
-1 - błąd importu
-2 - anulowanie
-3 - błąd konfiguracji
-4 - błąd odświeżania widoków materializowanych
-5 - brak plików wejściowych
-```
-
-Kod `5` przy pustym katalogu `input` nie oznacza awarii bazy danych.
-
----
-
-## 17. Test z plikiem GML lub ZIP
-
-Skopiuj plik testowy do:
-
-```text
-/opt/gugik/rcn-importer/input
-```
-
-Przykład:
-
-```bash
-sudo cp /sciezka/do/pliku/test.zip /opt/gugik/rcn-importer/input/
-```
-
-Ustaw właściciela:
-
-```bash
-sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/input/test.zip
-```
-
-Uruchom:
-
-```bash
-cd /opt/gugik/rcn-importer
-sudo -u rcn-importer ./rcn-importer-1.0
-```
-
-Po wykonaniu sprawdź:
-
-```bash
-ls -la processed
-ls -la error
-ls -la artifacts
-ls -la logs
-```
-
-Po sukcesie plik powinien trafić do `processed`, a po błędzie do `error`, jeżeli konfiguracja przewiduje przenoszenie plików.
-
----
-
-# Automatyczne uruchamianie
-
-## 18. Utworzenie usługi systemd
-
-Utwórz plik:
-
-```bash
-sudo nano /etc/systemd/system/rcn-importer.service
-```
-
-Zawartość:
-
-```ini
-[Unit]
-Description=GUGiK RCN Importer
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-User=rcn-importer
-Group=rcn-importer
-WorkingDirectory=/opt/gugik/rcn-importer
-ExecStart=/opt/gugik/rcn-importer/rcn-importer-1.0
-
-NoNewPrivileges=true
-PrivateTmp=true
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Przeładuj konfigurację:
-
-```bash
-sudo systemctl daemon-reload
-```
-
----
-
-## 19. Test usługi systemd
-
-Uruchom ręcznie:
-
-```bash
-sudo systemctl start rcn-importer.service
-```
-
-Sprawdź status:
-
-```bash
-sudo systemctl status rcn-importer.service
-```
-
-Ostatnie logi:
-
-```bash
-sudo journalctl -u rcn-importer.service -n 100 --no-pager
-```
-
----
-
-## 20. Utworzenie timera — raz dziennie
-
-Utwórz:
-
-```bash
-sudo nano /etc/systemd/system/rcn-importer.timer
-```
-
-Przykład uruchomienia codziennie o 02:00:
-
-```ini
-[Unit]
-Description=Codzienne uruchamianie RCN Importer
-
-[Timer]
-OnCalendar=*-*-* 02:00:00
-Persistent=true
-Unit=rcn-importer.service
-
-[Install]
-WantedBy=timers.target
-```
-
-Włącz timer:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now rcn-importer.timer
-```
-
-Sprawdź:
-
-```bash
-systemctl list-timers --all | grep rcn
-```
-
----
-
-## 21. Inne przykłady harmonogramu
-
-### Co godzinę
-
-```ini
-[Timer]
-OnCalendar=hourly
-Persistent=true
-Unit=rcn-importer.service
-```
-
-### Co około 15 minut
-
-```ini
-[Timer]
-OnBootSec=5min
-OnUnitActiveSec=15min
-Persistent=true
-Unit=rcn-importer.service
-```
-
-### Kilka razy dziennie
-
-```ini
-[Timer]
-OnCalendar=*-*-* 06:00:00
-OnCalendar=*-*-* 12:00:00
-OnCalendar=*-*-* 18:00:00
-Persistent=true
-Unit=rcn-importer.service
-```
-
-Po zmianie timera:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart rcn-importer.timer
-```
-
----
-
-## 22. Sprawdzenie timera
-
-Status:
-
-```bash
-sudo systemctl status rcn-importer.timer
-```
-
-Lista timerów:
-
-```bash
-systemctl list-timers --all | grep rcn
-```
-
-Pełna konfiguracja:
-
-```bash
-systemctl cat rcn-importer.timer
-```
-
----
-
-## 23. Ręczne uruchomienie mimo aktywnego timera
-
-Nie trzeba wyłączać timera:
-
-```bash
-sudo systemctl start rcn-importer.service
-```
-
-Sprawdzenie:
-
-```bash
-sudo systemctl status rcn-importer.service
-```
-
----
-
-## 24. Wyłączenie i ponowne włączenie timera
-
-Wyłączenie:
-
-```bash
-sudo systemctl disable --now rcn-importer.timer
-```
-
-Ponowne włączenie:
-
-```bash
-sudo systemctl enable --now rcn-importer.timer
-```
-
----
+Dodaje nowe rekordy oraz aktualizuje rekordy istniejące. Jeżeli część
+plików jest błędna, aplikacja może wykorzystać dane z plików poprawnych
+i jednocześnie zaraportować błędy dla pozostałych plików.
 
-# Alternatywa — cron
-
-## 25. Uruchamianie przez cron
-
-Jeżeli administrator nie chce używać `systemd timer`, aplikację można uruchamiać przez `cron`.
-
-Edycja crontaba użytkownika aplikacji:
-
-```bash
-sudo crontab -u rcn-importer -e
-```
-
-Codziennie o 02:00:
-
-```cron
-0 2 * * * cd /opt/gugik/rcn-importer && ./rcn-importer-1.0
-```
-
-Co godzinę:
-
-```cron
-0 * * * * cd /opt/gugik/rcn-importer && ./rcn-importer-1.0
-```
-
-Co 15 minut:
-
-```cron
-*/15 * * * * cd /opt/gugik/rcn-importer && ./rcn-importer-1.0
-```
-
-Zalecany jest jednak `systemd timer`, ponieważ zapewnia wygodniejsze sprawdzanie statusu, logowanie przez `journalctl` i zarządzanie harmonogramem.
-
-Nie należy jednocześnie konfigurować tego samego importera w `cron` i `systemd timer`.
-
----
-
-# Aktualizacja aplikacji
-
-## 26. Przygotowanie nowej wersji
-
-Nową publikację `linux-x64` należy przesłać przez WinSCP do katalogu użytkownika, np.:
-
-```text
-/home/sszczerba/RCN/rcn-importer
-```
-
-Nie należy aktualizować plików bezpośrednio w `/opt` przez WinSCP.
-
----
-
-## 27. Aktualizacja plików aplikacji
-
-Zatrzymaj timer:
-
-```bash
-sudo systemctl stop rcn-importer.timer
-```
-
-Sprawdź, czy aplikacja aktualnie nie działa:
-
-```bash
-sudo systemctl status rcn-importer.service
-```
-
-Wykonaj kopię konfiguracji:
-
-```bash
-sudo cp /opt/gugik/rcn-importer/appsettings.json \
-  /opt/gugik/rcn-importer/appsettings.json.bak
-```
-
-Skopiuj nową publikację:
-
-```bash
-sudo cp -a ~/RCN/rcn-importer/. /opt/gugik/rcn-importer/
-```
-
-Jeżeli nowa publikacja zawiera własny `appsettings.json`, przywróć konfigurację produkcyjną:
-
-```bash
-sudo cp /opt/gugik/rcn-importer/appsettings.json.bak \
-  /opt/gugik/rcn-importer/appsettings.json
-```
-
-Ustaw właściciela:
-
-```bash
-sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
-```
-
-Ustaw prawa:
-
-```bash
-sudo chmod -R u=rwX,g=rX,o= /opt/gugik/rcn-importer
-sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.0
-sudo chmod 660 /opt/gugik/rcn-importer/appsettings.json
-```
-
-Przetestuj aplikację:
-
-```bash
-cd /opt/gugik/rcn-importer
-sudo -u rcn-importer ./rcn-importer-1.0
-```
-
-Jeżeli test jest poprawny:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl start rcn-importer.timer
-```
-
----
-
-## 28. Zmiana konfiguracji
-
-Po zmianie `appsettings.json` nie trzeba restartować stale działającego procesu, ponieważ aplikacja nie działa jako daemon.
-
-Nowa konfiguracja zostanie odczytana przy następnym uruchomieniu.
-
-Jeżeli chcesz uruchomić aplikację od razu:
-
-```bash
-sudo systemctl start rcn-importer.service
-```
-
----
-
-# Administracja i diagnostyka
-
-## 29. Logi aplikacji
-
-Logi aplikacji:
-
-```bash
-ls -lht /opt/gugik/rcn-importer/logs
-```
-
-Logi systemd:
-
-```bash
-sudo journalctl -u rcn-importer.service
-```
-
-Ostatnie 100 wpisów:
-
-```bash
-sudo journalctl -u rcn-importer.service -n 100 --no-pager
-```
-
-Log na żywo:
-
-```bash
-sudo journalctl -fu rcn-importer.service
-```
-
----
-
-## 30. Kontrola katalogu błędów
-
-```bash
-ls -lht /opt/gugik/rcn-importer/error
-```
-
-W przypadku błędów należy sprawdzić również:
-
-```text
-logs/
-artifacts/
-```
-
-Pliku z katalogu `error` nie należy bez analizy ponownie kopiować do `input`.
-
----
-
-## 31. Kontrola miejsca na dysku
-
-```bash
-df -h
-```
-
-Rozmiar całej aplikacji:
-
-```bash
-du -sh /opt/gugik/rcn-importer
-```
-
-Rozmiary katalogów:
-
-```bash
-du -sh /opt/gugik/rcn-importer/input
-du -sh /opt/gugik/rcn-importer/processed
-du -sh /opt/gugik/rcn-importer/error
-du -sh /opt/gugik/rcn-importer/artifacts
-du -sh /opt/gugik/rcn-importer/logs
-```
-
----
-
-## 32. Sprawdzenie procesu
-
-```bash
-ps aux | grep rcn-importer-1.0
-```
-
-Ponieważ aplikacja wykonuje jeden cykl i kończy pracę, po poprawnym zakończeniu procesu nie powinno być na liście.
-
----
-
-## 33. Kopia bezpieczeństwa
-
-Katalogi `processed`, `error`, `artifacts` i `logs` są katalogami technicznymi i mogą być objęte retencją.
-
-Jeżeli organizacja wymaga dłuższego przechowywania historii, należy skonfigurować osobny mechanizm kopii bezpieczeństwa poza katalogiem aplikacji.
-
-Najważniejsza jest niezależna polityka kopii bezpieczeństwa bazy PostgreSQL. Retencja plików aplikacji nie zastępuje backupu bazy.
-
----
-
-## 34. Bezpieczeństwo
-
-Administrator powinien:
-
-- uruchamiać aplikację z dedykowanego użytkownika `rcn-importer`,
-- nie uruchamiać aplikacji jako `root`,
-- ograniczyć dostęp do `appsettings.json` do użytkownika `rcn-importer` i członków grupy `rcn-importer`,
-- stosować dedykowanego użytkownika PostgreSQL z wymaganymi, ale nie nadmiarowymi uprawnieniami,
-- ograniczyć dostęp sieciowy do PostgreSQL,
-- nie publikować rzeczywistych haseł w repozytorium,
-- regularnie instalować aktualizacje bezpieczeństwa systemu,
-- kontrolować katalog `error`,
-- kontrolować wolne miejsce,
-- wykonywać backup bazy danych,
-- sprawdzać logi po zmianach konfiguracji lub aktualizacji aplikacji.
-
----
-
-# Najczęstsze problemy
-
-## 35. `Permission denied` przy kopiowaniu przez WinSCP
-
-Nie należy wgrywać plików bezpośrednio do:
-
-```text
-/opt/gugik/rcn-importer
-```
-
-WinSCP powinien przesyłać pliki do katalogu użytkownika, np.:
-
-```text
-/home/sszczerba/RCN/rcn-importer
-```
-
-Następnie należy użyć:
-
-```bash
-sudo cp -a ~/RCN/rcn-importer/. /opt/gugik/rcn-importer/
-sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
-```
-
----
-
-## 36. `Permission denied` przy wejściu do `/opt/gugik/rcn-importer`
-
-Jeżeli:
-
-```bash
-ls -la /opt/gugik/rcn-importer
-```
-
-zwraca `Permission denied`, sprawdź:
-
-```bash
-groups
-groups sszczerba
-```
-
-Jeżeli `groups sszczerba` pokazuje `rcn-importer`, ale polecenie `groups` dla bieżącej sesji jej nie pokazuje, wyloguj się:
-
-```bash
-exit
-```
-
-i zaloguj ponownie przez SSH. Nowe członkostwo w grupie zaczyna obowiązywać w nowej sesji.
-
-Po ponownym zalogowaniu:
-
-```bash
-groups
-ls -la /opt/gugik/rcn-importer
-```
-
----
-
-## 37. `Permission denied` przy uruchamianiu aplikacji
-
-Sprawdź:
-
-```bash
-ls -la /opt/gugik/rcn-importer
-```
-
-Następnie:
-
-```bash
-sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
-sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.0
-```
-
----
-
-## 38. Brak połączenia z PostgreSQL
-
-Sprawdź konfigurację `ConnectionStrings`.
-
-Jeżeli baza jest lokalna:
-
-```bash
-sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn
-```
-
-Jeżeli baza jest zdalna:
-
-```bash
-nc -vz HOST 5432
-```
-
-Po stronie PostgreSQL sprawdź:
-
-- `listen_addresses`,
-- `pg_hba.conf`,
-- reguły zapory,
-- port PostgreSQL,
-- użytkownika i hasło,
-- uprawnienia użytkownika do bazy `rcn`.
-
----
-
-## 39. PostgreSQL nasłuchuje tylko lokalnie
-
-Sprawdź:
-
-```bash
-sudo ss -ltnp | grep 5432
+``` json
+"Mode": "UPSERT"
 ```
 
-Jeżeli widoczne jest wyłącznie:
-
-```text
-127.0.0.1:5432
-[::1]:5432
-```
-
-to PostgreSQL przyjmuje tylko połączenia lokalne.
-
-Konfiguracja znajduje się typowo w:
-
-```text
-/etc/postgresql/18/main/postgresql.conf
-/etc/postgresql/18/main/pg_hba.conf
-```
+### `INSERT`
 
-Po zmianach wymagających restartu:
+Służy do dodawania nowych danych zgodnie z logiką trybu INSERT. Błąd
+pojedynczego pliku nie musi blokować załadowania danych z pozostałych
+poprawnych plików.
 
-```bash
-sudo pg_ctlcluster 18 main restart
+``` json
+"Mode": "INSERT"
 ```
 
----
+Wybrany tryb jest zapisywany w logu oraz w artefaktach importu. Przed
+uruchomieniem należy upewnić się, że `Mode` odpowiada oczekiwanemu
+sposobowi aktualizacji bazy.
 
-## 40. Plik pozostaje w `input`
+## Przenoszenie plików
 
-Sprawdź w `appsettings.json`:
+Przy ustawieniu:
 
-```json
+``` json
 "MoveFilesAfterImport": true
 ```
 
-Następnie sprawdź log aplikacji.
+plik po zakończeniu przetwarzania znika z katalogu `input` i zostaje
+przeniesiony do odpowiedniego katalogu docelowego.
 
----
+Po poprawnym imporcie:
 
-## 41. Plik trafił do `error`
-
-Sprawdź:
-
-```text
-logs/
-artifacts/
+``` text
+input/powiat.zip
+        ↓
+processed/2026-08-12-12_31_00_powiat.zip
 ```
 
-Artefakty i logi zawierają informacje diagnostyczne dotyczące konkretnego importu.
+Po błędzie lub braku danych do załadowania:
 
----
-
-## 42. Timer nie uruchamia aplikacji
-
-Sprawdź:
-
-```bash
-sudo systemctl status rcn-importer.timer
-systemctl list-timers --all | grep rcn
-sudo journalctl -u rcn-importer.service -n 100 --no-pager
+``` text
+input/powiat.zip
+        ↓
+error/2026-08-12-12_31_00_powiat.zip
 ```
 
-Po zmianie pliku `.service` albo `.timer`:
+Do nazwy przenoszonego pliku dodawana jest data i czas. Pozwala to
+zachować historię kolejnych importów i ogranicza ryzyko nadpisania
+wcześniej przetworzonego pliku o tej samej nazwie.
 
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart rcn-importer.timer
+Przy ustawieniu:
+
+``` json
+"MoveFilesAfterImport": false
 ```
 
----
+plik pozostaje w katalogu `input`. Przy kolejnym uruchomieniu może więc
+zostać ponownie znaleziony i ponownie przetworzony. Do normalnej pracy
+automatycznej zalecane jest pozostawienie wartości `true`.
 
-# Przydatne polecenia administratora
+## Automatyczne usuwanie starych plików
 
-## 43. Skrócona lista
+Aplikacja może automatycznie usuwać stare pliki, aby katalogi robocze
+nie zwiększały swojej wielkości bez ograniczeń.
 
-```bash
-# przejście do aplikacji
-cd /opt/gugik/rcn-importer
+Mechanizmem steruje parametr:
 
-# ręczne uruchomienie aplikacji
+``` json
+"RetentionDays": 7
+```
+
+Retencja obejmuje katalogi:
+
+-   `processed`;
+-   `error`;
+-   `artifacts`;
+-   `logs`.
+
+**Katalog `input` nie jest automatycznie czyszczony.** Dzięki temu
+aplikacja nie usunie pliku, który nadal oczekuje na zaimportowanie.
+
+### `RetentionDays = 0`
+
+``` json
+"RetentionDays": 0
+```
+
+Automatyczne usuwanie jest wyłączone. Żadne pliki nie są usuwane z
+powodu retencji.
+
+W logu zapisywana jest informacja:
+
+``` text
+Retencja plików: 0 dni - automatyczne usuwanie plików jest wyłączone.
+```
+
+### `RetentionDays = 7`
+
+``` json
+"RetentionDays": 7
+```
+
+Aplikacja usuwa pliki mające 7 dni lub więcej. Pod uwagę brana jest data
+ostatniej modyfikacji pliku.
+
+Przykładowo, jeżeli aplikacja zostanie uruchomiona 12.08.2026, usuwane
+będą pliki z dnia 05.08.2026 i starsze.
+
+Przykładowy log:
+
+``` text
+Retencja plików: 7 dni. Usuwane będą pliki z dnia 2026-08-05 i starsze.
+Retencja katalogu processed: usunięto 12 plików, błędy: 0.
+Retencja katalogu error: usunięto 2 pliki, błędy: 0.
+Retencja katalogu artifacts: usunięto 14 plików, błędy: 0.
+Retencja katalogu logs: usunięto 6 plików, błędy: 0.
+Zakończono czyszczenie plików. Usunięto: 34, błędy: 0.
+```
+
+### Wartość ujemna
+
+Wartość mniejsza od `0` jest traktowana jako nieprawidłowa konfiguracja,
+ale **nie zatrzymuje działania aplikacji**.
+
+Przykład:
+
+``` json
+"RetentionDays": -7
+```
+
+Aplikacja bezpiecznie przyjmuje wtedy `0`, wyłącza automatyczne usuwanie
+i kontynuuje pracę.
+
+W logu zostanie zapisane:
+
+``` text
+Nieprawidłowa wartość RetentionDays: -7. Ustawiono 0 dni - automatyczne usuwanie plików jest wyłączone.
+```
+
+### Błąd podczas usuwania pliku
+
+Jeżeli pojedynczego starego pliku nie można usunąć, np. z powodu braku
+uprawnień albo dlatego, że jest używany przez inny proces, błąd zostaje
+zapisany w logu. Nie powoduje to zatrzymania całego importu.
+
+Czyszczenie wykonywane jest przed wyszukaniem i rozpoczęciem importu
+nowych plików.
+
+## Katalog `artifacts`
+
+Katalog `artifacts` zawiera raporty techniczne w formacie JSON. Nie są w
+nim przechowywane kopie plików GML ani ZIP.
+
+Dla każdego przetworzonego pliku tworzony jest osobny raport, np.:
+
+``` text
+artifacts/2026-08-12-12_31_00_powiat.json
+```
+
+Raport może zawierać m.in.:
+
+-   nazwę pliku źródłowego;
+-   wykorzystany tryb importu;
+-   status `SUCCESS` albo `ERROR`;
+-   czas rozpoczęcia i zakończenia;
+-   czas trwania operacji;
+-   ścieżkę, do której przeniesiono plik;
+-   opis błędu, jeżeli import się nie powiódł;
+-   komunikaty zwrócone podczas importu.
+
+Przykład:
+
+``` json
+{
+  "SourceFile": "powiat.zip",
+  "Mode": "REPLACE",
+  "Status": "SUCCESS",
+  "StartedAt": "2026-08-12T10:25:31+02:00",
+  "FinishedAt": "2026-08-12T10:25:45+02:00",
+  "DurationSeconds": 14.2,
+  "DestinationFile": "processed/2026-08-12-12_31_00_powiat.zip",
+  "Error": null,
+  "Messages": []
+}
+```
+
+Po każdym uruchomieniu aplikacji zapisywane jest również zbiorcze
+podsumowanie:
+
+``` text
+artifacts/2026-08-12-12_31_00_run-summary.json
+```
+
+Zawiera ono m.in. liczbę znalezionych plików, liczbę importów poprawnych
+i błędnych, użyty tryb, katalogi robocze, informację o odświeżeniu
+widoków materializowanych oraz kod zakończenia programu.
+
+Artefakty są szczególnie przydatne przy diagnostyce problemów oraz
+sprawdzaniu historii automatycznych uruchomień.
+
+## Logi
+
+Przebieg działania aplikacji jest zapisywany w katalogu `logs`.
+
+W logu znajdują się m.in.:
+
+-   data i czas uruchomienia;
+-   wybrany tryb importu;
+-   katalog źródłowy;
+-   katalog plików poprawnych;
+-   katalog plików błędnych;
+-   katalog artefaktów;
+-   lista obsługiwanych rozszerzeń;
+-   zastosowana retencja plików i wynik automatycznego czyszczenia;
+-   informacje o rozpoczęciu i wyniku importu poszczególnych plików;
+-   informacja, gdzie został przeniesiony plik;
+-   błędy i ostrzeżenia;
+-   wynik odświeżenia widoków materializowanych;
+-   podsumowanie całego uruchomienia.
+
+W przypadku problemów z importem w pierwszej kolejności należy sprawdzić
+log, a następnie odpowiadający danemu plikowi raport w katalogu
+`artifacts`.
+
+## Pliki ZIP
+
+Archiwum ZIP jest traktowane jako jedno źródło wejściowe, ale znajdujące
+się w nim pliki GML są przygotowywane i diagnozowane osobno.
+
+Przykład:
+
+``` text
+dane.zip
+├── czesc_1.gml   → OK
+├── czesc_2.gml   → BŁĄD
+└── czesc_3.gml   → OK
+```
+
+W logu i artefakcie aplikacja może wskazać błąd konkretnego pliku, np.
+`dane.zip / czesc_2.gml`. Jeżeli nie można otworzyć samego archiwum,
+błąd jest przypisywany do pliku ZIP.
+
+W `UPSERT` i `INSERT` poprawne dane z `czesc_1.gml` i `czesc_3.gml` mogą
+zostać wykorzystane mimo błędu `czesc_2.gml`. W `REPLACE` nie jest
+wykonywane częściowe zastąpienie danych z niekompletnego
+archiwum/zestawu.
+
+Do katalogu `input` należy przekazywać wyłącznie pliki przeznaczone do
+importu. Nie należy używać tego katalogu jako archiwum.
+
+## Uruchamianie ręczne
+
+### Linux
+
+W docelowej instalacji aplikacja działa z katalogu `/opt/gugik/rcn-importer` jako dedykowany użytkownik systemowy `rcn-importer`. Dla wersji opublikowanej jako plik wykonywalny:
+
+``` bash
+chmod +x rcn-importer-1.0
 sudo -u rcn-importer ./rcn-importer-1.0
-
-# uruchomienie przez systemd
-sudo systemctl start rcn-importer.service
-
-# status ostatniego uruchomienia
-sudo systemctl status rcn-importer.service
-
-# status timera
-sudo systemctl status rcn-importer.timer
-
-# lista timerów
-systemctl list-timers --all | grep rcn
-
-# ostatnie logi
-sudo journalctl -u rcn-importer.service -n 100 --no-pager
-
-# log na żywo
-sudo journalctl -fu rcn-importer.service
-
-# zatrzymanie timera
-sudo systemctl stop rcn-importer.timer
-
-# wyłączenie timera
-sudo systemctl disable --now rcn-importer.timer
-
-# włączenie timera
-sudo systemctl enable --now rcn-importer.timer
-
-# przeładowanie konfiguracji systemd
-sudo systemctl daemon-reload
-
-# sprawdzenie miejsca na dysku
-df -h
-
-# rozmiar aplikacji
-du -sh /opt/gugik/rcn-importer
 ```
 
----
+Aplikacja może być również uruchamiana automatycznie przez
+`systemd timer` lub `cron`.
 
-# Zalecany proces wdrożenia
+## Automatyczne uruchamianie
 
-## 44. Kolejność krok po kroku
+Program został zaprojektowany tak, aby jedno uruchomienie oznaczało
+jeden pełny cykl przetwarzania katalogu `input`. Dzięki temu może być
+bezpiecznie uruchamiany cyklicznie przez mechanizmy systemowe, np.:
 
-1. Przygotuj PostgreSQL/PostGIS oraz bazę `rcn`.
-2. Przygotuj publikację `linux-x64` jako `self-contained`.
-3. **Utwórz użytkownika systemowego `rcn-importer` i dodaj administratora do grupy `rcn-importer`.**
-4. **Sprawdź `groups sszczerba`, wyloguj się przez `exit`, zaloguj ponownie przez SSH i sprawdź `groups`. Nie kontynuuj, dopóki aktywna sesja nie pokazuje grupy `rcn-importer`.**
-6. **Utwórz katalog docelowy `/opt/gugik/rcn-importer`.**
-6. Utwórz katalog `~/RCN/rcn-importer` dla plików przesyłanych przez WinSCP.
-7. Wgraj przez WinSCP całą publikację do `~/RCN/rcn-importer`.
-8. Sprawdź przesłane pliki.
-9. Skopiuj publikację do `/opt/gugik/rcn-importer` za pomocą `sudo cp -a`.
-10. Utwórz katalogi `input`, `processed`, `error`, `artifacts`, `logs`.
-11. Ustaw właściciela `rcn-importer:rcn-importer`.
-12. Nadaj odpowiednie uprawnienia.
-13. Skonfiguruj `appsettings.json`.
-14. Sprawdź `TerytPow`, tryb importu i retencję.
-15. Sprawdź połączenie z PostgreSQL.
-16. Uruchom aplikację ręcznie jako `rcn-importer`.
-17. Wykonaj test z plikiem GML lub ZIP.
-18. Sprawdź `processed`, `error`, `artifacts` i `logs`.
-19. Utwórz `rcn-importer.service`.
-20. Przetestuj usługę.
-21. Utwórz `rcn-importer.timer`.
-22. Włącz timer.
-23. Sprawdź następny termin uruchomienia.
-24. Po pierwszym automatycznym wykonaniu sprawdź logi i wynik importu.
+-   `systemd timer`;
+-   `cron`.
 
-Po wykonaniu powyższych kroków aplikacja może pracować cyklicznie bez ręcznego uruchamiania.
+Przed włączeniem pracy cyklicznej zaleca się wykonać co najmniej jeden
+import ręczny i sprawdzić połączenie z bazą, tryb importu, logi oraz
+wynik w bazie.
+
+## Kody zakończenia
+
+Aplikacja zwraca kod zakończenia, który może być wykorzystany przez
+skrypty, Harmonogram zadań lub `systemd`:
+
+    Kod Znaczenie
+  ----- ---------------------------------------------
+    `0` Import zakończony sukcesem.
+    `1` Wystąpił błąd importu.
+    `2` Operacja została anulowana.
+    `3` Błąd konfiguracji.
+    `4` Błąd odświeżania widoków materializowanych.
+    `5` Nie znaleziono plików wejściowych.
+
+Kod `5` oznacza, że w chwili uruchomienia w katalogu `input` nie było
+plików przeznaczonych do importu. Nie oznacza to uszkodzenia bazy
+danych.
+
+## Co sprawdzić po imporcie
+
+Po zakończeniu pracy warto sprawdzić:
+
+1.  czy plik zniknął z `input`;
+2.  czy trafił do `processed` albo `error`;
+3.  czy w `artifacts` powstał raport dotyczący pliku;
+4.  czy log nie zawiera błędów lub ostrzeżeń;
+5.  w przypadku importu produkcyjnego -- czy dane są dostępne w bazie i
+    oczekiwanych widokach.
+
+## Najczęstsze problemy
+
+### Brak plików do importu
+
+Sprawdź, czy plik znajduje się w katalogu `input` i ma rozszerzenie
+`.gml` albo `.zip`.
+
+### Plik trafił do `error`
+
+Sprawdź log oraz raport JSON w `artifacts`. Powinny zawierać informację
+o przyczynie niepowodzenia.
+
+### Brak połączenia z PostgreSQL
+
+Sprawdź `Host`, `Port`, `Database`, `Username` i `Password` w
+`ConnectionStrings`. W przypadku połączenia z innym serwerem sprawdź
+również konfigurację sieci, zapory i PostgreSQL (`pg_hba.conf`).
+
+### Dane zostały zaimportowane w niewłaściwym trybie
+
+Przed kolejnym uruchomieniem sprawdź wartość `ImportJob:Mode`. Tryb
+importu wpływa na sposób aktualizacji danych w bazie.
+
+### Plik jest przetwarzany ponownie
+
+Sprawdź `MoveFilesAfterImport`. Przy wartości `false` poprawnie
+przetworzony plik pozostaje w `input` i może zostać ponownie znaleziony
+przy następnym uruchomieniu.
+
+## Zalecenia eksploatacyjne
+
+-   przed pierwszym użyciem wykonaj test na danych testowych;
+-   przed importem sprawdź wartość `Mode`;
+-   pozostaw `MoveFilesAfterImport` ustawione na `true` przy pracy
+    automatycznej;
+-   regularnie kontroluj katalog `error`;
+-   ustaw `RetentionDays` odpowiednio do dostępnego miejsca i wymaganej
+    historii importów; wartość `0` wyłącza automatyczne czyszczenie;
+-   jeżeli wymagana jest dłuższa archiwizacja, skopiuj potrzebne pliki
+    poza katalogi objęte retencją przed upływem ustawionej liczby dni;
+-   zabezpiecz `appsettings.json`, ponieważ może zawierać hasło do bazy;
+-   nie uruchamiaj równocześnie kilku instancji importera korzystających
+    z tego samego katalogu `input`, jeżeli nie zostało to wcześniej
+    przetestowane i świadomie skonfigurowane.
