@@ -28,6 +28,8 @@ Przed rozpoczęciem Etapu 2 muszą być spełnione następujące warunki:
 - zostało ustawione i zapisane hasło użytkownika PostgreSQL używanego przez importer;  
 - administrator ma `sudo`.  
 
+Całą instrukcję wykonuj z konta administratora posiadającego uprawnienia `sudo`. Nie loguj się na konto `rcn-importer`; jest to konto systemowe przeznaczone wyłącznie do uruchamiania aplikacji.
+
 > **Nie klonuj repozytorium ponownie.** Etap 2 korzysta z plików pobranych wcześniej w ramach całego repozytorium RCN.
 
 ## 2. Przejście do Etapu 2 w repozytorium
@@ -144,12 +146,6 @@ Skopiuj **całą zawartość** katalogu `publish/linux-x64` do katalogu produkcy
 
 ```bash
 sudo cp -a ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/publish/linux-x64/. /opt/gugik/rcn-importer/
-```
-
-Następnie ustaw właściciela plików:
-
-```bash
-sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
 ```
 
 Sprawdź skopiowane pliki:
@@ -559,6 +555,8 @@ Uruchom usługę ręcznie w celu sprawdzenia konfiguracji:
 sudo systemctl start rcn-importer.service
 sudo systemctl status rcn-importer.service
 ```
+
+Jeżeli `systemctl status` otworzy widok pełnoekranowy, naciśnij `q`, aby wrócić do terminala.
 
 Sprawdź również logi usługi:
 
