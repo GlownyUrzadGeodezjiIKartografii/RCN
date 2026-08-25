@@ -1,27 +1,150 @@
-# RCN – narzędzie do publikacji danych Rejestru Cen Nieruchomości
+# RCN -- narzędzie do publikacji danych Rejestru Cen Nieruchomości
 
-Pakiet narzędzi przygotowany z myślą o **starostwach**, przeznaczony do przygotowania, zasilania oraz publikacji danych Rejestru Cen Nieruchomości (RCN).
+Pakiet narzędzi przygotowany z myślą o **starostwach**, przeznaczony do
+przygotowania, zasilania oraz publikacji danych Rejestru Cen
+Nieruchomości (RCN).
 
-Rozwiązanie obejmuje przygotowanie bazy danych PostgreSQL/PostGIS, aplikację **RCN Importer** do ładowania danych RCN z plików GML oraz konfigurację serwera publikacyjnego opartego na MapServerze.
+Rozwiązanie obejmuje przygotowanie bazy danych PostgreSQL/PostGIS,
+aplikację **RCN Importer** do ładowania danych RCN z plików GML oraz
+konfigurację serwera publikacyjnego opartego na MapServerze.
 
-Pakiet prowadzi administratora przez cały proces wdrożenia – od przygotowania bazy danych, przez załadowanie danych z plików GML, aż do uruchomienia usługi publikującej dane RCN.
+Pakiet prowadzi administratora przez cały proces wdrożenia -- od
+przygotowania bazy danych, przez załadowanie danych z plików GML, aż do
+uruchomienia usługi publikującej dane RCN.
 
 ## Informacje
 
-**Nazwa:** RCN – narzędzie do publikacji danych Rejestru Cen Nieruchomości  
-**Jednostka:** Główny Urząd Geodezji i Kartografii (GUGiK)  
-**Autorzy:** Szymon Szczerba, Krzysztof Błachnio  
-**Rok:** 2026  
-**System operacyjny:** Debian 13 (trixie) lub nowszy  
-**Baza danych:** PostgreSQL 18 lub nowsza  
-**Rozszerzenie przestrzenne:** PostGIS  
-**Schemat bazy danych:** `uslugi_rcn`  
-**Aplikacja importująca:** RCN Importer  
-**Serwer publikacyjny:** MapServer  
-**Repozytorium:** `GlownyUrzadGeodezjiIKartografii/RCN`  
+**Nazwa:** RCN -- narzędzie do publikacji danych Rejestru Cen
+Nieruchomości\
+**Jednostka:** Główny Urząd Geodezji i Kartografii (GUGiK)\
+**Autorzy:** Szymon Szczerba, Krzysztof Błachnio\
+**Rok:** 2026\
+**System operacyjny:** Debian 13 (trixie) lub nowszy\
+**Baza danych:** PostgreSQL 18 lub nowsza\
+**Rozszerzenie przestrzenne:** PostGIS\
+**Schemat bazy danych:** `uslugi_rcn`\
+**Aplikacja importująca:** RCN Importer\
+**Serwer publikacyjny:** MapServer\
+**Repozytorium:** `GlownyUrzadGeodezjiIKartografii/RCN`\
 **Wersja:** 1.0
 
----
+------------------------------------------------------------------------
+
+## Wymagania systemowe
+
+Do wdrożenia rozwiązania przygotuj serwer lub maszynę wirtualną z
+systemem:
+
+``` text
+Debian 13 (trixie) lub nowszy
+```
+
+Administrator wykonujący instalację powinien posiadać:
+
+-   konto użytkownika z możliwością wykonywania poleceń `sudo`,
+-   dostęp do Internetu na czas pobierania repozytorium i instalowania
+    wymaganych pakietów,
+-   zainstalowane narzędzie `git`,
+-   możliwość instalowania pakietów systemowych,
+-   możliwość konfiguracji PostgreSQL i -- jeżeli jest to wymagane --
+    reguł zapory sieciowej,
+-   odpowiednią ilość wolnego miejsca na bazę danych, pliki GML, logi i
+    pliki robocze aplikacji.
+
+PostgreSQL 18 i PostGIS mogą zostać zainstalowane za pomocą skryptów
+znajdujących się w pakiecie RCN, dlatego **nie muszą być zainstalowane
+przed pobraniem repozytorium**.
+
+Aplikacja RCN Importer jest przygotowana do uruchomienia w środowisku
+Linux zgodnie z instrukcją znajdującą się w katalogu
+`2-aplikacja-do-ladowania-danych-z-gml`.
+
+> **Ważne**
+>
+> MapServer może działać na tym samym serwerze co PostgreSQL albo na
+> osobnym serwerze. Jeżeli MapServer znajduje się na innej maszynie,
+> należy zapewnić komunikację sieciową pomiędzy serwerem MapServera i
+> serwerem PostgreSQL.
+
+------------------------------------------------------------------------
+
+## Pobranie repozytorium w Debianie
+
+### 1. Zaloguj się na serwer
+
+Zaloguj się na serwer Debian na konto użytkownika posiadającego
+możliwość wykonywania poleceń `sudo`.
+
+### 2. Sprawdź, czy Git jest zainstalowany
+
+Wykonaj:
+
+``` bash
+git --version
+```
+
+Jeżeli Git jest zainstalowany, zobaczysz informację o jego wersji.
+
+Jeżeli polecenie `git` nie jest dostępne, zainstaluj je:
+
+``` bash
+sudo apt update
+sudo apt install -y git
+```
+
+### 3. Przejdź do katalogu domowego
+
+``` bash
+cd ~
+```
+
+### 4. Pobierz repozytorium RCN
+
+Wykonaj:
+
+``` bash
+git clone https://github.com/GlownyUrzadGeodezjiIKartografii/RCN.git
+```
+
+Repozytorium zostanie pobrane do katalogu:
+
+``` text
+~/RCN
+```
+
+### 5. Sprawdź pobrane pliki
+
+Wykonaj:
+
+``` bash
+ls -la ~/RCN
+```
+
+Powinny być widoczne trzy główne katalogi:
+
+``` text
+1-baza-danych
+2-aplikacja-do-ladowania-danych-z-gml
+3-konfiguracja-uslugi
+```
+
+### 6. Nadaj uprawnienia do wykonywania skryptów
+
+Po pobraniu repozytorium nadaj uprawnienia do wykonywania wszystkim
+plikom `.sh` znajdującym się w repozytorium:
+
+``` bash
+find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
+```
+
+Repozytorium jest teraz przygotowane do rozpoczęcia wdrożenia.
+
+> **Nie uruchamiaj jeszcze skryptów na podstawie ich nazw.**
+>
+> Przejdź do katalogu `1-baza-danych`, otwórz instrukcję instalacji i
+> wykonuj opisane w niej czynności w podanej kolejności.
+
+------------------------------------------------------------------------
 
 ## Jak korzystać z repozytorium?
 
@@ -305,17 +428,17 @@ lub logów importu**
 
 Pakiet RCN składa się z trzech współpracujących ze sobą elementów:
 
-  ---------------------------------------------------------------------
-  Element                            Zadanie
-  ---------------------------------- ----------------------------------
-  **PostgreSQL/PostGIS**             przechowuje dane RCN
+  -----------------------------------------------------------------------
+  Element                             Zadanie
+  ----------------------------------- -----------------------------------
+  **PostgreSQL/PostGIS**              przechowuje dane RCN
 
-  **RCN Importer**                   ładuje i aktualizuje dane RCN na
-                                     podstawie plików GML
+  **RCN Importer**                    ładuje i aktualizuje dane RCN na
+                                      podstawie plików GML
 
-  **MapServer**                      publikuje dane znajdujące się w
-                                     bazie
-  ---------------------------------------------------------------------
+  **MapServer**                       publikuje dane znajdujące się w
+                                      bazie
+  -----------------------------------------------------------------------
 
 Aby rozwiązanie działało prawidłowo, przygotuj je kolejno:
 
@@ -325,12 +448,3 @@ BAZA DANYCH  →  IMPORT DANYCH GML  →  PUBLIKACJA
 
 Po wykonaniu wszystkich trzech etapów środowisko jest przygotowane do
 cyklicznego zasilania bazy danymi RCN i ich publikacji.
-
-------------------------------------------------------------------------
-
-# Twórcy
-
-Narzędzie RCN zostało przygotowane przez:
-
--   **Szymon Szczerba**
--   **Krzysztof Błachnio**
