@@ -29,202 +29,25 @@ Pakiet składa się z trzech głównych etapów:
 2. przygotowanie bazy danych `rcn`,
 3. import struktury `uslugi_rcn` z pliku `struktura_uslugi_rcn.sql`.
 
-## 2. Pliki i struktura repozytorium
+## 2. Przed rozpoczęciem
 
-Kompletne repozytorium RCN zostanie pobrane w dalszej części instrukcji do katalogu:
+Przed rozpoczęciem tego etapu wykonaj czynności wstępne opisane w głównym pliku `README.md` repozytorium RCN:
 
-```text
-~/RCN
-```
+- sprawdź wymagania systemowe,
+- zainstaluj program `git`, jeżeli nie jest dostępny,
+- pobierz repozytorium RCN,
+- sprawdź pobrane katalogi,
+- nadaj plikom `.sh` uprawnienia do wykonywania.
 
-Po pobraniu repozytorium podstawowa struktura katalogów będzie następująca:
-
-```text
-~/RCN/
-├── 1-baza-danych/
-├── 2-aplikacja-do-ladowania-danych-z-gml/
-└── 3-konfiguracja-uslugi/
-```
-
-Pliki wykorzystywane w **Etapie 1 – przygotowanie bazy danych** znajdują się w katalogu:
-
-```text
-~/RCN/1-baza-danych
-```
-
-W katalogu tym znajdują się m.in.:
-
-```text
-00_instalacja_postgresql_postgis.sh
-01_przygotowanie_bazy_rcn.sh
-02_import_struktury_rcn.sh
-03_konfiguracja_uzytkownika_mapserver.sh
-04_reload_bazy_rcn.sh
-struktura_uslugi_rcn.sql
-cofnij_do_czystego_debiana.sh
-```
-
-## 3. Wymagania i sprawdzenie systemu
-
-Skrypty instalacyjne są przeznaczone dla systemu **Debian 13 (trixie) lub nowszego** na architekturze `x86_64/amd64`.
-
-Przed rozpoczęciem instalacji należy sprawdzić wersję systemu:
-
-```bash
-cat /etc/os-release
-```
-
-Polecenie wyświetli informacje o zainstalowanym systemie, w tym nazwę i wersję Debiana.
-
-Przykładowy wynik:
-
-```text
-PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
-NAME="Debian GNU/Linux"
-VERSION_ID="13"
-VERSION="13 (trixie)"
-```
-
-Sam numer wersji Debiana można sprawdzić poleceniem:
-
-```bash
-cat /etc/debian_version
-```
-
-Dodatkowo należy zapewnić:
-
-- system Debian 13 (trixie) lub nowszy,
-- architekturę `x86_64/amd64`,
-- dostęp do Internetu podczas instalacji pakietów,
-- konto użytkownika z możliwością wykonywania poleceń `sudo`.
-
-Sprawdzenie architektury systemu:
-
-```bash
-uname -m
-```
-
-Dla architektury `x86_64/amd64` wynik powinien być:
-
-```text
-x86_64
-```
-
-PostgreSQL 18 jest instalowany z oficjalnego repozytorium PostgreSQL PGDG dla Debiana.
-
-## 4. Przygotowanie i pobranie plików RCN
-
-Pliki niezbędne do instalacji i konfiguracji RCN są dostępne w publicznym repozytorium GitHub Głównego Urzędu Geodezji i Kartografii.
-
-Repozytorium zawiera trzy główne katalogi:
-
-```text
-1-baza-danych/
-2-aplikacja-do-ladowania-danych-z-gml/
-3-konfiguracja-uslugi/
-```
-
-### 4.1. Instalacja programu Git
-
-Sprawdź, czy program `git` jest zainstalowany:
-
-```bash
-git --version
-```
-
-Jeżeli `git` nie jest zainstalowany, wykonaj:
-
-```bash
-sudo apt update
-sudo apt install -y git
-```
-
-### 4.2. Pobranie repozytorium RCN
-
-Przejdź do katalogu domowego:
-
-```bash
-cd ~
-```
-
-Pobierz repozytorium RCN:
-
-```bash
-git clone https://github.com/GlownyUrzadGeodezjiIKartografii/RCN.git
-```
-
-Jeżeli katalog `~/RCN` już istnieje, polecenie `git clone` zakończy się komunikatem:
-
-```text
-fatal: destination path 'RCN' already exists and is not an empty directory.
-```
-
-Jeżeli istniejące repozytorium ma zostać jedynie zaktualizowane, wykonaj:
-
-```bash
-cd ~/RCN
-git pull --ff-only
-```
-
-Jeżeli chcesz usunąć lokalną kopię repozytorium i pobrać ją ponownie:
-
-> **UWAGA:** poniższe polecenie usuwa cały katalog `~/RCN` wraz ze wszystkimi znajdującymi się w nim plikami i lokalnymi zmianami.
-
-```bash
-cd ~
-rm -rf ~/RCN
-git clone https://github.com/GlownyUrzadGeodezjiIKartografii/RCN.git
-```
-
-### 4.3. Sprawdzenie pobranego repozytorium
-
-Po pobraniu sprawdź zawartość repozytorium:
-
-```bash
-ls -la ~/RCN
-```
-
-Powinny być widoczne m.in. katalogi:
-
-```text
-1-baza-danych
-2-aplikacja-do-ladowania-danych-z-gml
-3-konfiguracja-uslugi
-```
-
-### 4.4. Nadanie uprawnień do uruchamiania skryptów
-
-Po pobraniu repozytorium skrypty `.sh` mogą nie mieć uprawnień do wykonywania.
-
-Nadaj uprawnienia do wykonywania **wszystkim plikom `.sh` znajdującym się w repozytorium RCN i jego podkatalogach**:
-
-```bash
-find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
-```
-
-Polecenie wyszukuje wszystkie pliki z rozszerzeniem `.sh` w katalogu `~/RCN` oraz jego podkatalogach i nadaje im uprawnienia do wykonywania.
-
-Możesz sprawdzić nadane uprawnienia poleceniem:
-
-```bash
-find ~/RCN -type f -name "*.sh" -ls
-```
-
-Przy plikach `.sh` powinno być widoczne uprawnienie `x`, np.:
-
-```text
--rwxr-xr-x ... 00_instalacja_postgresql_postgis.sh
-```
-
-Po nadaniu uprawnień przejdź do katalogu instalacji bazy danych:
+Po wykonaniu tych czynności przejdź do katalogu:
 
 ```bash
 cd ~/RCN/1-baza-danych
 ```
 
-Po wykonaniu tych czynności można przejść do instalacji PostgreSQL i PostGIS.
+Dalsza część tej instrukcji dotyczy wyłącznie **Etapu 1 – instalacji i przygotowania bazy danych RCN**.
 
-## 5. Instalacja PostgreSQL i PostGIS
+## 3. Instalacja PostgreSQL i PostGIS
 
 Uruchom skrypt z instalacją:
 
@@ -258,7 +81,7 @@ Stan klastrów można sprawdzić:
 pg_lsclusters
 ```
 
-## 6. Przygotowanie bazy `rcn`
+## 4. Przygotowanie bazy `rcn`
 
 Uruchom skrypt:
 
@@ -274,7 +97,7 @@ Jeżeli baza `rcn` nie istnieje, zostanie utworzona. Następnie skrypt włącza 
 CREATE EXTENSION postgis;
 ```
 
-## 7. Ustawienie hasła użytkownika PostgreSQL `postgres`
+## 3. Ustawienie hasła użytkownika PostgreSQL `postgres`
 
 Aplikacja RCN Importer wykorzystuje użytkownika PostgreSQL `postgres` do połączenia z bazą danych `rcn`.
 
@@ -309,7 +132,7 @@ Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
 > PostgreSQL nie umożliwia późniejszego odczytania ustawionego hasła. W przypadku jego utraty konieczne będzie ustawienie nowego.
 >
 
-## 8. Import struktury
+## 4. Import struktury
 
 Plik:
 
@@ -332,7 +155,7 @@ Uruchom:
 Jeżeli schemat `uslugi_rcn` już istnieje, import jest pomijany i wykonywana jest weryfikacja.
 
 
-## 9. Użytkownik PostgreSQL dla MapServera
+## 3. Użytkownik PostgreSQL dla MapServera
 
 Po utworzeniu struktury bazy należy skonfigurować oddzielnego użytkownika PostgreSQL przeznaczonego wyłącznie dla MapServera.
 
@@ -374,7 +197,7 @@ Jeżeli użytkownik `ms_rcn` już istnieje, skrypt nie zmienia jego hasła, ale 
 
 Użytkownik administracyjny `postgres` pozostaje w systemie. Jest nadal wykorzystywany do przygotowania bazy, importu struktury oraz operacji administracyjnych. MapServer powinien natomiast korzystać z ograniczonego użytkownika `ms_rcn`.
 
-## 10. Dostęp sieciowy do PostgreSQL — MapServer, DBeaver i inne komputery
+## 4. Dostęp sieciowy do PostgreSQL — MapServer, DBeaver i inne komputery
 
 Samo utworzenie użytkownika PostgreSQL nie powoduje automatycznie udostępnienia bazy z innych komputerów.
 
@@ -687,7 +510,7 @@ User:     ms_rcn
 Dostęp użytkownika `ms_rcn` jest ograniczony do wymaganych widoków materializowanych przeznaczonych do publikacji danych przez MapServer.
 
 
-## 11. Weryfikacja poprawności instalacji
+## 3. Weryfikacja poprawności instalacji
 
 Po zakończeniu instalacji wykonaj poniższe polecenia kontrolne.
 
@@ -961,7 +784,7 @@ Importer**.
 
 
 
-## 12. Przydatne polecenia administracyjne PostgreSQL
+## 4. Przydatne polecenia administracyjne PostgreSQL
 
 Poniższe polecenia nie są częścią standardowego procesu instalacji. Mogą
 być wykorzystywane przez administratora podczas późniejszej eksploatacji
@@ -1084,7 +907,7 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
 
 ------------------------------------------------------------------------
 
-## 13. Ważne informacje
+## 3. Ważne informacje
 
 -   skrypty instalacyjne i administracyjne wymagają odpowiednich
     uprawnień systemowych, w tym w określonych przypadkach `sudo`,
@@ -1118,7 +941,7 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
 
 ------------------------------------------------------------------------
 
-# 14. Operacje dodatkowe i administracyjne
+# 4. Operacje dodatkowe i administracyjne
 
 Poniższe operacje **nie są częścią standardowej pierwszej instalacji
 RCN**.
