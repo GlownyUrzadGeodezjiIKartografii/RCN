@@ -61,6 +61,7 @@ i zatwierdź klawiszem Enter.
 Skrypt usuwa elementy związane z instalacją RCN Importer, w szczególności:
 
 - katalog instalacyjny `/opt/gugik/rcn-importer`;
+- katalog `/opt/gugik`, jeżeli po usunięciu aplikacji pozostanie pusty;
 - użytkownika systemowego `rcn-importer`;
 - grupę `rcn-importer`, jeżeli może zostać usunięta;
 - jednostkę `/etc/systemd/system/rcn-importer.service`, jeżeli istnieje;
