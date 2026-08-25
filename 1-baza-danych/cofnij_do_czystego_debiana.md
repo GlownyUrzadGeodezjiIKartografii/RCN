@@ -1,119 +1,125 @@
-# Cofnięcie instalacji PostgreSQL/PostGIS do czystego Debiana
+# Cofnięcie instalacji PostgreSQL/PostGIS do stanu sprzed Etapu 1
 
 ## 1. Przeznaczenie
 
 Skrypt:
 
-``` text
+```text
 cofnij_do_czystego_debiana.sh
 ```
 
-służy do usunięcia z **maszyny testowej Debian** elementów
-zainstalowanych podczas przygotowania PostgreSQL 18 i PostGIS.
+służy do usunięcia z **maszyny testowej Debian** elementów zainstalowanych podczas przygotowania PostgreSQL 18 i PostGIS w ramach **Etapu 1 — baza danych**.
 
-Skrypt jest operacją destrukcyjną. Usuwa PostgreSQL 18 wraz z bazami
-danych i konfiguracją.
+Skrypt jest operacją destrukcyjną. Usuwa PostgreSQL 18 wraz z klastrem `18/main`, bazami danych i konfiguracją tego klastra.
 
-> **UWAGA:** użycie skryptu powoduje usunięcie bazy `rcn` oraz
-> wszystkich innych baz znajdujących się w klastrze PostgreSQL
-> `18/main`. Operacji nie można cofnąć.
+> **UWAGA**
+>
+> Użycie skryptu powoduje usunięcie bazy `rcn` oraz wszystkich innych baz i ról PostgreSQL znajdujących się w klastrze PostgreSQL `18/main`. Operacji nie można cofnąć.
+>
+> Skrypt należy stosować wyłącznie na maszynie testowej, na której świadomie chcesz usunąć instalację PostgreSQL/PostGIS wykonaną w Etapie 1.
 
-Skrypt dotyczy PostgreSQL/PostGIS. Nie służy do resetowania samej
-aplikacji RCN Importer.
+Skrypt dotyczy PostgreSQL/PostGIS. **Nie resetuje aplikacji RCN Importer z Etapu 2.**
 
 ## 2. Co usuwa skrypt
 
 Skrypt:
 
--   sprawdza, czy systemem jest Debian,
--   zatrzymuje i usuwa klaster PostgreSQL `18/main`,
--   usuwa pakiety PostgreSQL 18,
--   usuwa klienta PostgreSQL 18,
--   usuwa pakiety PostGIS dla PostgreSQL 18,
--   wykonuje `apt autoremove --purge`,
--   usuwa pozostały katalog danych:
+- sprawdza, czy systemem jest Debian;
+- sprawdza dostęp do `sudo`;
+- zatrzymuje i usuwa klaster PostgreSQL `18/main`, jeżeli istnieje;
+- usuwa pakiety PostgreSQL 18;
+- usuwa klienta PostgreSQL 18;
+- usuwa pakiety PostGIS dla PostgreSQL 18;
+- wykonuje `apt-get autoremove --purge`;
+- usuwa pozostały katalog danych:
 
-``` text
+```text
 /var/lib/postgresql/18
 ```
 
--   usuwa pozostały katalog konfiguracji:
+- usuwa pozostały katalog konfiguracji:
 
-``` text
+```text
 /etc/postgresql/18
 ```
 
--   usuwa repozytorium PGDG dodane podczas instalacji:
+- usuwa repozytorium PGDG dodane podczas instalacji:
 
-``` text
+```text
 /etc/apt/sources.list.d/pgdg.list
 ```
 
--   usuwa klucz repozytorium PGDG:
+- usuwa klucz repozytorium PGDG:
 
-``` text
+```text
 /usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg
 ```
 
--   wykonuje:
+- wykonuje:
 
-``` bash
+```bash
 sudo apt-get update
 ```
 
-Usunięcie klastra powoduje również usunięcie bazy `rcn`, schematu
-`uslugi_rcn`, użytkownika PostgreSQL `ms_rcn`, jego uprawnień oraz zmian
-dotyczących PostgreSQL zapisanych w konfiguracji klastra, w tym
-`pg_hba.conf` i `postgresql.conf`.
+Usunięcie klastra powoduje również usunięcie:
+
+- bazy `rcn`;
+- schematu `uslugi_rcn`;
+- danych znajdujących się w bazie;
+- ról i użytkowników PostgreSQL utworzonych w tym klastrze, w tym użytkowników wykorzystywanych przez RCN i MapServer;
+- uprawnień nadanych tym użytkownikom;
+- konfiguracji klastra PostgreSQL, w tym zmian wykonanych w `pg_hba.conf` i `postgresql.conf`.
 
 ## 3. Czego skrypt nie usuwa
 
 Skrypt nie usuwa:
 
--   użytkownika systemowego Linux `rcn-importer`,
--   katalogu aplikacji `/opt/gugik/rcn-importer`,
--   plików aplikacji RCN Importer,
--   jednostek `systemd` aplikacji RCN Importer,
--   katalogu roboczego `~/RCN`,
--   skryptów `.sh` i pliku `struktura_uslugi_rcn.sql` znajdujących się w
-    `~/RCN`.
+- użytkownika systemowego Linux `rcn-importer`;
+- katalogu aplikacji `/opt/gugik/rcn-importer`;
+- plików aplikacji RCN Importer;
+- jednostek `systemd` aplikacji RCN Importer;
+- repozytorium `~/RCN`;
+- plików Etapu 1 znajdujących się w `~/RCN/1-baza-danych`;
+- plików Etapu 2 znajdujących się w `~/RCN/2-aplikacja-do-ladowania-danych-z-gml`;
+- plików Etapu 3 znajdujących się w `~/RCN/3-konfiguracja-uslugi`.
 
-Jeżeli chcesz również usunąć instalację aplikacji RCN Importer, użyj
-osobnego skryptu:
+Jeżeli chcesz również usunąć instalację aplikacji RCN Importer, użyj osobnego skryptu:
 
-``` text
-reset_instalacji_rcn_importer.sh
+```text
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml/reset_instalacji_rcn_importer.sh
 ```
 
 ## 4. Lokalizacja pliku
 
-Jeżeli plik został umieszczony w katalogu:
+Skrypt znajduje się w katalogu **Etapu 1**:
 
-``` text
-/home/sszczerba/RCN
+```text
+~/RCN/1-baza-danych/cofnij_do_czystego_debiana.sh
 ```
 
-przejdź do niego:
+Przejdź do katalogu:
 
-``` bash
-cd ~/RCN
+```bash
+cd ~/RCN/1-baza-danych
 ```
 
 Sprawdź obecność pliku:
 
-``` bash
+```bash
 ls -la cofnij_do_czystego_debiana.sh
 ```
 
 ## 5. Nadanie prawa wykonywania
 
-``` bash
+Jeżeli skrypt nie ma jeszcze prawa wykonywania, nadaj je:
+
+```bash
 chmod +x cofnij_do_czystego_debiana.sh
 ```
 
-Możesz sprawdzić prawa:
+Sprawdź:
 
-``` bash
+```bash
 ls -l cofnij_do_czystego_debiana.sh
 ```
 
@@ -121,108 +127,202 @@ ls -l cofnij_do_czystego_debiana.sh
 
 Uruchom:
 
-``` bash
+```bash
 ./cofnij_do_czystego_debiana.sh
 ```
 
-Skrypt wyświetli ostrzeżenie i poprosi o wpisanie dokładnie:
+Skrypt sam sprawdzi dostęp do `sudo` i w razie potrzeby poprosi o uwierzytelnienie administratora.
 
-``` text
+Przed rozpoczęciem usuwania skrypt wyświetli ostrzeżenie i poprosi o wpisanie dokładnie:
+
+```text
 CZYSTY_DEBIAN
 ```
 
-Dopiero po podaniu tej wartości rozpocznie usuwanie PostgreSQL 18 i
-PostGIS.
+Dopiero po podaniu tej wartości rozpocznie usuwanie PostgreSQL 18 i PostGIS.
 
-## 7. Sprawdzenie po wykonaniu
+## 7. Weryfikacja po wykonaniu
 
-Sprawdź klastry PostgreSQL:
+Skrypt wykonuje podstawową weryfikację automatycznie. Po jego zakończeniu możesz dodatkowo sprawdzić stan systemu.
 
-``` bash
-pg_lsclusters
+Sprawdź, czy klaster PostgreSQL 18 nadal istnieje:
+
+```bash
+if command -v pg_lsclusters >/dev/null 2>&1; then
+    pg_lsclusters
+else
+    echo "OK - polecenie pg_lsclusters nie jest dostępne"
+fi
 ```
 
-Jeżeli polecenie nie jest już dostępne po usunięciu pakietów, jest to
-prawidłowe.
+Sprawdź klienta PostgreSQL:
 
-Sprawdź PostgreSQL:
-
-``` bash
-psql --version
+```bash
+if command -v psql >/dev/null 2>&1; then
+    psql --version
+else
+    echo "OK - polecenie psql nie jest dostępne"
+fi
 ```
-
-Jeżeli PostgreSQL został całkowicie usunięty, polecenie powinno zwrócić
-informację, że `psql` nie został znaleziony.
 
 Sprawdź katalog danych:
 
-``` bash
-ls -la /var/lib/postgresql/18
+```bash
+if [ -e /var/lib/postgresql/18 ]; then
+    echo "UWAGA - katalog /var/lib/postgresql/18 nadal istnieje"
+else
+    echo "OK - katalog danych PostgreSQL 18 został usunięty"
+fi
 ```
-
-Powinien być nieobecny.
 
 Sprawdź katalog konfiguracji:
 
-``` bash
-ls -la /etc/postgresql/18
+```bash
+if [ -e /etc/postgresql/18 ]; then
+    echo "UWAGA - katalog /etc/postgresql/18 nadal istnieje"
+else
+    echo "OK - katalog konfiguracji PostgreSQL 18 został usunięty"
+fi
 ```
-
-Powinien być nieobecny.
 
 Sprawdź repozytorium PGDG:
 
-``` bash
-ls -la /etc/apt/sources.list.d/pgdg.list
+```bash
+if [ -e /etc/apt/sources.list.d/pgdg.list ]; then
+    echo "UWAGA - plik pgdg.list nadal istnieje"
+else
+    echo "OK - plik repozytorium PGDG został usunięty"
+fi
 ```
 
-Plik powinien być nieobecny.
+Sprawdź, czy repozytorium RCN nadal istnieje:
+
+```bash
+ls -la ~/RCN
+```
+
+Repozytorium `~/RCN` powinno pozostać bez zmian.
 
 ## 8. Pełny reset środowiska RCN
 
-Jeżeli celem jest ponowne przetestowanie **całej instalacji od
-początku**, należy wykonać dwa niezależne resety.
+Jeżeli celem jest ponowne przetestowanie **całego wdrożenia od początku**, wykonaj dwa niezależne resety.
 
-### Krok 1 --- usunięcie aplikacji RCN Importer
+### Krok 1 — usunięcie aplikacji RCN Importer
 
-``` bash
-cd ~/RCN
+Przejdź do katalogu Etapu 2:
+
+```bash
+cd ~/RCN/2-aplikacja-do-ladowania-danych-z-gml
+```
+
+Jeżeli jest to potrzebne, nadaj skryptowi prawo wykonywania:
+
+```bash
 chmod +x reset_instalacji_rcn_importer.sh
+```
+
+Uruchom:
+
+```bash
 ./reset_instalacji_rcn_importer.sh
 ```
 
 Potwierdzenie:
 
-``` text
+```text
 RESET_RCN_IMPORTER
 ```
 
-### Krok 2 --- usunięcie PostgreSQL/PostGIS
+### Krok 2 — usunięcie PostgreSQL/PostGIS
 
-``` bash
+Przejdź do katalogu Etapu 1:
+
+```bash
+cd ~/RCN/1-baza-danych
+```
+
+Jeżeli jest to potrzebne, nadaj skryptowi prawo wykonywania:
+
+```bash
 chmod +x cofnij_do_czystego_debiana.sh
+```
+
+Uruchom:
+
+```bash
 ./cofnij_do_czystego_debiana.sh
 ```
 
 Potwierdzenie:
 
-``` text
+```text
 CZYSTY_DEBIAN
 ```
 
-Po wykonaniu obu skryptów można ponownie rozpocząć test instrukcji
-instalacji od pierwszego kroku.
+Po wykonaniu obu resetów repozytorium `~/RCN` pozostaje na serwerze. Można ponownie rozpocząć wdrożenie od **Etapu 1 — instalacji bazy danych**, korzystając z aktualnej instrukcji znajdującej się w:
 
-## 9. Ważne informacje
+```text
+~/RCN/1-baza-danych
+```
 
--   skrypt należy stosować wyłącznie na maszynie testowej,
--   wszystkie dane z klastra PostgreSQL `18/main` zostaną usunięte,
--   baza `rcn` zostanie usunięta,
--   użytkownik PostgreSQL `ms_rcn` zostanie usunięty razem z klastrem,
--   konfiguracja dostępu MapServera i DBeavera w `pg_hba.conf` zostanie
-    usunięta razem z konfiguracją PostgreSQL 18,
--   po ponownej instalacji należy ponownie skonfigurować PostgreSQL,
-    bazę `rcn`, użytkownika `ms_rcn`, `pg_hba.conf` oraz --- jeśli jest
-    wymagany dostęp zdalny --- `listen_addresses`,
--   aplikacja RCN Importer jest resetowana osobnym skryptem
-    `reset_instalacji_rcn_importer.sh`.
+Nie ma potrzeby ponownego klonowania repozytorium.
+
+## 9. Aktualizacja repozytorium przed ponownym testem
+
+Jeżeli przed ponownym testem chcesz pobrać najnowszą wersję materiałów, przejdź do repozytorium:
+
+```bash
+cd ~/RCN
+```
+
+Sprawdź stan:
+
+```bash
+git status
+```
+
+Pobierz informacje o zmianach z repozytorium zdalnego:
+
+```bash
+git fetch
+```
+
+Ponownie sprawdź stan:
+
+```bash
+git status
+```
+
+Jeżeli nie ma lokalnych zmian kolidujących z aktualizacją, pobierz najnowszą wersję:
+
+```bash
+git pull --ff-only
+```
+
+Na końcu sprawdź:
+
+```bash
+git status
+git log -1 --oneline
+```
+
+> **Ważne**
+>
+> Jeżeli `git status` pokaże lokalne zmiany, nie usuwaj ich ani nie nadpisuj bez wcześniejszego sprawdzenia. Zakres zmian możesz wyświetlić poleceniem:
+>
+> ```bash
+> git diff
+> ```
+
+## 10. Ważne informacje
+
+- skrypt należy stosować wyłącznie na maszynie testowej;
+- wszystkie dane z klastra PostgreSQL `18/main` zostaną usunięte;
+- baza `rcn` zostanie usunięta;
+- schemat `uslugi_rcn` zostanie usunięty wraz z bazą;
+- role i użytkownicy PostgreSQL utworzeni w klastrze zostaną usunięci razem z klastrem;
+- konfiguracja dostępu MapServera i narzędzi administracyjnych w `pg_hba.conf` zostanie usunięta razem z konfiguracją PostgreSQL 18;
+- ustawienia `postgresql.conf`, w tym `listen_addresses`, zostaną usunięte razem z konfiguracją klastra;
+- po ponownej instalacji należy ponownie skonfigurować PostgreSQL, bazę `rcn`, wymaganych użytkowników i ich uprawnienia, `pg_hba.conf` oraz — jeżeli jest wymagany dostęp zdalny — `listen_addresses`;
+- aplikacja RCN Importer jest resetowana osobnym skryptem `reset_instalacji_rcn_importer.sh`;
+- repozytorium `~/RCN` nie jest usuwane.
