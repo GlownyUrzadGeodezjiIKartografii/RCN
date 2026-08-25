@@ -1043,7 +1043,7 @@ COMMENT ON COLUMN uslugi_rcn.transakcja.dok_tworca IS 'Twórca/wystawca dokument
 
 CREATE MATERIALIZED VIEW uslugi_rcn.mv_budynki AS
  SELECT b.id AS gid,
-    b.geometria AS geom,
+    COALESCE(b.geometria, public.st_geomfromtext('POLYGON EMPTY'::text, 2180)) AS geom,
     p.serwis_rcn,
     t.teryt_powiatu AS teryt,
     t.iip_przestrzen_nazw AS tran_przestrzen_nazw,
@@ -1063,6 +1063,7 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_budynki AS
     COALESCE(s_rp.nazwa, (n.rodzaj_prawa)::text) AS nier_prawo,
     n.udzial AS nier_udzial,
     n.pole_pow_gruntowej AS nier_pow_gruntu,
+    n.opis AS nier_opis,
     n.cena_brutto AS nier_cena_brutto,
     n.kwota_vat AS nier_vat,
     b.id_budynku AS bud_id_budynku,
@@ -1071,6 +1072,7 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_budynki AS
     b.powa_uzytkowa AS bud_pow_uzyt,
     b.cena_brutto AS bud_cena_brutto,
     b.kwota_vat AS bud_vat,
+    b.dodatkowe_informacje AS bud_info,
     b.adres_serial AS bud_adres,
     b.centroid AS bud_centroid
    FROM ((((((((((uslugi_rcn.budynek b
@@ -1121,7 +1123,7 @@ CREATE TABLE uslugi_rcn.sposob_uzytkowania (
 
 CREATE MATERIALIZED VIEW uslugi_rcn.mv_dzialki AS
  SELECT d.id AS gid,
-    d.geometria AS geom,
+    COALESCE(d.geometria, public.st_geomfromtext('POLYGON EMPTY'::text, 2180)) AS geom,
     p.serwis_rcn,
     t.teryt_powiatu AS teryt,
     t.iip_przestrzen_nazw AS tran_przestrzen_nazw,
@@ -1141,6 +1143,7 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_dzialki AS
     COALESCE(s_rp.nazwa, (n.rodzaj_prawa)::text) AS nier_prawo,
     n.udzial AS nier_udzial,
     n.pole_pow_gruntowej AS nier_pow_gruntu,
+    n.opis AS nier_opis,
     n.cena_brutto AS nier_cena_brutto,
     n.kwota_vat AS nier_vat,
     d.id_dzialki AS dzi_id_dzialki,
@@ -1155,6 +1158,7 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_dzialki AS
     COALESCE(s_su.nazwa, (d.sposob_uzytkowania)::text) AS dzi_sposob_uzyt,
     d.cena_brutto AS dzi_cena_brutto,
     d.kwota_vat AS dzi_vat,
+    d.dodatkowe_informacje AS dzi_info,
     d.adres_serial AS dzi_adres,
     d.centroid AS dzi_centroid
    FROM ((((((((((uslugi_rcn.dzialka d
@@ -1185,7 +1189,7 @@ COMMENT ON MATERIALIZED VIEW uslugi_rcn.mv_dzialki IS 'RCN: MV dzialki + atrybut
 
 CREATE MATERIALIZED VIEW uslugi_rcn.mv_lokale AS
  SELECT l.id AS gid,
-    l.georeferencja AS geom,
+    COALESCE(l.georeferencja, public.st_geomfromtext('POINT EMPTY'::text, 2180)) AS geom,
     p.serwis_rcn,
     t.teryt_powiatu AS teryt,
     t.iip_przestrzen_nazw AS tran_przestrzen_nazw,
@@ -1205,6 +1209,7 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_lokale AS
     COALESCE(s_rp.nazwa, (n.rodzaj_prawa)::text) AS nier_prawo,
     n.udzial AS nier_udzial,
     n.pole_pow_gruntowej AS nier_pow_gruntu,
+    n.opis AS nier_opis,
     n.cena_brutto AS nier_cena_brutto,
     n.kwota_vat AS nier_vat,
     l.id_lokalu AS lok_id_lokalu,
@@ -1216,6 +1221,7 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_lokale AS
     l.pow_pom_przynal AS lok_pow_przyn,
     l.cena_brutto AS lok_cena_brutto,
     l.kwota_vat AS lok_vat,
+    l.dodatkowe_informacje AS lok_info,
     l.adres_serial AS lok_adres
    FROM ((((((((((uslugi_rcn.lokal l
      LEFT JOIN uslugi_rcn.nieruchomosc n ON ((n.id = l.id_nieruchomosci)))
