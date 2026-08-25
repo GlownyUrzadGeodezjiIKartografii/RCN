@@ -34,14 +34,19 @@ Nieruchomości\
 
 Do rozpoczęcia wdrożenia potrzebujesz:
 
-- systemu **Debian 13 (trixie) lub nowszego** na architekturze `x86_64/amd64`,
-- konta użytkownika z możliwością wykonywania poleceń `sudo`,
-- dostępu do Internetu podczas pobierania repozytorium i instalowania pakietów,
-- programu `git` (jeżeli nie jest zainstalowany, poniżej znajduje się polecenie instalacji).
+-   systemu **Debian 13 (trixie) lub nowszego** na architekturze
+    `x86_64/amd64`,
+-   konta użytkownika z możliwością wykonywania poleceń `sudo`,
+-   dostępu do Internetu podczas pobierania repozytorium i instalowania
+    pakietów,
+-   programu `git` (jeżeli nie jest zainstalowany, poniżej znajduje się
+    polecenie instalacji).
 
-PostgreSQL, PostGIS, RCN Importer i MapServer są przygotowywane w kolejnych etapach zgodnie z instrukcjami znajdującymi się w odpowiednich katalogach repozytorium.
+PostgreSQL, PostGIS, RCN Importer i MapServer są przygotowywane w
+kolejnych etapach zgodnie z instrukcjami znajdującymi się w odpowiednich
+katalogach repozytorium.
 
----
+------------------------------------------------------------------------
 
 ## Pobranie repozytorium w Debianie
 
@@ -54,13 +59,13 @@ możliwość wykonywania poleceń `sudo`.
 
 Wykonaj:
 
-```bash
+``` bash
 uname -m
 ```
 
 Dla obsługiwanej architektury wynik powinien być:
 
-```text
+``` text
 x86_64
 ```
 
@@ -132,6 +137,88 @@ Repozytorium jest teraz przygotowane do rozpoczęcia wdrożenia.
 >
 > Przejdź do katalogu `1-baza-danych`, otwórz instrukcję instalacji i
 > wykonuj opisane w niej czynności w podanej kolejności.
+
+### 8. Sprawdzenie stanu i aktualizacja wcześniej pobranego repozytorium
+
+Jeżeli repozytorium `RCN` zostało już wcześniej pobrane, **nie należy
+klonować go ponownie**. Przed pobraniem najnowszej wersji warto najpierw
+sprawdzić stan lokalnego repozytorium.
+
+Przejdź do katalogu repozytorium:
+
+``` bash
+cd ~/RCN
+```
+
+Sprawdź aktualny stan:
+
+``` bash
+git status
+```
+
+Polecenie pokaże między innymi:
+
+-   aktualną gałąź;
+-   czy w repozytorium znajdują się lokalne zmiany;
+-   czy są pliki zmodyfikowane lub nieśledzone.
+
+Następnie pobierz z serwera informacje o najnowszych zmianach, bez
+modyfikowania lokalnych plików:
+
+``` bash
+git fetch
+```
+
+Ponownie sprawdź stan repozytorium:
+
+``` bash
+git status
+```
+
+Jeżeli lokalna gałąź jest starsza od repozytorium zdalnego i nie ma
+lokalnych zmian kolidujących z aktualizacją, pobierz najnowszą wersję:
+
+``` bash
+git pull --ff-only
+```
+
+Po aktualizacji sprawdź ponownie stan:
+
+``` bash
+git status
+```
+
+Możesz również wyświetlić ostatni commit znajdujący się w lokalnym
+repozytorium:
+
+``` bash
+git log -1 --oneline
+```
+
+Jeżeli repozytorium jest aktualne i nie zawiera lokalnych zmian,
+`git status` powinien wskazywać, że lokalna gałąź jest zgodna z
+repozytorium zdalnym oraz że nie ma zmian do zatwierdzenia.
+
+> **Ważne**
+>
+> Jeżeli `git status` pokaże lokalne zmiany w plikach, nie usuwaj ich
+> ani nie nadpisuj bez wcześniejszego sprawdzenia.
+>
+> Zakres lokalnych zmian możesz wyświetlić poleceniem:
+>
+> ``` bash
+> git diff
+> ```
+>
+> Polecenia `git clone` używa się przy pierwszym pobraniu repozytorium.
+> Dla istniejącego repozytorium `~/RCN` do sprawdzania i pobierania
+> kolejnych wersji używaj `git status`, `git fetch` oraz
+> `git pull --ff-only`.
+
+Po aktualizacji repozytorium nie ma potrzeby ponownego wykonywania
+zakończonych etapów wdrożenia, chyba że instrukcja dotycząca konkretnej
+aktualizacji wyraźnie tego wymaga. Przejdź do właściwego katalogu etapu
+i postępuj zgodnie z jego aktualną instrukcją.
 
 ------------------------------------------------------------------------
 
@@ -417,17 +504,17 @@ lub logów importu**
 
 Pakiet RCN składa się z trzech współpracujących ze sobą elementów:
 
-  -----------------------------------------------------------------------
-  Element                             Zadanie
-  ----------------------------------- -----------------------------------
-  **PostgreSQL/PostGIS**              przechowuje dane RCN
+  ---------------------------------------------------------------------
+  Element                            Zadanie
+  ---------------------------------- ----------------------------------
+  **PostgreSQL/PostGIS**             przechowuje dane RCN
 
-  **RCN Importer**                    ładuje i aktualizuje dane RCN na
-                                      podstawie plików GML
+  **RCN Importer**                   ładuje i aktualizuje dane RCN na
+                                     podstawie plików GML
 
-  **MapServer**                       publikuje dane znajdujące się w
-                                      bazie
-  -----------------------------------------------------------------------
+  **MapServer**                      publikuje dane znajdujące się w
+                                     bazie
+  ---------------------------------------------------------------------
 
 Aby rozwiązanie działało prawidłowo, przygotuj je kolejno:
 
