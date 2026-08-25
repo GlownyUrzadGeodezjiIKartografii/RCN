@@ -5,12 +5,13 @@ Dokument opisuje **Etap 2** wdrożenia RCN: instalację aplikacji RCN Importer i
 ## Informacje o aplikacji
 
 **Nazwa:** RCN Importer  
-**Wersja:** 1.0  
-**Plik wykonywalny:** `rcn-importer-1.0`  
 **Jednostka:** Główny Urząd Geodezji i Kartografii (GUGiK)  
 **Autor:** Szymon Szczerba  
 **Rok:** 2026  
 **Technologia:** .NET 9  
+**Typ aplikacji:** aplikacja konsolowa  
+**Wersja:** 1.0  
+**Plik wykonywalny:** `rcn-importer-1.0`  
 **Publikacja:** self-contained `linux-x64`
 
 Na serwerze nie trzeba instalować .NET Runtime. Aplikacja wykonuje jeden cykl importu i kończy pracę; nie działa stale jako daemon.
