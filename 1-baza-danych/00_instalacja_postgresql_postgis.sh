@@ -115,7 +115,3 @@ POSTGIS_AVAILABLE="$(
 ok "PostgreSQL ${PG_MAJOR} i PostGIS sa zainstalowane poprawnie."
 
 echo
-echo "============================================================"
-echo " Nastepny krok:"
-echo "   ./01_przygotowanie_bazy_rcn.sh"
-echo "============================================================"
