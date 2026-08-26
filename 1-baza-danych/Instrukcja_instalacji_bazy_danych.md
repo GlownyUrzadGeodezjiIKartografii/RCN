@@ -251,7 +251,7 @@ Enter
 Ctrl+X
 </pre>
 
-### 8.3. `pg_hba.conf` --- dostęp MapServera do bazy danych
+### 8.3. `pg_hba.conf` - dostęp MapServera do bazy danych
 
 MapServer może działać:
 
@@ -780,8 +780,7 @@ Instalację bazy danych RCN można uznać za prawidłowo zakończoną, jeżeli:
 -   PostgreSQL nasłuchuje na adresie odpowiednim dla przyjętej
     konfiguracji MapServera.
 
-Jeżeli wszystkie powyższe testy zakończyły się prawidłowo, **Etap 1 ---
-instalacja i przygotowanie bazy danych RCN --- został zakończony**.
+Jeżeli wszystkie powyższe testy zakończyły się prawidłowo, **Etap 1 - instalacja i przygotowanie bazy danych RCN - został zakończony**.
 
 ## 10. Podstawowe operacje administracyjne PostgreSQL
 
@@ -954,7 +953,7 @@ Korzystaj z nich wyłącznie wtedy, gdy świadomie chcesz:
 
 ### 12.1. Ponowne utworzenie bazy `rcn` (RELOAD)
 
-> **UWAGA --- OPERACJA DESTRUKCYJNA**
+> **UWAGA - OPERACJA DESTRUKCYJNA**
 >
 > Nie wykonuj tego kroku podczas standardowej instalacji.
 >
@@ -1002,7 +1001,7 @@ konfigurującego użytkownika MapServera.
 
 ### 12.2. Przywrócenie środowiska do stanu przed instalacją RCN
 
-> **UWAGA --- OPERACJA DESTRUKCYJNA**
+> **UWAGA - OPERACJA DESTRUKCYJNA**
 >
 > Poniższej procedury używaj wyłącznie wtedy, gdy świadomie chcesz
 > usunąć środowisko RCN i przygotować serwer do ponownej instalacji.
@@ -1069,7 +1068,7 @@ Jeżeli chcesz usunąć lokalną kopię repozytorium RCN i pobrać wszystkie
 pliki ponownie, najpierw upewnij się, że katalog `~/RCN` nie zawiera
 żadnych lokalnych plików lub zmian, które należy zachować.
 
-> **UWAGA --- OPERACJA DESTRUKCYJNA**
+> **UWAGA - OPERACJA DESTRUKCYJNA**
 >
 > Poniższe polecenie bezpowrotnie usuwa cały katalog `~/RCN` wraz z jego
 > zawartością.
