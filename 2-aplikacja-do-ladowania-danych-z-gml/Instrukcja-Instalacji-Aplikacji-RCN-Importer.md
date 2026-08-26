@@ -1,4 +1,4 @@
-# Krok 2
+# Etap 2
 # RCN Importer — instrukcja instalacji aplikacji na Linux Debian
 
 ## Informacje o aplikacji
@@ -910,6 +910,10 @@ sudo systemctl status rcn-importer.timer
 systemctl list-timers --all | grep rcn-importer
 ```
 
-Po pozytywnej weryfikacji można przejść do **Etapu 3 — konfiguracji usługi publikacyjnej MapServer**.
+## 16. Przejście do Etapu 3
 
-Otwórz [instrukcję instalacji mapservera](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/3-konfiguracja-uslugi/mapserver-rcn-debian-trixie.md)
+Jeżeli instalacja i weryfikacja aplikacji RCN Importer zakończyły się prawidłowo, **Etap 2 — instalacja aplikacji RCN Importer — jest zakończony**.
+
+Przejdź do **Etapu 3 — konfiguracji usługi publikacyjnej MapServer**:
+
+[Otwórz instrukcję konfiguracji MapServera](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/3-konfiguracja-uslugi/mapserver-rcn-debian-trixie.md)
