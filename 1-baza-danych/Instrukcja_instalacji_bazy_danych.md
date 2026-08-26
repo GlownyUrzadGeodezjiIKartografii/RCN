@@ -95,10 +95,6 @@ Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
 ## 5. Ustawienie hasła użytkownika PostgreSQL `postgres`
 
-Aplikacja RCN Importer wykorzystuje użytkownika PostgreSQL `postgres` do połączenia z bazą danych `rcn`.
-
-Przed przejściem do kolejnych etapów należy ustawić hasło użytkownika `postgres`.
-
 Uruchom konsolę PostgreSQL:
 
 ```bash
