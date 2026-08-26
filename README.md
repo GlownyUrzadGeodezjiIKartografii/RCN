@@ -282,7 +282,7 @@ gotowa do przyjęcia danych z plików GML.
 
 ------------------------------------------------------------------------
 
-# Etap 2 --- instalacja RCN Importer i załadowanie danych GML
+# Etap 2 - instalacja RCN Importer i załadowanie danych GML
 
 ### Od czego zacząć?
 
@@ -305,12 +305,10 @@ Na tym etapie skonfigurujesz między innymi połączenie aplikacji z bazą
 Po zakończeniu sprawdź, czy dane zostały prawidłowo załadowane do bazy.
 
 > **Etap 2 wymaga prawidłowo zakończonego Etapu 1.**
->
-> RCN Importer zapisuje dane do bazy przygotowanej w poprzednim etapie.
 
 ------------------------------------------------------------------------
 
-# Etap 3 --- konfiguracja usługi publikacyjnej
+# Etap 3 - konfiguracja usługi publikacyjnej
 
 Po przygotowaniu bazy i załadowaniu danych przejdź do katalogu:
 
