@@ -245,6 +245,14 @@ RCN/
 └── 3-konfiguracja-uslugi/
 </pre>
 
+> [!IMPORTANT]
+> **Struktura repozytorium**
+>
+> RCN/  
+> ├── 1-baza-danych/  
+> ├── 2-aplikacja-do-ladowania-danych-z-gml/  
+> └── 3-konfiguracja-uslugi/
+
 **Przy pierwszym wdrożeniu wykonuj etapy dokładnie w tej kolejności:**
 
 ``` text
