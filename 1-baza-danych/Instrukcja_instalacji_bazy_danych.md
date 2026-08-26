@@ -12,7 +12,7 @@ Pakiet umożliwia instalację PostgreSQL i PostGIS, utworzenie bazy danych `rcn`
 **Autor:** Szymon Szczerba  
 **Rok:** 2026  
 **System operacyjny:** Debian 13 (trixie) lub nowszy  
-**Baza danych:** PostgreSQL 18 lub nowsza  
+**Baza danych:** PostgreSQL 18  
 **Rozszerzenie przestrzenne:** PostGIS  
 **Schemat bazy danych:** `uslugi_rcn`  
 **Wersja:** 1.0
