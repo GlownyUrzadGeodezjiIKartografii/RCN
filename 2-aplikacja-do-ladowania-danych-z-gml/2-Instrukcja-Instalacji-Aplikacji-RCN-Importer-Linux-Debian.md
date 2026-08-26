@@ -256,6 +256,14 @@ Przykład:
 
 Uzupełnij przede wszystkim hasło, `TerytPow` i świadomie wybierz `Mode`. Nie zapisuj rzeczywistych haseł w repozytorium Git.
 
+Po wprowadzeniu zmian zapisz plik:
+
+```text
+Ctrl+O
+Enter
+Ctrl+X
+```
+
 Po edycji ponownie ogranicz dostęp:
 
 ```bash
