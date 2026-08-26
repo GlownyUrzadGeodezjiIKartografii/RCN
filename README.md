@@ -295,7 +295,9 @@ gotowa do przyjęcia danych z plików GML.
 
 # Etap 2 --- instalacja RCN Importer i załadowanie danych GML
 
-Po prawidłowym przygotowaniu bazy przejdź do katalogu:
+Po prawidłowym przygotowaniu bazy otwórz:
+
+Otwórz [instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/Instrukcja-Instalacji-Aplikacji-RCN-Importer.md)
 
 ``` text
 2-aplikacja-do-ladowania-danych-z-gml
@@ -355,49 +357,6 @@ Otwórz instrukcję znajdującą się w katalogu:
 ```
 
 i wykonaj konfigurację zgodnie z opisanymi krokami.
-
-------------------------------------------------------------------------
-
-# Kolejność wdrożenia --- w skrócie
-
-Jeżeli instalujesz rozwiązanie po raz pierwszy, postępuj według
-poniższego schematu:
-
-### 1. Przygotuj bazę danych
-
-``` text
-1-baza-danych
-```
-
-Zainstaluj PostgreSQL/PostGIS, utwórz bazę `rcn`, zaimportuj jej
-strukturę i skonfiguruj dostęp.
-
-**Rezultat:** masz działającą, ale jeszcze niezasiloną danymi bazę RCN.
-
-↓
-
-### 2. Zainstaluj RCN Importer i załaduj dane
-
-``` text
-2-aplikacja-do-ladowania-danych-z-gml
-```
-
-Zainstaluj aplikację, skonfiguruj połączenie z bazą i załaduj dane RCN z
-plików GML.
-
-**Rezultat:** baza `rcn` zawiera dane gotowe do publikacji.
-
-↓
-
-### 3. Skonfiguruj publikację danych
-
-``` text
-3-konfiguracja-uslugi
-```
-
-Skonfiguruj MapServer i jego połączenie z bazą danych.
-
-**Rezultat:** dane RCN mogą być udostępniane przez usługę publikacyjną.
 
 ------------------------------------------------------------------------
 
@@ -464,12 +423,6 @@ Pakiet RCN składa się z trzech współpracujących ze sobą elementów:
   **MapServer**                      publikuje dane znajdujące się w
                                      bazie
   ---------------------------------------------------------------------
-
-Aby rozwiązanie działało prawidłowo, przygotuj je kolejno:
-
-``` text
-BAZA DANYCH  →  IMPORT DANYCH GML  →  PUBLIKACJA
-```
 
 Po wykonaniu wszystkich trzech etapów środowisko jest przygotowane do
 cyklicznego zasilania bazy danymi RCN i ich publikacji.
