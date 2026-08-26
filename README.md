@@ -76,9 +76,9 @@ uname -m
 
 Dla obsługiwanej architektury wynik powinien być:
 
-``` text
+**`
 x86_64
-```
+`**
 
 ### 3. Sprawdź, czy Git jest zainstalowany
 
