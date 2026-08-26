@@ -28,8 +28,6 @@ Nieruchomości\
 **Repozytorium:** `GlownyUrzadGeodezjiIKartografii/RCN`\
 **Wersja:** 1.0
 
-------------------------------------------------------------------------
-
 ## Wymagania sprzętowe
 
 Dla środowiska produkcyjnego, w którym na jednej maszynie uruchomione są PostgreSQL/PostGIS, RCN Importer oraz MapServer, zalecana jest następująca minimalna konfiguracja:
@@ -42,8 +40,6 @@ Dla środowiska produkcyjnego, w którym na jednej maszynie uruchomione są Post
 Wymagana przestrzeń dyskowa może być większa w zależności od wielkości bazy RCN, liczby przechowywanych plików GML/ZIP, logów oraz sposobu wykonywania kopii zapasowych.
 
 W przypadku rozdzielenia PostgreSQL/PostGIS, RCN Importera i MapServera na osobne maszyny wymagania sprzętowe należy dostosować do roli i przewidywanego obciążenia poszczególnych serwerów.
-
-------------------------------------------------------------------------
 
 ## Wymagania systemowe
 
