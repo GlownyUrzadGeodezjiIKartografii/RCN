@@ -69,11 +69,11 @@ Skrypt:
 
 Typowe ścieżki dla tej instalacji:
 
-```text
+<pre>
 /usr/lib/postgresql/18/bin
 /var/lib/postgresql/18/main
 /etc/postgresql/18/main
-```
+</pre>
 
 Stan klastrów można sprawdzić:
 
@@ -91,11 +91,7 @@ Uruchom skrypt:
 
 Skrypt nie usuwa istniejącej bazy.
 
-Jeżeli baza `rcn` nie istnieje, zostanie utworzona. Następnie skrypt włącza PostGIS:
-
-```sql
-CREATE EXTENSION postgis;
-```
+Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
 ## 3. Ustawienie hasła użytkownika PostgreSQL `postgres`
 
@@ -136,15 +132,15 @@ Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
 
 Plik:
 
-```text
+<pre>
 struktura_uslugi_rcn.sql
-```
+</pre>
 
-musi znajdować się obok skryptu:
+musi znajdować się w tym samym katalogu co skrypt:
 
-```text
+<pre>
 02_import_struktury_rcn.sh
-```
+</pre>
 
 Uruchom:
 
