@@ -258,8 +258,6 @@ RCN/
 
 # Etap 1 - przygotowanie bazy danych RCN
 
-### Od czego zacząć?
-
 Otwórz [instrukcję instalacji bazy danych](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/Instrukcja_instalacji_bazy_danych.md)
 
 i wykonuj kolejne punkty instrukcji.
@@ -284,8 +282,6 @@ gotowa do przyjęcia danych z plików GML.
 
 # Etap 2 - instalacja RCN Importer i załadowanie danych GML
 
-### Od czego zacząć?
-
 Otwórz [instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/Instrukcja-Instalacji-Aplikacji-RCN-Importer.md)
 
 RCN Importer odpowiada za:
@@ -309,10 +305,6 @@ Po zakończeniu sprawdź, czy dane zostały prawidłowo załadowane do bazy.
 ------------------------------------------------------------------------
 
 # Etap 3 - konfiguracja usługi publikacyjnej
-
-Po przygotowaniu bazy i załadowaniu danych przejdź do katalogu:
-
-### Od czego zacząć?
 
 Otwórz [instrukcję instalacji mapservera](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/3-konfiguracja-uslugi/mapserver-rcn-debian-trixie.md)
 
