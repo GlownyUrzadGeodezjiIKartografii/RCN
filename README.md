@@ -1,4 +1,4 @@
-# RCN -- narzędzie do publikacji danych Rejestru Cen Nieruchomości
+# RCN - narzędzie do publikacji danych Rejestru Cen Nieruchomości
 
 Pakiet narzędzi przygotowany z myślą o **starostwach**, przeznaczony do
 przygotowania, zasilania oraz publikacji danych Rejestru Cen
@@ -14,7 +14,7 @@ uruchomienia usługi publikującej dane RCN.
 
 ## Informacje
 
-**Nazwa:** RCN -- narzędzie do publikacji danych Rejestru Cen
+**Nazwa:** RCN - narzędzie do publikacji danych Rejestru Cen
 Nieruchomości\
 **Jednostka:** Główny Urząd Geodezji i Kartografii (GUGiK)\
 **Autorzy:** Szymon Szczerba, Krzysztof Błachnio\
@@ -43,14 +43,14 @@ W przypadku rozdzielenia PostgreSQL/PostGIS, RCN Importera i MapServera na osobn
 
 ## Wymagania systemowe
 
-Do rozpoczęcia wdrożenia potrzebujesz:
+Minimalne wymagania systemowe:
 
 -   systemu **Debian 13 (trixie) lub nowszego** na architekturze
     `x86_64/amd64`,
--   konta użytkownika z możliwością wykonywania poleceń `sudo`,
+-   konto użytkownika z możliwością wykonywania poleceń `sudo`,
 -   dostępu do Internetu podczas pobierania repozytorium i instalowania
     pakietów,
--   programu `git` (jeżeli nie jest zainstalowany, poniżej znajduje się
+-   program `git` (jeżeli nie jest zainstalowany, poniżej znajduje się
     polecenie instalacji).
 
 PostgreSQL, PostGIS, RCN Importer i MapServer są przygotowywane w
