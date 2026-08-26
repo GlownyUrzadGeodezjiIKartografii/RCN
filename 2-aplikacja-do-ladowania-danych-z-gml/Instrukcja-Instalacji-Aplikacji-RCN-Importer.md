@@ -196,7 +196,7 @@ sudo ls -la /opt/gugik/rcn-importer
 
 Docelowo:
 
-```text
+<pre>
 /opt/gugik/rcn-importer/
 ├── rcn-importer-1.0
 ├── appsettings.json
@@ -205,7 +205,7 @@ Docelowo:
 ├── error/
 ├── artifacts/
 └── logs/
-```
+</pre>
 
 > **Ważne**
 >
