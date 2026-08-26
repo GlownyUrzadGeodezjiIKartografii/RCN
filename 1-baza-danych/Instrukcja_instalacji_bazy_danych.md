@@ -429,10 +429,13 @@ Przykład dla komputera z DBeaverem o adresie IP `10.0.100.50`:
 host    rcn    postgres    10.0.100.50/32    scram-sha-256
 ```
 
-IP Adres:
-10.0.100.50
+Przykładowy adres IP:
 
-jest przykładowy. Zastąp go rzeczywistym adresem IP komputera, na którym działa DBeaver.
+<pre>
+10.0.100.50
+</pre>
+
+Zastąp go rzeczywistym adresem IP komputera, na którym działa DBeaver.
 
 Wpis oznacza:
 
