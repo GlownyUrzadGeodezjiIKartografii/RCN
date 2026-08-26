@@ -227,7 +227,7 @@ sudo nano /opt/gugik/rcn-importer/appsettings.json
 
 Przykład:
 
-```json
+<pre>
 {
   "Database": {
     "ConnectionName": "Localhost",
@@ -248,23 +248,23 @@ Przykład:
     "RetentionDays": 7
   }
 }
-```
+</pre>
 
 ### 7.1. Ustawienie hasła do bazy danych
 
 W parametrze:
 
-```text
+<pre>
 Password=TWOJE_HASLO
-```
+</pre>
 
 zastąp `TWOJE_HASLO` **hasłem użytkownika PostgreSQL `postgres`, które zostało ustawione w Etapie 1 podczas konfiguracji bazy danych RCN**.
 
 Przykład:
 
-```text
+<pre>
 Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=USTAWIONE_W_ETAPIE_1_HASLO
-```
+</pre>
 
 > **Ważne:** Nie zapisuj rzeczywistych haseł w repozytorium Git ani w dokumentacji.
 
@@ -272,9 +272,9 @@ Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=USTAWIONE_W_ETA
 
 Parametr:
 
-```json
+<pre>
 "TerytPow": "1864"
-```
+</pre>
 
 określa kod TERYT powiatu, którego dane będą importowane.
 
@@ -289,9 +289,9 @@ Wybierz jeden z dwóch wariantów:
 
 Parametr:
 
-```json
+<pre>
 "Mode": "UPSERT"
-```
+</pre>
 
 określa sposób zapisu danych do bazy.
 
@@ -309,11 +309,11 @@ Jeżeli w katalogu `input` znajduje się kilka plików, aplikacja analizuje je o
 
 Po wprowadzeniu zmian zapisz plik:
 
-```text
+<pre>
 Ctrl+O
 Enter
 Ctrl+X
-```
+</pre>
 
 Po edycji ponownie ogranicz dostęp do pliku konfiguracyjnego:
 
