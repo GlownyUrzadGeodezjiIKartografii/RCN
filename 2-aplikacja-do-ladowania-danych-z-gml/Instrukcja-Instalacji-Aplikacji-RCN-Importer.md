@@ -434,7 +434,11 @@ W repozytorium znajdują się dwa pliki testowe:
 Test wykonaj w następującej kolejności:
 
 1. import pliku bazowego `1864-1-bazowy.zip`;
-2. import pliku przyrostowego `1864-2-przyrostowy.zip`.
+2. sprawdzenie liczby zaimportowanych obiektów;
+3. import pliku przyrostowego `1864-2-przyrostowy.zip`;
+4. ponowne sprawdzenie liczby obiektów po imporcie przyrostowym.
+
+> **Ważne:** Import pliku przyrostowego wykonaj dopiero po poprawnym zakończeniu importu pliku bazowego.
 
 #### 10.1.1. Import pliku bazowego
 
@@ -455,6 +459,12 @@ Sprawdź zawartość katalogu `input`:
 ```bash
 sudo ls -la /opt/gugik/rcn-importer/input
 ```
+
+W katalogu powinien znajdować się plik:
+
+<pre>
+1864-1-bazowy.zip
+</pre>
 
 Uruchom aplikację:
 
@@ -484,9 +494,41 @@ powinien zostać przeniesiony do katalogu:
 /opt/gugik/rcn-importer/processed
 </pre>
 
-#### 10.1.2. Import pliku przyrostowego
+Sprawdź:
 
-Import pliku przyrostowego wykonaj **dopiero po poprawnym zakończeniu importu pliku bazowego**.
+```bash
+sudo ls -la /opt/gugik/rcn-importer/processed
+```
+
+Jeżeli plik trafił do katalogu `error`, sprawdź logi aplikacji:
+
+```bash
+sudo ls -lht /opt/gugik/rcn-importer/logs
+```
+
+#### 10.1.2. Sprawdzenie danych po imporcie pliku bazowego
+
+Do repozytorium dołączony jest pomocniczy plik `count.sql`:
+
+<pre>
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
+</pre>
+
+Uruchom:
+
+```bash
+sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
+```
+
+Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie po imporcie pliku bazowego.
+
+> **Uwaga:** Jeżeli wynik zostanie wyświetlony w trybie podglądu i nie nastąpi automatyczny powrót do wiersza poleceń, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
+
+Po potwierdzeniu, że dane zostały poprawnie zapisane w bazie, przejdź do importu pliku przyrostowego.
+
+#### 10.1.3. Import pliku przyrostowego
+
+Import pliku przyrostowego wykonaj **dopiero po poprawnym zakończeniu importu pliku bazowego i sprawdzeniu danych w bazie**.
 
 Skopiuj plik przyrostowy do katalogu `input`:
 
@@ -506,6 +548,12 @@ Sprawdź zawartość katalogu `input`:
 sudo ls -la /opt/gugik/rcn-importer/input
 ```
 
+W katalogu powinien znajdować się plik:
+
+<pre>
+1864-2-przyrostowy.zip
+</pre>
+
 Uruchom ponownie aplikację:
 
 ```bash
@@ -520,6 +568,8 @@ Prawidłowy wynik:
 Kod zakończenia RCN Importer: 0
 </pre>
 
+Kod `0` oznacza poprawne zakończenie importu.
+
 Po poprawnym imporcie plik:
 
 <pre>
@@ -532,9 +582,35 @@ powinien zostać przeniesiony do katalogu:
 /opt/gugik/rcn-importer/processed
 </pre>
 
-#### 10.1.3. Sprawdzenie wyniku testu
+Sprawdź:
 
-Sprawdź katalogi robocze aplikacji:
+```bash
+sudo ls -la /opt/gugik/rcn-importer/processed
+```
+
+Jeżeli plik trafił do katalogu `error`, sprawdź logi aplikacji:
+
+```bash
+sudo ls -lht /opt/gugik/rcn-importer/logs
+```
+
+#### 10.1.4. Sprawdzenie danych po imporcie pliku przyrostowego
+
+Ponownie uruchom `count.sql`:
+
+```bash
+sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
+```
+
+Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie po imporcie pliku przyrostowego.
+
+Porównaj wynik z wartościami uzyskanymi po imporcie pliku bazowego. Pozwala to sprawdzić, czy dane z pliku przyrostowego zostały prawidłowo dodane lub zaktualizowane w bazie.
+
+> **Uwaga:** Jeżeli wynik zostanie wyświetlony w trybie podglądu i nie nastąpi automatyczny powrót do wiersza poleceń, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
+
+#### 10.1.5. Końcowa weryfikacja testu
+
+Po wykonaniu importu bazowego i przyrostowego sprawdź katalogi robocze aplikacji:
 
 ```bash
 sudo ls -la /opt/gugik/rcn-importer/processed
@@ -543,29 +619,33 @@ sudo ls -la /opt/gugik/rcn-importer/artifacts
 sudo ls -la /opt/gugik/rcn-importer/logs
 ```
 
-Jeżeli którykolwiek plik trafił do katalogu `error`, sprawdź logi:
+W katalogu `processed` powinny znajdować się oba poprawnie przetworzone pliki:
+
+<pre>
+1864-1-bazowy.zip
+1864-2-przyrostowy.zip
+</pre>
+
+Katalog `error` powinien być pusty.
+
+Jeżeli którykolwiek z plików trafił do katalogu `error`, sprawdź logi aplikacji:
 
 ```bash
 sudo ls -lht /opt/gugik/rcn-importer/logs
 ```
 
-Do repozytorium dołączony jest również plik `count.sql` umożliwiający sprawdzenie liczby zaimportowanych obiektów:
+Test można uznać za zakończony poprawnie, jeżeli:
 
-<pre>
-~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
-</pre>
-
-Wykonaj:
-
-```bash
-sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
-```
-
-Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie.
+- oba uruchomienia aplikacji zakończyły się kodem `0`;
+- plik bazowy i przyrostowy zostały przeniesione do katalogu `processed`;
+- żaden z plików nie trafił do katalogu `error`;
+- po imporcie bazowym dane zostały zapisane w bazie;
+- po imporcie przyrostowym liczba lub zawartość danych odpowiada wynikowi przetworzenia pliku przyrostowego;
+- aplikacja utworzyła wymagane logi i artefakty.
 
 ### 10.2. Wariant B — import danych własnego powiatu
 
-Jeżeli nie chcesz korzystać z danych testowych, możesz od razu wykonać pierwszy import danych własnego powiatu.
+Jeżeli nie chcesz korzystać z przygotowanych danych testowych, możesz od razu wykonać pierwszy import danych własnego powiatu.
 
 Przed rozpoczęciem upewnij się, że w `appsettings.json`:
 
@@ -573,7 +653,7 @@ Przed rozpoczęciem upewnij się, że w `appsettings.json`:
 - `Mode` został świadomie wybrany zgodnie z zasadami opisanymi w punkcie 7.3;
 - ustawione jest poprawne połączenie z bazą danych.
 
-Przykładowa wartość:
+Przykładowa wartość parametru `TerytPow`:
 
 <pre>
 "TerytPow": "XXXX"
@@ -583,33 +663,39 @@ gdzie `XXXX` oznacza właściwy kod TERYT powiatu.
 
 > **Ważne:** Kod `TerytPow` musi odpowiadać powiatowi, którego dane znajdują się w pliku przeznaczonym do importu.
 
+> **Ważne:** Jeżeli nie masz pewności, którego trybu importu użyć, wybierz `UPSERT`. Tryb `REPLACE` stosuj tylko wtedy, gdy importowany plik zawiera kompletny zestaw danych powiatu i świadomie chcesz zastąpić dotychczasowe dane znajdujące się w bazie.
+
 #### 10.2.1. Skopiowanie własnego pliku
 
-Skopiuj plik GML lub ZIP zawierający dane RCN Twojego powiatu do katalogu:
+Plik GML lub ZIP zawierający dane RCN Twojego powiatu należy skopiować do katalogu:
 
 <pre>
 /opt/gugik/rcn-importer/input
 </pre>
 
-Przykładowo, jeżeli plik `dane_rcn.zip` znajduje się w katalogu domowym administratora, wykonaj:
+Załóżmy, że plik przeznaczony do importu znajduje się w katalogu domowym administratora.
+
+W poniższych poleceniach zastąp `NAZWA_PLIKU.zip` rzeczywistą nazwą pliku zawierającego dane RCN Twojego powiatu.
+
+Skopiuj plik:
 
 ```bash
-sudo cp ~/dane_rcn.zip /opt/gugik/rcn-importer/input/
+sudo cp ~/NAZWA_PLIKU.zip /opt/gugik/rcn-importer/input/
 ```
-
-> Zastąp `dane_rcn.zip` rzeczywistą nazwą pliku przeznaczonego do importu.
 
 Nadaj użytkownikowi `rcn-importer` własność skopiowanego pliku:
 
 ```bash
-sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/input/dane_rcn.zip
+sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/input/NAZWA_PLIKU.zip
 ```
 
-Sprawdź, czy plik znajduje się w katalogu `input`:
+Sprawdź zawartość katalogu `input`:
 
 ```bash
 sudo ls -la /opt/gugik/rcn-importer/input
 ```
+
+Upewnij się, że w katalogu znajduje się właściwy plik przeznaczony do importu.
 
 #### 10.2.2. Uruchomienie importu
 
@@ -640,7 +726,7 @@ sudo ls -la /opt/gugik/rcn-importer/artifacts
 sudo ls -la /opt/gugik/rcn-importer/logs
 ```
 
-Po poprawnym imporcie plik powinien zostać przeniesiony z katalogu `input` do:
+Po poprawnym imporcie przetworzony plik powinien zostać przeniesiony z katalogu `input` do:
 
 <pre>
 /opt/gugik/rcn-importer/processed
@@ -664,7 +750,19 @@ Sprawdź również dane zapisane w bazie:
 sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
 ```
 
+Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie.
+
 Liczba obiektów będzie zależna od zawartości pliku z danymi własnego powiatu.
+
+> **Uwaga:** Jeżeli wynik zostanie wyświetlony w trybie podglądu i nie nastąpi automatyczny powrót do wiersza poleceń, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
+
+Import danych własnego powiatu można uznać za zakończony poprawnie, jeżeli:
+
+- aplikacja zakończyła działanie kodem `0`;
+- przetworzony plik został przeniesiony do katalogu `processed`;
+- plik nie trafił do katalogu `error`;
+- dane zostały zapisane w bazie `rcn`;
+- aplikacja utworzyła wymagane logi i artefakty.
 
 ## 11. Automatyczne uruchamianie — systemd timer
 
@@ -714,7 +812,7 @@ sudo systemctl start rcn-importer.service
 sudo systemctl status rcn-importer.service
 ```
 
-Jeżeli którekolwiek polecenie systemctl status otworzy widok pełnoekranowy, naciśnij q, aby wrócić do terminala.
+> **Uwaga:** Jeżeli polecenie `systemctl status` otworzy widok pełnoekranowy, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
 
 Sprawdź również logi usługi:
 
@@ -730,7 +828,7 @@ Utwórz timer, np. uruchamiający importer codziennie o godzinie 02:00:
 sudo nano /etc/systemd/system/rcn-importer.timer
 ```
 
-Wprowadź:
+Wprowadź konfigurację:
 
 ```ini
 [Unit]
@@ -759,11 +857,11 @@ sudo systemctl status rcn-importer.timer
 systemctl list-timers --all | grep rcn-importer
 ```
 
+> **Uwaga:** Jeżeli polecenie `systemctl status` otworzy widok pełnoekranowy, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
+
 Opcja `Persistent=true` powoduje, że jeżeli zaplanowane uruchomienie nie odbyło się np. z powodu wyłączenia serwera, systemd uruchomi zadanie po ponownym uruchomieniu systemu.
 
 Nie konfiguruj jednocześnie `cron` i `systemd timer` dla tej samej instalacji. Zalecany jest `systemd timer`.
-
----
 
 ## 12. Aktualizacja aplikacji z repozytorium
 
@@ -1046,20 +1144,24 @@ ls -la ~/RCN
 Etap 2 można uznać za zakończony, jeżeli:
 
 - istnieje `/opt/gugik/rcn-importer/rcn-importer-1.0`;
-- aplikacja uruchamia się jako `rcn-importer`;
-- `appsettings.json` zawiera poprawne połączenie, `TerytPow` i `Mode`;
+- aplikacja uruchamia się jako użytkownik systemowy `rcn-importer`;
+- `appsettings.json` zawiera poprawne połączenie z bazą danych, właściwy `TerytPow` i świadomie wybrany `Mode`;
 - wykonano co najmniej jeden poprawny import;
-- pliki trafiają do `processed` albo `error`;
-- powstają logi i artefakty;
-- dane są zapisane w bazie `rcn`;
-- jeżeli skonfigurowano automatykę — `rcn-importer.timer` jest aktywny i widoczny na liście zaplanowanych timerów.
+- poprawnie przetworzony plik został przeniesiony do katalogu `processed`;
+- dane zostały zapisane w bazie `rcn`;
+- aplikacja tworzy logi i artefakty;
+- jeżeli skonfigurowano automatyczne uruchamianie — `rcn-importer.timer` jest aktywny i widoczny na liście zaplanowanych timerów.
 
-Stan timera można sprawdzić poleceniami:
+Jeżeli skonfigurowano automatyczne uruchamianie, stan timera można sprawdzić poleceniami:
 
 ```bash
 sudo systemctl status rcn-importer.timer
 systemctl list-timers --all | grep rcn-importer
 ```
+
+> **Uwaga:** Jeżeli polecenie `systemctl status` otworzy widok pełnoekranowy, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
+
+Po pozytywnej weryfikacji powyższych elementów Etap 2 można uznać za zakończony.
 
 ## 16. Przejście do Etapu 3
 
