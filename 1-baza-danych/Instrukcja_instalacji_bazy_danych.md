@@ -55,7 +55,16 @@ Uruchom skrypt z instalacją:
 ./00_instalacja_postgresql_postgis.sh
 ```
 
-> **Uwaga:** Jeżeli podczas wykonywania skryptu zostaną wyświetlone informacje w trybie podglądu i skrypt będzie oczekiwał na ręczne wyjście, naciśnij `q`, aby zamknąć podgląd i kontynuować wykonywanie skryptu.
+> **Uwaga dotycząca pracy w terminalu**
+>
+> Niektóre polecenia mogą po wyświetleniu wyniku pozostać aktywne i nie wrócić automatycznie do wiersza poleceń.
+>
+> W takim przypadku sposób zakończenia zależy od uruchomionego programu:
+>
+> - naciśnij `q` — aby zakończyć tryb podglądu wyniku, np. w przypadku polecenia `systemctl status`;
+> - wpisz `\q` i naciśnij `Enter` — aby zakończyć pracę w konsoli PostgreSQL `psql`.
+>
+> Użycie `q` lub `\q` w tych sytuacjach **nie zatrzymuje PostgreSQL ani nie cofa wykonanych operacji**. Powoduje jedynie zamknięcie aktualnego podglądu lub konsoli i powrót do wiersza poleceń systemu Linux.
 
 Skrypt:
 
