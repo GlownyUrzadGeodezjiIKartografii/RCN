@@ -76,9 +76,9 @@ uname -m
 
 Dla obsługiwanej architektury wynik powinien być:
 
-**`
+<pre>
 x86_64
-`**
+</pre>
 
 ### 3. Sprawdź, czy Git jest zainstalowany
 
@@ -113,9 +113,9 @@ git clone https://github.com/GlownyUrzadGeodezjiIKartografii/RCN.git
 
 Repozytorium zostanie pobrane do katalogu:
 
-**`
+<pre>
 ~/RCN
-`**
+</pre>
 
 ### 6. Sprawdź pobrane pliki
 
@@ -127,11 +127,11 @@ ls -la ~/RCN
 
 Powinny być widoczne trzy główne katalogi:
 
-**`
+<pre>
 1-baza-danych
 2-aplikacja-do-ladowania-danych-z-gml
 3-konfiguracja-uslugi
-`**
+</pre>
 
 ### 7. Nadaj uprawnienia do wykonywania skryptów
 
@@ -244,14 +244,6 @@ RCN/
 ├── 2-aplikacja-do-ladowania-danych-z-gml/
 └── 3-konfiguracja-uslugi/
 </pre>
-
-> [!IMPORTANT]
-> **Struktura repozytorium**
->
-> RCN/  
-> ├── 1-baza-danych/  
-> ├── 2-aplikacja-do-ladowania-danych-z-gml/  
-> └── 3-konfiguracja-uslugi/
 
 **Przy pierwszym wdrożeniu wykonuj etapy dokładnie w tej kolejności:**
 
