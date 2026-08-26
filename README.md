@@ -356,25 +356,6 @@ Otwórz instrukcję znajdującą się w katalogu:
 
 i wykonaj konfigurację zgodnie z opisanymi krokami.
 
-MapServer łączy się z bazą `rcn` za pomocą przygotowanego wcześniej
-użytkownika:
-
-``` text
-ms_rcn
-```
-
-Do publikacji wykorzystywane są przygotowane w bazie widoki
-materializowane, w szczególności:
-
-``` text
-uslugi_rcn.mv_dzialki
-uslugi_rcn.mv_budynki
-uslugi_rcn.mv_lokale
-```
-
-Użytkownik `ms_rcn` posiada ograniczone uprawnienia do odczytu danych
-wymaganych do publikacji.
-
 ------------------------------------------------------------------------
 
 # Kolejność wdrożenia --- w skrócie
@@ -465,38 +446,6 @@ Skonfiguruj MapServer i jego połączenie z bazą danych.
     Została ona opisana w instrukcji Etapu 1.
 -   Jeżeli MapServer i PostgreSQL działają na tym samym serwerze,
     możliwe jest wykorzystanie połączenia lokalnego.
-
-------------------------------------------------------------------------
-
-# Gdzie szukać informacji?
-
-Jeżeli problem dotyczy:
-
-**PostgreSQL, PostGIS, bazy `rcn`, schematu `uslugi_rcn`, użytkownika
-`ms_rcn` lub dostępu sieciowego**
-
-→ przejdź do:
-
-``` text
-1-baza-danych
-```
-
-**instalacji RCN Importer, konfiguracji aplikacji, importu plików GML
-lub logów importu**
-
-→ przejdź do:
-
-``` text
-2-aplikacja-do-ladowania-danych-z-gml
-```
-
-**MapServera, połączenia MapServera z bazą lub publikacji danych**
-
-→ przejdź do:
-
-``` text
-3-konfiguracja-uslugi
-```
 
 ------------------------------------------------------------------------
 
