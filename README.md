@@ -142,8 +142,6 @@ plikom `.sh` znajdującym się w repozytorium:
 find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 ```
 
-Repozytorium jest teraz przygotowane do rozpoczęcia wdrożenia.
-
 ### 8. Sprawdzenie stanu i aktualizacja wcześniej pobranego repozytorium
 
 Jeżeli repozytorium `RCN` zostało już wcześniej pobrane, **nie należy
