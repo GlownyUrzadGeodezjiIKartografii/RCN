@@ -117,6 +117,4 @@ sudo -u postgres "${PG_BIN}/psql" \
 echo
 echo "============================================================"
 echo " Baza ${PG_DB} jest przygotowana poprawnie."
-echo " Nastepny krok:"
-echo "   ./02_import_struktury_rcn.sh"
 echo "============================================================"
