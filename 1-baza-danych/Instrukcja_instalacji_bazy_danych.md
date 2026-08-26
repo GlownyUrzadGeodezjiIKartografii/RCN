@@ -317,8 +317,6 @@ Przykład:
 10.0.100.20
 </pre>
 
-> **Nie kopiuj tego adresu bez sprawdzenia.**
->
 > W swoim środowisku użyj rzeczywistego adresu IP serwera MapServer.
 
 ##### 8.3.2.2. Otwórz plik `pg_hba.conf`
