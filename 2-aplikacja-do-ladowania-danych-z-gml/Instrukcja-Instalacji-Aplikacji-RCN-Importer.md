@@ -562,7 +562,7 @@ sudo systemctl start rcn-importer.service
 sudo systemctl status rcn-importer.service
 ```
 
-Jeżeli `systemctl status` otworzy widok pełnoekranowy, naciśnij `q`, aby wrócić do terminala.
+Jeżeli którekolwiek polecenie systemctl status otworzy widok pełnoekranowy, naciśnij q, aby wrócić do terminala.
 
 Sprawdź również logi usługi:
 
@@ -887,8 +887,6 @@ ls -la ~/RCN
 >
 > Cofnięcie Etapu 2 nie usuwa PostgreSQL, PostGIS, bazy `rcn`, schematu `uslugi_rcn` ani konfiguracji wykonanej w Etapie 1.
 
-Po wykonaniu resetu instalację aplikacji można rozpocząć ponownie od **punktu 2 — Przejście do Etapu 2 w repozytorium**.
-
 ---
 
 ## 15. Weryfikacja zakończenia Etapu 2
@@ -902,7 +900,6 @@ Etap 2 można uznać za zakończony, jeżeli:
 - pliki trafiają do `processed` albo `error`;
 - powstają logi i artefakty;
 - dane są zapisane w bazie `rcn`;
-- widoki materializowane są odświeżane;
 - jeżeli skonfigurowano automatykę — `rcn-importer.timer` jest aktywny i widoczny na liście zaplanowanych timerów.
 
 Stan timera można sprawdzić poleceniami:
@@ -913,3 +910,5 @@ systemctl list-timers --all | grep rcn-importer
 ```
 
 Po pozytywnej weryfikacji można przejść do **Etapu 3 — konfiguracji usługi publikacyjnej MapServer**.
+
+Otwórz [instrukcję instalacji mapservera](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/3-konfiguracja-uslugi/mapserver-rcn-debian-trixie.md)
