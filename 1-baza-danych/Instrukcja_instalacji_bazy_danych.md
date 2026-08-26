@@ -313,16 +313,6 @@ dla bazy `rcn` i użytkownika `ms_rcn`, możesz dodać:
 host    rcn    ms_rcn    127.0.0.1/32    scram-sha-256
 ```
 
-W konfiguracji połączenia MapServera ustaw:
-
-<pre>
-Host:     127.0.0.1
-Port:     5432
-Database: rcn
-User:     ms_rcn
-Password: HASŁO_UŻYTKOWNIKA_ms_rcn
-</pre>
-
 > **WAŻNE**
 >
 > Jeżeli MapServer i PostgreSQL działają na tym samym serwerze, **nie
