@@ -45,10 +45,10 @@ W przypadku rozdzielenia PostgreSQL/PostGIS, RCN Importera i MapServera na osobn
 
 Minimalne wymagania systemowe:
 
--   systemu **Debian 13 (trixie) lub nowszego** na architekturze
+-   system **Linux Debian 13 (trixie) lub nowszy** na architekturze
     `x86_64/amd64`,
 -   konto użytkownika z możliwością wykonywania poleceń `sudo`,
--   dostępu do Internetu podczas pobierania repozytorium i instalowania
+-   dostęp do Internetu podczas pobierania repozytorium i instalowania
     pakietów,
 -   program `git` (jeżeli nie jest zainstalowany, poniżej znajduje się
     polecenie instalacji).
