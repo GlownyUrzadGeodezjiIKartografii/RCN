@@ -127,9 +127,9 @@ sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer
 
 Docelowa lokalizacja aplikacji:
 
-```text
+<pre>
 /opt/gugik/rcn-importer
-```
+</pre>
 
 ## 5. Skopiowanie aplikacji z repozytorium
 
