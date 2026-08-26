@@ -113,7 +113,9 @@ git clone https://github.com/GlownyUrzadGeodezjiIKartografii/RCN.git
 
 Repozytorium zostanie pobrane do katalogu:
 
-**`~/RCN`**
+**`
+~/RCN
+`**
 
 ### 6. Sprawdź pobrane pliki
 
@@ -125,11 +127,11 @@ ls -la ~/RCN
 
 Powinny być widoczne trzy główne katalogi:
 
-``` text
+**`
 1-baza-danych
 2-aplikacja-do-ladowania-danych-z-gml
 3-konfiguracja-uslugi
-```
+`**
 
 ### 7. Nadaj uprawnienia do wykonywania skryptów
 
