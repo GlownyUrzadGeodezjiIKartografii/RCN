@@ -276,15 +276,15 @@ nie musisz udostępniać bazy danych w sieci tylko na potrzeby MapServera.
 
 MapServer może łączyć się z PostgreSQL lokalnie, używając adresu:
 
-``` text
+<pre>
 127.0.0.1
-```
+</pre>
 
 lub nazwy:
 
-``` text
+<pre>
 localhost
-```
+</pre>
 
 Otwórz plik:
 
@@ -296,9 +296,9 @@ Sprawdź, czy PostgreSQL zezwala na lokalne połączenia TCP/IP.
 
 W pliku powinien znajdować się wpis podobny do:
 
-``` text
+<pre>
 host    all    all    127.0.0.1/32    scram-sha-256
-```
+</pre>
 
 Taki wpis obejmuje również lokalne połączenie użytkownika `ms_rcn` z
 bazą `rcn`.
@@ -315,13 +315,13 @@ host    rcn    ms_rcn    127.0.0.1/32    scram-sha-256
 
 W konfiguracji połączenia MapServera ustaw:
 
-``` text
+<pre>
 Host:     127.0.0.1
 Port:     5432
 Database: rcn
 User:     ms_rcn
 Password: HASŁO_UŻYTKOWNIKA_ms_rcn
-```
+</pre>
 
 > **WAŻNE**
 >
@@ -341,9 +341,9 @@ Sprawdź adres IP serwera, na którym działa MapServer.
 
 Przykład:
 
-``` text
+<pre>
 10.0.100.20
-```
+</pre>
 
 > **Nie kopiuj tego adresu bez sprawdzenia.**
 >
@@ -369,9 +369,9 @@ Zastąp `10.0.100.20` rzeczywistym adresem IP serwera MapServer.
 
 Przykładowo, jeżeli MapServer ma adres:
 
-``` text
+<pre>
 192.168.1.50
-```
+</pre>
 
 dodaj:
 
@@ -386,11 +386,11 @@ adresowi IPv4.
 
 W edytorze `nano` naciśnij kolejno:
 
-``` text
+<pre>
 Ctrl+O
 Enter
 Ctrl+X
-```
+</pre>
 
 ##### 5. Sprawdź `listen_addresses`
 
@@ -405,9 +405,9 @@ PostgreSQL**.
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall,
 zezwól na połączenie:
 
-``` text
+<pre>
 MapServer → serwer PostgreSQL → TCP/5432
-```
+</pre>
 
 Najlepiej dopuść port `5432/TCP` wyłącznie z adresu IP serwera
 MapServer.
@@ -416,9 +416,9 @@ MapServer.
 >
 > Nie dodawaj bez potrzeby:
 >
-> ``` text
+> </pre>
 > host    rcn    ms_rcn    0.0.0.0/0    scram-sha-256
-> ```
+> <pre>
 >
 > `0.0.0.0/0` oznacza zezwolenie na próbę połączenia z dowolnego adresu
 > IPv4.
@@ -565,16 +565,16 @@ pg_lsclusters
 
 Dla przygotowanego środowiska powinien być widoczny klaster:
 
-``` text
+<pre>
 Ver  Cluster  Port  Status
 18   main     5432  online
-```
+</pre>
 
 Najważniejsza jest wartość:
 
-``` text
+<pre>
 Status: online
-```
+</pre>
 
 Jeżeli klaster `18/main` ma status `online`, PostgreSQL jest
 uruchomiony.
@@ -589,9 +589,9 @@ Wykonaj:
 
 Powinna zostać wyświetlona wersja PostgreSQL 18, np.:
 
-``` text
+<pre>
 psql (PostgreSQL) 18.x
-```
+</pre>
 
 ### 11.3. Sprawdź, czy istnieje baza `rcn`
 
@@ -603,9 +603,9 @@ sudo -u postgres psql -tAc "SELECT datname FROM pg_database WHERE datname='rcn';
 
 Prawidłowy wynik:
 
-``` text
+<pre>
 rcn
-```
+</pre>
 
 Jeżeli polecenie nie zwróci żadnej wartości, baza `rcn` nie istnieje.
 
@@ -619,9 +619,9 @@ sudo -u postgres psql -d rcn -tAc "SELECT PostGIS_Version();"
 
 Powinien zostać wyświetlony numer wersji PostGIS, np.:
 
-``` text
+<pre>
 3.6 ...
-```
+</pre>
 
 Oznacza to, że rozszerzenie PostGIS jest dostępne w bazie `rcn`.
 
@@ -635,9 +635,9 @@ sudo -u postgres psql -d rcn -tAc "SELECT schema_name FROM information_schema.sc
 
 Prawidłowy wynik:
 
-``` text
+<pre>
 uslugi_rcn
-```
+</pre>
 
 Jeżeli polecenie nie zwróci żadnej wartości, struktura RCN nie została
 prawidłowo zaimportowana.
@@ -667,11 +667,11 @@ sudo -u postgres psql -d rcn -c "\dm uslugi_rcn.*"
 Na liście powinny znajdować się co najmniej następujące widoki
 materializowane:
 
-``` text
+<pre>
 uslugi_rcn.mv_dzialki
 uslugi_rcn.mv_budynki
 uslugi_rcn.mv_lokale
-```
+</pre>
 
 Są to widoki wykorzystywane przez MapServer do publikacji danych RCN.
 
@@ -679,9 +679,9 @@ Są to widoki wykorzystywane przez MapServer do publikacji danych RCN.
 >
 > Na liście widoków zobaczysz również:
 >
-> ``` text
+> <pre>
 > uslugi_rcn.mv_powiaty
-> ```
+> </pre>
 >
 > Jest to **prawidłowe i oczekiwane**. Widok `mv_powiaty` nie jest
 > wykorzystywany bezpośrednio przez MapServer do publikacji działek,
@@ -697,12 +697,12 @@ Są to widoki wykorzystywane przez MapServer do publikacji danych RCN.
 >
 > Dlatego prawidłowy wynik polecenia może zawierać cztery widoki:
 >
-> ``` text
+> <pre>
 > mv_budynki
 > mv_dzialki
 > mv_lokale
 > mv_powiaty
-> ```
+> </pre>
 >
 > Obecność widoku `mv_powiaty` **nie oznacza błędu konfiguracji** i nie
 > wymaga żadnych dodatkowych działań.
@@ -717,9 +717,9 @@ sudo -u postgres psql -tAc "SELECT rolname FROM pg_roles WHERE rolname='ms_rcn';
 
 Prawidłowy wynik:
 
-``` text
+<pre>
 ms_rcn
-```
+</pre>
 
 Jeżeli polecenie nie zwróci żadnej wartości, użytkownik `ms_rcn` nie
 został utworzony.
@@ -734,9 +734,9 @@ sudo -u postgres psql -d rcn -tAc "SELECT has_database_privilege('ms_rcn','rcn',
 
 Prawidłowy wynik:
 
-``` text
+<pre>
 t
-```
+</pre>
 
 Sprawdź dostęp do schematu:
 
@@ -746,9 +746,9 @@ sudo -u postgres psql -d rcn -tAc "SELECT has_schema_privilege('ms_rcn','uslugi_
 
 Prawidłowy wynik:
 
-``` text
+<pre>
 t
-```
+</pre>
 
 Sprawdź dostęp do widoków materializowanych:
 
@@ -763,11 +763,11 @@ SELECT
 
 Prawidłowy wynik powinien zawierać:
 
-``` text
+<pre>
  mv_dzialki | mv_budynki | mv_lokale
 ------------+-------------+-----------
  t          | t           | t
-```
+</pre>
 
 Wartość `t` oznacza, że użytkownik posiada wymagane uprawnienie.
 
@@ -782,9 +782,9 @@ sudo ss -ltnp | grep 5432
 Jeżeli MapServer działa na tym samym serwerze co PostgreSQL,
 wystarczający jest m.in. nasłuch lokalny:
 
-``` text
+<pre>
 127.0.0.1:5432
-```
+</pre>
 
 Jeżeli MapServer działa na innym serwerze, PostgreSQL musi również
 nasłuchiwać na odpowiednim interfejsie sieciowym.
@@ -886,9 +886,9 @@ PostgreSQL.
 
 Polecenie jest wystarczające m.in. po zmianach w pliku:
 
-``` text
+<pre>
 /etc/postgresql/18/main/pg_hba.conf
-```
+</pre>
 
 o ile nie zostały jednocześnie zmienione parametry wymagające restartu
 klastra.
@@ -1057,9 +1057,9 @@ instalacji**.
 
 Szczegółowy opis procedury znajduje się w pliku:
 
-``` text
+<pre>
 ~/RCN/1-baza-danych/cofnij_do_czystego_debiana.md
-```
+</pre>
 
 Najpierw zapoznaj się z instrukcją:
 
