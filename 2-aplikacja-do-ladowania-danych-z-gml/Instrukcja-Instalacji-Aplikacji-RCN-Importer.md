@@ -59,8 +59,8 @@ Aktualna struktura tego katalogu jest następująca:
 │       ├── rcn-importer-1.0
 │       ├── appsettings.json
 │       └── pozostałe pliki publikacji
-├── 2-Aplikacja-RCN-Importer.md
-├── 2-Instrukcja-Instalacji-Aplikacji-RCN-Importer-Linux-Debian.md
+├── Instrukcja-Instalacji-Aplikacji-RCN-Importer.md
+├── O-Aplikacji-RCN-Importer.md
 ├── reset_instalacji_rcn_importer.md
 └── reset_instalacji_rcn_importer.sh
 ```
