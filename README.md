@@ -348,6 +348,6 @@ i zasilonej danymi w Etapie 2.
 -   Wykonuj etapy **1 → 2 → 3** w podanej kolejności.
 -   W każdym katalogu rozpocznij od przeczytania znajdującej się tam
     instrukcji.
--   Skrypty uruchamiaj zgodnie z instrukcją.
+-   Skrypty uruchamiaj zgodnie z instrukcjami.
 -   Przed przejściem do następnego etapu sprawdź, czy poprzedni etap
     zakończył się prawidłowo.
