@@ -126,19 +126,7 @@ Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
 
 ## 6. Import struktury
 
-Plik:
-
-<pre>
-struktura_uslugi_rcn.sql
-</pre>
-
-musi znajdować się w tym samym katalogu co skrypt:
-
-<pre>
-02_import_struktury_rcn.sh
-</pre>
-
-Uruchom:
+Uruchom skrypt:
 
 ```bash
 ./02_import_struktury_rcn.sh
