@@ -1055,25 +1055,15 @@ instalacji**.
 > Poniższej procedury używaj wyłącznie wtedy, gdy świadomie chcesz
 > usunąć środowisko RCN i przygotować serwer do ponownej instalacji.
 
-Szczegółowy opis procedury znajduje się w pliku:
+Otwórz [instrukcję cofnięcia do `czystego` Debiana](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/cofnij_do_czystego_debiana.md)
 
-<pre>
-~/RCN/1-baza-danych/cofnij_do_czystego_debiana.md
-</pre>
-
-Najpierw zapoznaj się z instrukcją:
-
-``` bash
-cat ~/RCN/1-baza-danych/cofnij_do_czystego_debiana.md
-```
-
-Następnie przejdź do katalogu:
+Przejdź do katalogu:
 
 ``` bash
 cd ~/RCN/1-baza-danych
 ```
 
-Jeżeli po zapoznaniu się z instrukcją chcesz wykonać operację, uruchom:
+Po zapoznaniu się z instrukcją chcesz wykonać operację, uruchom:
 
 ``` bash
 ./cofnij_do_czystego_debiana.sh
