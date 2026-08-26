@@ -1,3 +1,4 @@
+# Etap 3
 # Konfiguracja Usługi WMS/WFS Rejestru Cen Nieruchomości (RCN)
 
 Dokument zawierający zestaw kroków do uruchomienia przykładowej powiatowej usługi WMS/WFS RCN za pomocą narzędzi OpenSource MapServer, Apache HTTP Server skierowany dla administratora środowiska Linux Debian.  
