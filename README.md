@@ -255,14 +255,13 @@ RCN/
 
 # Etap 1 --- przygotowanie bazy danych RCN
 
-Przejdź do katalogu:
+### Od czego zacząć?
 
-``` text
-1-baza-danych
-```
+Otwórz [instrukcję instalacji bazy danych](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/Instrukcja_instalacji_bazy_danych.md)
 
-W tym katalogu znajdują się materiały potrzebne do przygotowania bazy
-danych wykorzystywanej przez całe rozwiązanie.
+i wykonuj kolejne punkty instrukcji.
+
+Tutaj znajdują się materiały potrzebne do przygotowania bazy danych wykorzystywanej przez całe rozwiązanie.
 
 Etap obejmuje między innymi:
 
@@ -275,16 +274,6 @@ Etap obejmuje między innymi:
 -   konfigurację dostępu sieciowego do PostgreSQL, jeżeli jest wymagany,
 -   weryfikację poprawności przygotowanego środowiska.
 
-### Od czego zacząć?
-
-Otwórz [instrukcję instalacji bazy danych](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/Instrukcja_instalacji_bazy_danych.md)
-
-``` text
-1-baza-danych/1-Instrukcja_instalacji_RCN_Linux_Debian.md
-```
-
-i wykonuj kolejne punkty instrukcji.
-
 Po zakończeniu tego etapu powinna działać kompletna baza danych RCN
 gotowa do przyjęcia danych z plików GML.
 
@@ -295,16 +284,9 @@ gotowa do przyjęcia danych z plików GML.
 
 # Etap 2 --- instalacja RCN Importer i załadowanie danych GML
 
-Po prawidłowym przygotowaniu bazy otwórz:
+### Od czego zacząć?
 
 Otwórz [instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/Instrukcja-Instalacji-Aplikacji-RCN-Importer.md)
-
-``` text
-2-aplikacja-do-ladowania-danych-z-gml
-```
-
-Katalog zawiera aplikację **RCN Importer** oraz materiały potrzebne do
-jej instalacji i konfiguracji.
 
 RCN Importer odpowiada za:
 
@@ -314,11 +296,6 @@ RCN Importer odpowiada za:
 -   aktualizację danych znajdujących się w bazie,
 -   odświeżanie wymaganych widoków materializowanych,
 -   zapisywanie informacji o przebiegu importu w logach.
-
-### Od czego zacząć?
-
-W katalogu `2-aplikacja-do-ladowania-danych-z-gml` otwórz znajdującą się
-tam **instrukcję instalacji aplikacji RCN Importer**.
 
 Wykonaj opisane w niej czynności w podanej kolejności.
 
@@ -337,26 +314,13 @@ Po zakończeniu sprawdź, czy dane zostały prawidłowo załadowane do bazy.
 
 Po przygotowaniu bazy i załadowaniu danych przejdź do katalogu:
 
-``` text
-3-konfiguracja-uslugi
-```
+### Od czego zacząć?
 
-Ten katalog zawiera materiały potrzebne do skonfigurowania usługi
-publikującej dane RCN.
+Otwórz [instrukcję instalacji mapservera](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/3-konfiguracja-uslugi/mapserver-rcn-debian-trixie.md)
 
 Publikacja danych realizowana jest z wykorzystaniem **MapServera**,
 który odczytuje dane z bazy PostgreSQL/PostGIS przygotowanej w Etapie 1
 i zasilonej danymi w Etapie 2.
-
-### Od czego zacząć?
-
-Otwórz instrukcję znajdującą się w katalogu:
-
-``` text
-3-konfiguracja-uslugi
-```
-
-i wykonaj konfigurację zgodnie z opisanymi krokami.
 
 ------------------------------------------------------------------------
 
