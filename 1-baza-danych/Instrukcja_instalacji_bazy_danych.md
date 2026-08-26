@@ -226,7 +226,7 @@ PostgreSQL przyjmuje połączenia tylko z lokalnej maszyny.
 
 Jeżeli baza RCN ma być dostępna z innego komputera, np. z serwera MapServer lub komputera administratora, należy skonfigurować nasłuch PostgreSQL.
 
-### 10.2. Konfiguracja nasłuchu PostgreSQL
+### 9.2. Konfiguracja nasłuchu PostgreSQL
 
 Edytuj plik:
 
@@ -260,7 +260,7 @@ Enter
 Ctrl+X
 </pre>
 
-### 10.3. `pg_hba.conf` --- dostęp MapServera do bazy danych
+### 9.3. `pg_hba.conf` --- dostęp MapServera do bazy danych
 
 MapServer może działać:
 
@@ -269,7 +269,7 @@ MapServer może działać:
 
 Sposób konfiguracji zależy od tego, gdzie działa MapServer.
 
-#### 10.3.1. MapServer i PostgreSQL działają na tym samym serwerze
+#### 9.3.1. MapServer i PostgreSQL działają na tym samym serwerze
 
 Jeżeli MapServer działa na **tym samym serwerze Debian co PostgreSQL**,
 nie musisz udostępniać bazy danych w sieci tylko na potrzeby MapServera.
@@ -320,12 +320,12 @@ host    rcn    ms_rcn    127.0.0.1/32    scram-sha-256
 >
 > Połączenie może być realizowane lokalnie przez `127.0.0.1`.
 
-#### 10.3.2. MapServer działa na innym serwerze
+#### 9.3.2. MapServer działa na innym serwerze
 
 Jeżeli MapServer działa na **innym serwerze niż PostgreSQL**, musisz
 zezwolić serwerowi MapServer na połączenie z bazą `rcn` przez sieć.
 
-##### 1. Ustal adres IP serwera MapServer
+##### 9.3.2.1. Ustal adres IP serwera MapServer
 
 Sprawdź adres IP serwera, na którym działa MapServer.
 
@@ -339,7 +339,7 @@ Przykład:
 >
 > W swoim środowisku użyj rzeczywistego adresu IP serwera MapServer.
 
-##### 2. Otwórz plik `pg_hba.conf`
+##### 9.3.2.2. Otwórz plik `pg_hba.conf`
 
 Na serwerze Debian, na którym działa PostgreSQL, wykonaj:
 
@@ -347,7 +347,7 @@ Na serwerze Debian, na którym działa PostgreSQL, wykonaj:
 sudo nano /etc/postgresql/18/main/pg_hba.conf
 ```
 
-##### 3. Dodaj wpis dla MapServera
+##### 9.3.2.3. Dodaj wpis dla MapServera
 
 Na końcu pliku dodaj:
 
@@ -372,7 +372,7 @@ host    rcn    ms_rcn    192.168.1.50/32    scram-sha-256
 Maska `/32` oznacza, że dostęp zostanie przyznany tylko temu jednemu
 adresowi IPv4.
 
-##### 4. Zapisz plik
+##### 9.3.2.4. Zapisz plik
 
 W edytorze `nano` naciśnij kolejno:
 
@@ -382,7 +382,7 @@ Enter
 Ctrl+X
 </pre>
 
-##### 5. Sprawdź `listen_addresses`
+##### 9.3.2.5. Sprawdź `listen_addresses`
 
 Ponieważ MapServer działa na innym serwerze, PostgreSQL musi nasłuchiwać
 na interfejsie sieciowym dostępnym dla MapServera.
@@ -390,7 +390,7 @@ na interfejsie sieciowym dostępnym dla MapServera.
 Skonfiguruj nasłuch zgodnie z punktem **10.2. Konfiguracja nasłuchu
 PostgreSQL**.
 
-##### 6. Sprawdź firewall
+##### 9.3.2.6. Sprawdź firewall
 
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall,
 zezwól na połączenie:
@@ -419,7 +419,7 @@ MapServer.
 Po zapisaniu zmian przejdź do punktu **10.5. Zastosowanie zmian
 konfiguracji PostgreSQL**.
 
-### 10.4. `pg_hba.conf` — dostęp administratora z DBeavera
+### 9.4. `pg_hba.conf` — dostęp administratora z DBeavera
 
 Jeżeli chcesz połączyć się z bazą danych `rcn` z własnego komputera za pomocą programu **DBeaver**, należy dopuścić adres IP tego komputera w konfiguracji PostgreSQL.
 
@@ -472,7 +472,7 @@ Ctrl+X
 
 > **Ważne:** nie należy bez potrzeby zezwalać na dostęp z dowolnego adresu, np. przez zastosowanie `0.0.0.0/0`. Najbezpieczniej dopuścić konkretny adres IP komputera z DBeaverem za pomocą maski `/32`.
 
-### 10.5. Zastosowanie zmian konfiguracji PostgreSQL
+### 9.5. Zastosowanie zmian konfiguracji PostgreSQL
 
 Jeżeli zmieniono parametr `listen_addresses`, wykonaj restart klastra PostgreSQL:
 
@@ -498,7 +498,7 @@ Jeżeli zmieniono wyłącznie `pg_hba.conf`, wystarczy przeładować konfiguracj
 sudo pg_ctlcluster 18 main reload
 ```
 
-### 10.6. Zapora sieciowa
+### 9.6. Zapora sieciowa
 
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall, port:
 
@@ -510,7 +510,7 @@ musi być dostępny z adresu MapServera lub komputera administratora.
 
 Nie należy otwierać portu `5432` dla całego Internetu lub nieograniczonej sieci, jeżeli nie jest to wymagane.
 
-### 10.7. Test połączenia
+### 9.7. Test połączenia
 
 Z innego komputera można sprawdzić dostępność portu PostgreSQL:
 
@@ -537,7 +537,7 @@ User:     ms_rcn
 Dostęp użytkownika `ms_rcn` jest ograniczony do wymaganych widoków materializowanych przeznaczonych do publikacji danych przez MapServer.
 
 
-## 3. Weryfikacja poprawności instalacji
+## 10. Weryfikacja poprawności instalacji
 
 Po zakończeniu instalacji wykonaj poniższe polecenia kontrolne.
 
@@ -808,15 +808,6 @@ instalacja i przygotowanie bazy danych RCN --- został zakończony**.
 Możesz przejść do **Etapu 2 --- instalacji i konfiguracji aplikacji RCN
 Importer**.
 
-
-
-
-## 4. Przydatne polecenia administracyjne PostgreSQL
-
-Poniższe polecenia nie są częścią standardowego procesu instalacji. Mogą
-być wykorzystywane przez administratora podczas późniejszej eksploatacji
-środowiska RCN, prac konfiguracyjnych oraz diagnostyki PostgreSQL.
-
 ### 12.1. Sprawdzenie listy klastrów PostgreSQL
 
 ``` bash
@@ -934,7 +925,7 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
 
 ------------------------------------------------------------------------
 
-## 3. Ważne informacje
+## 13. Ważne informacje
 
 -   skrypty instalacyjne i administracyjne wymagają odpowiednich
     uprawnień systemowych, w tym w określonych przypadkach `sudo`,
@@ -968,7 +959,7 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
 
 ------------------------------------------------------------------------
 
-# 4. Operacje dodatkowe i administracyjne
+# 14. Operacje dodatkowe i administracyjne
 
 Poniższe operacje **nie są częścią standardowej pierwszej instalacji
 RCN**.
@@ -986,7 +977,7 @@ Korzystaj z nich wyłącznie wtedy, gdy świadomie chcesz:
 > lokalnych plików. Przed ich wykonaniem przeczytaj cały opis danego
 > punktu i upewnij się, że rozumiesz skutki operacji.
 
-## 14.1. Ponowne utworzenie bazy `rcn` (RELOAD)
+## 15.1. Ponowne utworzenie bazy `rcn` (RELOAD)
 
 > **UWAGA --- OPERACJA DESTRUKCYJNA**
 >
@@ -1038,7 +1029,7 @@ instalacji**.
 
 ------------------------------------------------------------------------
 
-## 14.2. Przywrócenie środowiska do stanu przed instalacją RCN
+## 15.2. Przywrócenie środowiska do stanu przed instalacją RCN
 
 > **UWAGA --- OPERACJA DESTRUKCYJNA**
 >
@@ -1067,7 +1058,7 @@ Po zapoznaniu się z instrukcją chcesz wykonać operację, uruchom:
 
 ------------------------------------------------------------------------
 
-## 14.3. Aktualizacja plików RCN z repozytorium
+## 15.3. Aktualizacja plików RCN z repozytorium
 
 Jeżeli lokalne repozytorium `~/RCN` nadal istnieje i chcesz pobrać jego
 najnowszą wersję bez usuwania całego katalogu, przejdź do repozytorium:
@@ -1104,7 +1095,7 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 
 ------------------------------------------------------------------------
 
-## 14.4. Usunięcie lokalnego repozytorium i ponowne pobranie
+## 15.4. Usunięcie lokalnego repozytorium i ponowne pobranie
 
 Jeżeli chcesz usunąć lokalną kopię repozytorium RCN i pobrać wszystkie
 pliki ponownie, najpierw upewnij się, że katalog `~/RCN` nie zawiera
