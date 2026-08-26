@@ -387,9 +387,6 @@ Ctrl+X
 Ponieważ MapServer działa na innym serwerze, PostgreSQL musi nasłuchiwać
 na interfejsie sieciowym dostępnym dla MapServera.
 
-Skonfiguruj nasłuch zgodnie z punktem **10.2. Konfiguracja nasłuchu
-PostgreSQL**.
-
 ##### 8.3.2.6. Sprawdź firewall
 
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall,
@@ -776,9 +773,6 @@ wystarczający jest m.in. nasłuch lokalny:
 Jeżeli MapServer działa na innym serwerze, PostgreSQL musi również
 nasłuchiwać na odpowiednim interfejsie sieciowym.
 
-Szczegółowa konfiguracja dostępu sieciowego została opisana w punkcie
-**10**.
-
 ### 9.11. Wynik weryfikacji
 
 Instalację bazy danych RCN można uznać za prawidłowo zakończoną, jeżeli:
@@ -802,6 +796,8 @@ Instalację bazy danych RCN można uznać za prawidłowo zakończoną, jeżeli:
 Jeżeli wszystkie powyższe testy zakończyły się prawidłowo, **Etap 1 ---
 instalacja i przygotowanie bazy danych RCN --- został zakończony**.
 
+## 10. Podstawowe operacje administracyjne PostgreSQL
+
 ### 10.1. Sprawdzenie listy klastrów PostgreSQL
 
 ``` bash
@@ -813,7 +809,7 @@ wersją, nazwą, portem, stanem oraz lokalizacją danych.
 
 Dla przygotowanego środowiska powinien być widoczny klaster `18/main`.
 
-### 12.2. Uruchomienie klastra PostgreSQL
+### 10.2. Uruchomienie klastra PostgreSQL
 
 ``` bash
 sudo pg_ctlcluster 18 main start
@@ -824,7 +820,7 @@ Uruchamia klaster PostgreSQL `18/main`.
 Polecenia użyj, jeżeli klaster został wcześniej zatrzymany lub nie
 uruchomił się automatycznie.
 
-### 12.3. Zatrzymanie klastra PostgreSQL
+### 10.3. Zatrzymanie klastra PostgreSQL
 
 ``` bash
 sudo pg_ctlcluster 18 main stop
@@ -838,7 +834,7 @@ Zatrzymuje klaster PostgreSQL `18/main` w kontrolowany sposób.
 > MapServer ani inne systemy nie wykonują w tym czasie operacji na bazie
 > danych.
 
-### 12.4. Restart klastra PostgreSQL
+### 10.4. Restart klastra PostgreSQL
 
 ``` bash
 sudo pg_ctlcluster 18 main restart
@@ -850,7 +846,7 @@ Restart może być wymagany po zmianie parametrów PostgreSQL, których nie
 można zastosować przez samo przeładowanie konfiguracji. Dotyczy to m.in.
 zmiany parametru `listen_addresses`.
 
-### 12.5. Przeładowanie konfiguracji PostgreSQL
+### 10.5. Przeładowanie konfiguracji PostgreSQL
 
 ``` bash
 sudo pg_ctlcluster 18 main reload
@@ -868,7 +864,7 @@ Polecenie jest wystarczające m.in. po zmianach w pliku:
 o ile nie zostały jednocześnie zmienione parametry wymagające restartu
 klastra.
 
-### 12.6. Sprawdzenie statusu usługi PostgreSQL
+### 10.6. Sprawdzenie statusu usługi PostgreSQL
 
 ``` bash
 sudo systemctl status postgresql
@@ -883,7 +879,7 @@ Aby zakończyć podgląd statusu, naciśnij:
 q
 ```
 
-### 12.7. Połączenie z bazą `rcn`
+### 10.7. Połączenie z bazą `rcn`
 
 Aby uruchomić konsolę `psql` jako użytkownik administracyjny `postgres`
 i połączyć się z bazą `rcn`, wykonaj:
@@ -901,7 +897,7 @@ Aby zakończyć pracę z konsolą:
 \q
 ```
 
-### 12.8. Sprawdzenie ostatnich komunikatów PostgreSQL
+### 10.8. Sprawdzenie ostatnich komunikatów PostgreSQL
 
 W przypadku problemów z uruchomieniem lub działaniem PostgreSQL sprawdź
 komunikaty usługi:
@@ -919,7 +915,7 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
 
 ------------------------------------------------------------------------
 
-## 13. Ważne informacje
+## 11. Ważne informacje
 
 -   skrypty instalacyjne i administracyjne wymagają odpowiednich
     uprawnień systemowych, w tym w określonych przypadkach `sudo`,
@@ -948,12 +944,10 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
     sieci niż jest to wymagane,
 -   operacje RELOAD, usuwania środowiska oraz ponownego pobierania
     repozytorium nie są częścią standardowej pierwszej instalacji,
--   po zakończeniu instalacji jej poprawność należy sprawdzić zgodnie z
-    punktem **11. Weryfikacja poprawności instalacji**.
 
 ------------------------------------------------------------------------
 
-# 14. Operacje dodatkowe i administracyjne
+# 12. Operacje dodatkowe i administracyjne
 
 Poniższe operacje **nie są częścią standardowej pierwszej instalacji
 RCN**.
@@ -971,7 +965,7 @@ Korzystaj z nich wyłącznie wtedy, gdy świadomie chcesz:
 > lokalnych plików. Przed ich wykonaniem przeczytaj cały opis danego
 > punktu i upewnij się, że rozumiesz skutki operacji.
 
-## 15.1. Ponowne utworzenie bazy `rcn` (RELOAD)
+## 12.1. Ponowne utworzenie bazy `rcn` (RELOAD)
 
 > **UWAGA --- OPERACJA DESTRUKCYJNA**
 >
@@ -1017,13 +1011,9 @@ uprawnienia do jej obiektów muszą jednak zostać nadane ponownie. Skrypt
 RELOAD wykonuje tę czynność przez ponowne uruchomienie skryptu
 konfigurującego użytkownika MapServera.
 
-Po zakończeniu operacji możesz sprawdzić poprawność odtworzonej bazy za
-pomocą testów opisanych w punkcie **11. Weryfikacja poprawności
-instalacji**.
-
 ------------------------------------------------------------------------
 
-## 15.2. Przywrócenie środowiska do stanu przed instalacją RCN
+## 12.2. Przywrócenie środowiska do stanu przed instalacją RCN
 
 > **UWAGA --- OPERACJA DESTRUKCYJNA**
 >
@@ -1052,7 +1042,7 @@ Po zapoznaniu się z instrukcją chcesz wykonać operację, uruchom:
 
 ------------------------------------------------------------------------
 
-## 15.3. Aktualizacja plików RCN z repozytorium
+## 12.3. Aktualizacja plików RCN z repozytorium
 
 Jeżeli lokalne repozytorium `~/RCN` nadal istnieje i chcesz pobrać jego
 najnowszą wersję bez usuwania całego katalogu, przejdź do repozytorium:
@@ -1075,9 +1065,6 @@ zostać wykonana jako `fast-forward`.
 > Przed aktualizacją upewnij się, że lokalne zmiany w plikach, które
 > chcesz zachować, zostały zapisane lub zabezpieczone.
 >
-> Jeżeli katalog `~/RCN` został wcześniej usunięty, nie możesz wykonać
-> `git pull`. W takim przypadku pobierz repozytorium ponownie zgodnie z
-> punktem **14.4**.
 
 Po aktualizacji repozytorium, jeżeli pojawiły się nowe pliki `.sh`,
 możesz ponownie nadać wszystkim skryptom w repozytorium uprawnienia do
@@ -1089,7 +1076,7 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 
 ------------------------------------------------------------------------
 
-## 15.4. Usunięcie lokalnego repozytorium i ponowne pobranie
+## 12.4. Usunięcie lokalnego repozytorium i ponowne pobranie
 
 Jeżeli chcesz usunąć lokalną kopię repozytorium RCN i pobrać wszystkie
 pliki ponownie, najpierw upewnij się, że katalog `~/RCN` nie zawiera
@@ -1156,5 +1143,3 @@ Jeżeli celem jest wykonanie pełnej instalacji na nowym lub wcześniej
 wyczyszczonym serwerze, rozpocznij procedurę od punktu **3. Wymagania i
 sprawdzenie systemu**, a następnie wykonuj kolejne punkty instrukcji.
 
-Po zakończeniu instalacji sprawdź jej poprawność zgodnie z punktem **11.
-Weryfikacja poprawności instalacji**.
