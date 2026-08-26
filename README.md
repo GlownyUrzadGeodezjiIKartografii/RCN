@@ -144,11 +144,6 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 
 Repozytorium jest teraz przygotowane do rozpoczęcia wdrożenia.
 
-> **Nie uruchamiaj jeszcze skryptów na podstawie ich nazw.**
->
-> Przejdź do katalogu `1-baza-danych`, otwórz instrukcję instalacji i
-> wykonuj opisane w niej czynności w podanej kolejności.
-
 ### 8. Sprawdzenie stanu i aktualizacja wcześniej pobranego repozytorium
 
 Jeżeli repozytorium `RCN` zostało już wcześniej pobrane, **nie należy
