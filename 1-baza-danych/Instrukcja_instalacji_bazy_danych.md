@@ -625,6 +625,8 @@ Powinna zostać wyświetlona lista tabel znajdujących się w schemacie
 Brak tabel może oznaczać, że import struktury bazy nie został wykonany
 prawidłowo.
 
+> **Uwaga:** Wynik polecenia może zostać wyświetlony w trybie podglądu. Jeżeli po wyświetleniu listy tabel nie nastąpi automatyczny powrót do wiersza poleceń, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
+
 ### 9.7. Sprawdź widoki materializowane dla MapServera
 
 Wykonaj:
