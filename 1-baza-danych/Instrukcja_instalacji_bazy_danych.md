@@ -425,8 +425,6 @@ Wpis oznacza:
 - `/32` – dostęp jest dozwolony wyłącznie z tego jednego adresu IP,
 - `scram-sha-256` – uwierzytelnianie za pomocą hasła.
 
-Jeżeli DBeaver ma łączyć się przy użyciu innego użytkownika PostgreSQL, zamiast `postgres` wpisz jego nazwę.
-
 Jeżeli dostęp ma być możliwy z kilku komputerów, dodaj osobny wpis dla każdego adresu IP, np.:
 
 <pre>
