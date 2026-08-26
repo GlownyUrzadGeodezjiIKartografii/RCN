@@ -113,9 +113,7 @@ git clone https://github.com/GlownyUrzadGeodezjiIKartografii/RCN.git
 
 Repozytorium zostanie pobrane do katalogu:
 
-``` text
-~/RCN
-```
+**`~/RCN`**
 
 ### 6. Sprawdź pobrane pliki
 
