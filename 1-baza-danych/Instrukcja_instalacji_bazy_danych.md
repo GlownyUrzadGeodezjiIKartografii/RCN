@@ -55,6 +55,8 @@ Uruchom skrypt z instalacją:
 ./00_instalacja_postgresql_postgis.sh
 ```
 
+> **Uwaga:** Jeżeli podczas wykonywania skryptu zostaną wyświetlone informacje w trybie podglądu i skrypt będzie oczekiwał na ręczne wyjście, naciśnij `q`, aby zamknąć podgląd i kontynuować wykonywanie skryptu.
+
 Skrypt:
 
 1. sprawdza, czy system jest Debianem,
@@ -93,7 +95,7 @@ Skrypt nie usuwa istniejącej bazy.
 
 Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
-## 3. Ustawienie hasła użytkownika PostgreSQL `postgres`
+## 5. Ustawienie hasła użytkownika PostgreSQL `postgres`
 
 Aplikacja RCN Importer wykorzystuje użytkownika PostgreSQL `postgres` do połączenia z bazą danych `rcn`.
 
@@ -128,7 +130,7 @@ Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
 > PostgreSQL nie umożliwia późniejszego odczytania ustawionego hasła. W przypadku jego utraty konieczne będzie ustawienie nowego.
 >
 
-## 4. Import struktury
+## 6. Import struktury
 
 Plik:
 
@@ -151,15 +153,15 @@ Uruchom:
 Jeżeli schemat `uslugi_rcn` już istnieje, import jest pomijany i wykonywana jest weryfikacja.
 
 
-## 3. Użytkownik PostgreSQL dla MapServera
+## 7. Użytkownik PostgreSQL dla MapServera
 
 Po utworzeniu struktury bazy należy skonfigurować oddzielnego użytkownika PostgreSQL przeznaczonego wyłącznie dla MapServera.
 
 Użytkownik:
 
-```text
+<pre>
 ms_rcn
-```
+</pre>
 
 ma otrzymać tylko:
 
@@ -193,7 +195,7 @@ Jeżeli użytkownik `ms_rcn` już istnieje, skrypt nie zmienia jego hasła, ale 
 
 Użytkownik administracyjny `postgres` pozostaje w systemie. Jest nadal wykorzystywany do przygotowania bazy, importu struktury oraz operacji administracyjnych. MapServer powinien natomiast korzystać z ograniczonego użytkownika `ms_rcn`.
 
-## 4. Dostęp sieciowy do PostgreSQL — MapServer, DBeaver i inne komputery
+## 8. Dostęp sieciowy do PostgreSQL — MapServer, DBeaver i inne komputery
 
 Samo utworzenie użytkownika PostgreSQL nie powoduje automatycznie udostępnienia bazy z innych komputerów.
 
@@ -205,7 +207,7 @@ Jeżeli z bazą `rcn` ma łączyć się:
 
 administrator PostgreSQL musi skonfigurować nasłuch serwera PostgreSQL, `pg_hba.conf` oraz ewentualną zaporę sieciową.
 
-### 10.1. Sprawdzenie aktualnego nasłuchu
+### 9.1. Sprawdzenie aktualnego nasłuchu
 
 Sprawdź, na jakich adresach PostgreSQL nasłuchuje na porcie `5432`:
 
@@ -215,10 +217,10 @@ sudo ss -ltnp | grep 5432
 
 Jeżeli widoczne są tylko adresy:
 
-```text
+<pre>
 127.0.0.1:5432
 [::1]:5432
-```
+</pre>
 
 PostgreSQL przyjmuje połączenia tylko z lokalnej maszyny.
 
@@ -240,9 +242,9 @@ listen_addresses
 
 Jeżeli PostgreSQL ma przyjmować połączenia z innych komputerów, można ustawić:
 
-```text
+<pre>
 listen_addresses = '*'
-```
+</pre>
 
 Ustawienie `*` powoduje nasłuchiwanie PostgreSQL na wszystkich dostępnych interfejsach sieciowych.
 
@@ -252,11 +254,11 @@ Jeżeli konfiguracja infrastruktury na to pozwala, zaleca się ograniczenie nas�
 
 Po wprowadzeniu zmian zapisz plik:
 
-```text
+<pre>
 Ctrl+O
 Enter
 Ctrl+X
-```
+</pre>
 
 ### 10.3. `pg_hba.conf` --- dostęp MapServera do bazy danych
 
@@ -445,11 +447,11 @@ Przykład dla komputera z DBeaverem o adresie IP `10.0.100.50`:
 host    rcn    postgres    10.0.100.50/32    scram-sha-256
 ```
 
-Adres:
+IP Adres:
 
-```text
+<pre>
 10.0.100.50
-```
+</pre>
 
 jest przykładowy. Zastąp go rzeczywistym adresem IP komputera, na którym działa DBeaver.
 
@@ -465,18 +467,18 @@ Jeżeli DBeaver ma łączyć się przy użyciu innego użytkownika PostgreSQL, z
 
 Jeżeli dostęp ma być możliwy z kilku komputerów, dodaj osobny wpis dla każdego adresu IP, np.:
 
-```text
+<pre>
 host    rcn    postgres    10.0.100.50/32    scram-sha-256
 host    rcn    postgres    10.0.100.51/32    scram-sha-256
-```
+</pre>
 
 Po wprowadzeniu zmian zapisz plik:
 
-```text
+<pre>
 Ctrl+O
 Enter
 Ctrl+X
-```
+</pre>
 
 > **Ważne:** nie należy bez potrzeby zezwalać na dostęp z dowolnego adresu, np. przez zastosowanie `0.0.0.0/0`. Najbezpieczniej dopuścić konkretny adres IP komputera z DBeaverem za pomocą maski `/32`.
 
@@ -510,9 +512,9 @@ sudo pg_ctlcluster 18 main reload
 
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall, port:
 
-```text
+<pre>
 5432/TCP
-```
+</pre>
 
 musi być dostępny z adresu MapServera lub komputera administratora.
 
@@ -528,19 +530,19 @@ nc -vz ADRES_SERWERA_POSTGRESQL 5432
 
 W DBeaver należy skonfigurować m.in.:
 
-```text
+<pre>
 Host:     adres serwera Debian/PostgreSQL
 Port:     5432
 Database: rcn
 User:     postgres lub inny użytkownik administracyjny
-```
+</pre>
 
 MapServer powinien korzystać z:
 
-```text
+<pre>
 Database: rcn
 User:     ms_rcn
-```
+</pre>
 
 Dostęp użytkownika `ms_rcn` jest ograniczony do wymaganych widoków materializowanych przeznaczonych do publikacji danych przez MapServer.
 
