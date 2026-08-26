@@ -153,11 +153,11 @@ sudo ls -la /opt/gugik/rcn-importer
 
 W katalogu powinny znajdować się co najmniej:
 
-```text
+<pre>
 rcn-importer-1.0
 appsettings.json
 pozostałe pliki i biblioteki publikacji
-```
+</pre>
 
 > **Ważne**
 >
