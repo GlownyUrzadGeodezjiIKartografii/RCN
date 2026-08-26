@@ -21,7 +21,7 @@ Pakiet umożliwia instalację PostgreSQL i PostGIS, utworzenie bazy danych `rcn`
 
 ## 1. Cel
 
-Pakiet przygotowuje PostgreSQL 18, PostGIS oraz bazę danych `rcn` dla usługi RCN na systemie **Debian 13 (trixie) lub nowszym**.
+Pakiet przygotowuje PostgreSQL 18, PostGIS oraz bazę danych `rcn` dla usługi RCN na systemie **Linux Debian 13 (trixie) lub nowszym**.
 
 Pakiet składa się z trzech głównych etapów:
 
