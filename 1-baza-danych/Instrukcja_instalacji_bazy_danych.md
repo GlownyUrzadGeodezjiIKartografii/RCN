@@ -101,7 +101,7 @@ Uruchom:
 sudo -u postgres psql
 ```
 
-Następnie wykonaj:
+Następnie wprowadź:
 
 ```text
 \password postgres
