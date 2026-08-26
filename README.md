@@ -20,7 +20,7 @@ Nieruchomości\
 **Autorzy:** Szymon Szczerba, Krzysztof Błachnio\
 **Rok:** 2026\
 **System operacyjny:** Debian 13 (trixie) lub nowszy\
-**Baza danych:** PostgreSQL 18 lub nowsza\
+**Baza danych:** PostgreSQL 18\
 **Rozszerzenie przestrzenne:** PostGIS\
 **Schemat bazy danych:** `uslugi_rcn`\
 **Aplikacja importująca:** RCN Importer\
