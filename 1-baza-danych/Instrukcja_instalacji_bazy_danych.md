@@ -1,3 +1,4 @@
+# Krok 1
 # RCN – baza danych PostgreSQL/PostGIS
 
 Zestaw skryptów i instrukcji przeznaczonych do instalacji oraz przygotowania bazy danych Rejestru Cen Nieruchomości (RCN) w środowisku Linux Debian.
