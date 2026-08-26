@@ -280,9 +280,6 @@ Etap obejmuje między innymi:
 Po zakończeniu tego etapu powinna działać kompletna baza danych RCN
 gotowa do przyjęcia danych z plików GML.
 
-> **Nie przechodź do Etapu 2, dopóki weryfikacja opisana w instrukcji
-> bazy danych nie zakończy się prawidłowo.**
-
 ------------------------------------------------------------------------
 
 # Etap 2 --- instalacja RCN Importer i załadowanie danych GML
