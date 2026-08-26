@@ -369,24 +369,3 @@ i zasilonej danymi w Etapie 2.
     Została ona opisana w instrukcji Etapu 1.
 -   Jeżeli MapServer i PostgreSQL działają na tym samym serwerze,
     możliwe jest wykorzystanie połączenia lokalnego.
-
-------------------------------------------------------------------------
-
-# Podsumowanie
-
-Pakiet RCN składa się z trzech współpracujących ze sobą elementów:
-
-  ---------------------------------------------------------------------
-  Element                            Zadanie
-  ---------------------------------- ----------------------------------
-  **PostgreSQL/PostGIS**             przechowuje dane RCN
-
-  **RCN Importer**                   ładuje i aktualizuje dane RCN na
-                                     podstawie plików GML
-
-  **MapServer**                      publikuje dane znajdujące się w
-                                     bazie
-  ---------------------------------------------------------------------
-
-Po wykonaniu wszystkich trzech etapów środowisko jest przygotowane do
-cyklicznego zasilania bazy danymi RCN i ich publikacji.
