@@ -1140,3 +1140,6 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 Jeżeli celem jest wykonanie pełnej instalacji na nowym lub wcześniej
 wyczyszczonym serwerze, rozpocznij procedurę instalacji od początku.
 
+Po pozytywnej weryfikacji można przejść do **Etapu 2 — Instalacja Aplikacji RCN Importer**.
+
+Otwórz [instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/Instrukcja-Instalacji-Aplikacji-RCN-Importer.md)
