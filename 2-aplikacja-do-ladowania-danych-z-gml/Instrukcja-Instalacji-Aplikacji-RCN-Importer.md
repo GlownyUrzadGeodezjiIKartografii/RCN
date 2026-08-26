@@ -217,7 +217,6 @@ Docelowo:
 
 ---
 
-
 ## 7. Konfiguracja `appsettings.json`
 
 Edytuj konfigurację:
@@ -238,20 +237,75 @@ Przykład:
     "Localhost": "Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=TWOJE_HASLO"
   },
   "ImportJob": {
-    "TerytPow": "1864", // Po testach wprowadź TERYT Twojego powiatu
+    "TerytPow": "1864",
     "InputPath": "input",
     "ProcessedPath": "processed",
     "ErrorPath": "error",
     "ArtifactsDir": "artifacts",
     "LogDirectory": "logs",
-    "Mode": "UPSERT", // Dostępne: REPLACE, UPSERT lub INSERT
+    "Mode": "UPSERT",
     "MoveFilesAfterImport": true,
     "RetentionDays": 7
   }
 }
 ```
 
-Uzupełnij przede wszystkim hasło, `TerytPow` i świadomie wybierz `Mode`. Nie zapisuj rzeczywistych haseł w repozytorium Git.
+### 7.1. Ustawienie hasła do bazy danych
+
+W parametrze:
+
+```text
+Password=TWOJE_HASLO
+```
+
+zastąp `TWOJE_HASLO` **hasłem użytkownika PostgreSQL `postgres`, które zostało ustawione w Etapie 1 podczas konfiguracji bazy danych RCN**.
+
+Przykład:
+
+```text
+Host=localhost;Port=5432;Database=rcn;Username=postgres;Password=USTAWIONE_W_ETAPIE_1_HASLO
+```
+
+> **Ważne:** Nie zapisuj rzeczywistych haseł w repozytorium Git ani w dokumentacji.
+
+### 7.2. Ustawienie `TerytPow`
+
+Parametr:
+
+```json
+"TerytPow": "1864"
+```
+
+określa kod TERYT powiatu, którego dane będą importowane.
+
+Wybierz jeden z dwóch wariantów:
+
+- **jeżeli chcesz wykonać pierwszy import z wykorzystaniem przygotowanych danych testowych** — pozostaw wartość `"1864"`;
+- **jeżeli nie chcesz korzystać z danych testowych i od razu chcesz sprawdzić import danych ze swojego powiatu** — zastąp `"1864"` właściwym kodem TERYT swojego powiatu.
+
+> **Ważne:** Wartość `TerytPow` musi odpowiadać powiatowi, którego dane będą importowane.
+
+### 7.3. Ustawienie trybu importu
+
+Parametr:
+
+```json
+"Mode": "UPSERT"
+```
+
+określa sposób zapisu danych do bazy.
+
+Dostępne tryby:
+
+- `REPLACE` — zastępuje dane powiatu kompletnym zestawem z danego uruchomienia;
+- `UPSERT` — aktualizuje istniejące rekordy i dodaje nowe;
+- `INSERT` — dodaje nowe dane zgodnie z logiką aplikacji.
+
+Wybierz tryb odpowiedni do sposobu wykonywania importu.
+
+Jeżeli w katalogu `input` znajduje się kilka plików, aplikacja analizuje je osobno, a poprawne dane scala do jednej kolekcji przed zapisem. W trybie `REPLACE` błąd części zestawu blokuje częściowe zastąpienie danych.
+
+### 7.4. Zapisanie konfiguracji
 
 Po wprowadzeniu zmian zapisz plik:
 
@@ -261,20 +315,12 @@ Enter
 Ctrl+X
 ```
 
-Po edycji ponownie ogranicz dostęp:
+Po edycji ponownie ogranicz dostęp do pliku konfiguracyjnego:
 
 ```bash
 sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/appsettings.json
 sudo chmod 600 /opt/gugik/rcn-importer/appsettings.json
 ```
-
-### Tryby importu
-
-- `REPLACE` — zastępuje dane powiatu kompletnym zestawem z danego uruchomienia;
-- `UPSERT` — aktualizuje istniejące rekordy i dodaje nowe;
-- `INSERT` — dodaje nowe dane zgodnie z logiką aplikacji.
-
-Jeżeli w `input` znajduje się kilka plików, aplikacja analizuje je osobno, a poprawne dane scala do jednej kolekcji przed zapisem. W `REPLACE` błąd części zestawu blokuje częściowe zastąpienie danych.
 
 ## 8. Sprawdzenie dostępu do bazy
 
