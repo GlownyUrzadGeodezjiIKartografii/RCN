@@ -1,3 +1,4 @@
+# Krok 2
 # RCN Importer — instrukcja instalacji aplikacji na Linux Debian
 
 ## Informacje o aplikacji
