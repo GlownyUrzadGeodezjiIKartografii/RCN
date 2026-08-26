@@ -108,14 +108,12 @@ sudo apt install -y -t trixie-backports \
 
 Wszystkie pliki należy umieścić w katalogu `/opt/gugik/mapserver/rcn` - poza document root serwera WWW, dostępnym do odczytu dla procesu serwera WWW. Mapfile (rcn.map) może zawierać dane dostępowe do bazy danych - nie może być dostępny bezpośrednio przez przeglądarkę.
 
+> **Przed rozpoczęciem:** Należy upewnić się, że pobrano repozytorium całego projektu do katalogu domowego
+
 ```bash
-# Katalog projektu
+# Utworzenie katalogu docelowego
 sudo mkdir -p /opt/gugik/mapserver/rcn
-curl -sL https://github.com/Kshtof/ms-deploy/archive/refs/heads/main.tar.gz \
-| sudo tar -xz \
-    -C /opt/gugik/mapserver/rcn \
-    --strip-components=2 \
-    "ms-deploy-main/setup-deb"
+sudo cp -r ~/RCN/setup-deb/* /opt/gugik/mapserver/rcn/
 
 sudo chown -R root:www-data /opt/gugik/mapserver/rcn
 sudo chmod -R u=rwX,g=rX,o= /opt/gugik/mapserver/rcn
