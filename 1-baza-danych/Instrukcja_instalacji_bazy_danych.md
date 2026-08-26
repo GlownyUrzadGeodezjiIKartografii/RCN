@@ -403,9 +403,7 @@ MapServer.
 >
 > Nie dodawaj bez potrzeby:
 >
-> </pre>
 > host    rcn    ms_rcn    0.0.0.0/0    scram-sha-256
-> <pre>
 >
 > `0.0.0.0/0` oznacza zezwolenie na próbę połączenia z dowolnego adresu
 > IPv4.
@@ -432,10 +430,7 @@ host    rcn    postgres    10.0.100.50/32    scram-sha-256
 ```
 
 IP Adres:
-
-<pre>
 10.0.100.50
-</pre>
 
 jest przykładowy. Zastąp go rzeczywistym adresem IP komputera, na którym działa DBeaver.
 
@@ -947,7 +942,7 @@ sudo tail -n 100 /var/log/postgresql/postgresql-18-main.log
 
 ------------------------------------------------------------------------
 
-# 12. Operacje dodatkowe i administracyjne
+## 12. Operacje dodatkowe i administracyjne
 
 Poniższe operacje **nie są częścią standardowej pierwszej instalacji
 RCN**.
@@ -965,7 +960,7 @@ Korzystaj z nich wyłącznie wtedy, gdy świadomie chcesz:
 > lokalnych plików. Przed ich wykonaniem przeczytaj cały opis danego
 > punktu i upewnij się, że rozumiesz skutki operacji.
 
-## 12.1. Ponowne utworzenie bazy `rcn` (RELOAD)
+### 12.1. Ponowne utworzenie bazy `rcn` (RELOAD)
 
 > **UWAGA --- OPERACJA DESTRUKCYJNA**
 >
@@ -1013,7 +1008,7 @@ konfigurującego użytkownika MapServera.
 
 ------------------------------------------------------------------------
 
-## 12.2. Przywrócenie środowiska do stanu przed instalacją RCN
+### 12.2. Przywrócenie środowiska do stanu przed instalacją RCN
 
 > **UWAGA --- OPERACJA DESTRUKCYJNA**
 >
@@ -1028,7 +1023,7 @@ Przejdź do katalogu:
 cd ~/RCN/1-baza-danych
 ```
 
-Po zapoznaniu się z instrukcją chcesz wykonać operację, uruchom:
+Po zapoznaniu się z instrukcją, jeżeli chcesz wykonać operację, uruchom:
 
 ``` bash
 ./cofnij_do_czystego_debiana.sh
@@ -1042,7 +1037,7 @@ Po zapoznaniu się z instrukcją chcesz wykonać operację, uruchom:
 
 ------------------------------------------------------------------------
 
-## 12.3. Aktualizacja plików RCN z repozytorium
+### 12.3. Aktualizacja plików RCN z repozytorium
 
 Jeżeli lokalne repozytorium `~/RCN` nadal istnieje i chcesz pobrać jego
 najnowszą wersję bez usuwania całego katalogu, przejdź do repozytorium:
@@ -1076,7 +1071,7 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 
 ------------------------------------------------------------------------
 
-## 12.4. Usunięcie lokalnego repozytorium i ponowne pobranie
+### 12.4. Usunięcie lokalnego repozytorium i ponowne pobranie
 
 Jeżeli chcesz usunąć lokalną kopię repozytorium RCN i pobrać wszystkie
 pliki ponownie, najpierw upewnij się, że katalog `~/RCN` nie zawiera
@@ -1140,6 +1135,5 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 > repozytorium zostało pobrane na nowo.
 
 Jeżeli celem jest wykonanie pełnej instalacji na nowym lub wcześniej
-wyczyszczonym serwerze, rozpocznij procedurę od punktu **3. Wymagania i
-sprawdzenie systemu**, a następnie wykonuj kolejne punkty instrukcji.
+wyczyszczonym serwerze, rozpocznij procedurę instalacji od początku.
 
