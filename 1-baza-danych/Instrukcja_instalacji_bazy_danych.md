@@ -1140,6 +1140,10 @@ find ~/RCN -type f -name "*.sh" -exec chmod +x {} \;
 Jeżeli celem jest wykonanie pełnej instalacji na nowym lub wcześniej
 wyczyszczonym serwerze, rozpocznij procedurę instalacji od początku.
 
-Po pozytywnej weryfikacji można przejść do **Etapu 2 — Instalacja Aplikacji RCN Importer**.
+## 13. Przejście do Etapu 2
 
-Otwórz [instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/Instrukcja-Instalacji-Aplikacji-RCN-Importer.md)
+Jeżeli instalacja i weryfikacja bazy danych RCN zakończyły się prawidłowo, **Etap 1 — instalacja i przygotowanie bazy danych RCN — jest zakończony**.
+
+Przejdź do **Etapu 2 — instalacji aplikacji RCN Importer**:
+
+[Otwórz instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/2-Instrukcja-Instalacji-Aplikacji-RCN-Importer-Linux-Debian.md)
