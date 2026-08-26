@@ -71,11 +71,9 @@ Znaczenie najważniejszych elementów:
 - `gml/1864-1-bazowy.zip` — testowy plik bazowy;
 - `gml/1864-2-przyrostowy.zip` — testowy plik przyrostowy;
 - `gml/count.sql` — pomocnicze zapytania do weryfikacji liczby danych po imporcie;
-- `2-Aplikacja-RCN-Importer.md` — opis działania i konfiguracji aplikacji;
+- `O-Aplikacji-RCN-Importer.md` — opis działania i konfiguracji aplikacji;
 - `reset_instalacji_rcn_importer.*` — materiały administracyjne do usunięcia instalacji aplikacji; nie są częścią standardowej pierwszej instalacji.
 
-> **Nie klonuj repozytorium ponownie.**
->
 > Etap 2 korzysta z plików znajdujących się już w `~/RCN`.
 
 Jeżeli chcesz jedynie pobrać najnowszą wersję plików użyj:
