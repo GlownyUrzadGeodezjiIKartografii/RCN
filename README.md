@@ -348,14 +348,6 @@ i zasilonej danymi w Etapie 2.
 -   Wykonuj etapy **1 → 2 → 3** w podanej kolejności.
 -   W każdym katalogu rozpocznij od przeczytania znajdującej się tam
     instrukcji.
--   Nie uruchamiaj skryptów tylko na podstawie ich nazw --- część z nich
-    służy do operacji administracyjnych, odtwarzania lub usuwania
-    środowiska.
--   Skrypty `RELOAD` nie są elementem standardowej pierwszej instalacji.
+-   Skrypty uruchamiaj zgodnie z instrukcją.
 -   Przed przejściem do następnego etapu sprawdź, czy poprzedni etap
     zakończył się prawidłowo.
--   Jeżeli MapServer znajduje się na innym serwerze niż PostgreSQL,
-    konieczna jest odpowiednia konfiguracja dostępu sieciowego do bazy.
-    Została ona opisana w instrukcji Etapu 1.
--   Jeżeli MapServer i PostgreSQL działają na tym samym serwerze,
-    możliwe jest wykorzystanie połączenia lokalnego.
