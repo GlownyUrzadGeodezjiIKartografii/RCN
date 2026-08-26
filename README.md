@@ -277,7 +277,7 @@ Etap obejmuje między innymi:
 
 ### Od czego zacząć?
 
-Otwórz [instrukcję instalacji bazy danych](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/1-Instrukcja_instalacji_RCN_Linux_Debian.md)
+Otwórz [instrukcję instalacji bazy danych](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/Instrukcja_instalacji_bazy_danych.md)
 
 ``` text
 1-baza-danych/1-Instrukcja_instalacji_RCN_Linux_Debian.md
