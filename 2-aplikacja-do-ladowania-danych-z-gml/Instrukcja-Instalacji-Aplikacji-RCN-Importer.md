@@ -297,11 +297,45 @@ określa sposób zapisu danych do bazy.
 
 Dostępne tryby:
 
-- `REPLACE` — zastępuje dane powiatu kompletnym zestawem z danego uruchomienia;
+- `REPLACE` — usuwa dotychczasowe dane powiatu z bazy i zastępuje je kompletnym zestawem danych z aktualnego importu;
 - `UPSERT` — aktualizuje istniejące rekordy i dodaje nowe;
 - `INSERT` — dodaje nowe dane zgodnie z logiką aplikacji.
 
-Wybierz tryb odpowiedni do sposobu wykonywania importu.
+#### Import danych testowych
+
+Jeżeli wykonujesz pierwszy import z wykorzystaniem przygotowanych danych testowych dla powiatu `1864`, pozostaw:
+
+<pre>
+"Mode": "UPSERT"
+</pre>
+
+Tryb `UPSERT` jest zalecany dla testu bazowego i późniejszego importu pliku przyrostowego.
+
+#### Import danych własnego powiatu
+
+Jeżeli od razu importujesz dane własnego powiatu, wybierz tryb odpowiedni do sposobu przygotowania danych.
+
+**Najbezpieczniejszym wyborem jest `UPSERT`**, ponieważ istniejące rekordy są aktualizowane, a nowe są dodawane bez wcześniejszego usuwania całego zestawu danych powiatu.
+
+<pre>
+"Mode": "UPSERT"
+</pre>
+
+Tryb `REPLACE` może być szybszy, ponieważ przed zapisem usuwa dotychczasowe dane danego powiatu i zastępuje je kompletnym zestawem z aktualnego importu.
+
+<pre>
+"Mode": "REPLACE"
+</pre>
+
+> **Ważne:** Trybu `REPLACE` używaj tylko wtedy, gdy importowany plik zawiera kompletny zestaw danych powiatu i świadomie chcesz zastąpić dane znajdujące się już w bazie.
+
+Jeżeli nie masz pewności, który tryb wybrać, użyj:
+
+<pre>
+"Mode": "UPSERT"
+</pre>
+
+Administrator powinien świadomie zdecydować o wyborze trybu przed pierwszym importem danych własnego powiatu.
 
 Jeżeli w katalogu `input` znajduje się kilka plików, aplikacja analizuje je osobno, a poprawne dane scala do jednej kolekcji przed zapisem. W trybie `REPLACE` błąd części zestawu blokuje częściowe zastąpienie danych.
 
@@ -362,34 +396,47 @@ Przy pustym katalogu `input` kod `5` oznacza brak plików wejściowych, a nie aw
 >
 > Kod zakończenia należy odczytać bezpośrednio po uruchomieniu aplikacji. Zmienna `$?` zawiera kod zakończenia ostatnio wykonanego polecenia, dlatego jest od razu zapisywana do zmiennej `EXIT_CODE`.
 
-## 10. Pierwszy import testowy
+## 10. Pierwszy import danych
 
-W repozytorium znajdują się przygotowane pliki testowe:
+Po skonfigurowaniu aplikacji wybierz jeden z dwóch wariantów pierwszego importu:
 
-```text
+1. **Wariant A — import danych testowych** — jeżeli chcesz sprawdzić działanie aplikacji na plikach testowych dołączonych do repozytorium;
+2. **Wariant B — import danych własnego powiatu** — jeżeli nie chcesz wykonywać testu i od razu chcesz zaimportować własne dane RCN.
+
+> **Ważne:** Nie ma obowiązku wykonywania importu danych testowych. Jeżeli konfiguracja została przygotowana dla własnego powiatu, możesz od razu przejść do wariantu B.
+
+### 10.1. Wariant A — import danych testowych
+
+Ten wariant służy do sprawdzenia poprawności działania RCN Importer na przygotowanych danych testowych.
+
+Pliki testowe dotyczą powiatu o kodzie TERYT:
+
+<pre>
+1864
+</pre>
+
+Przed rozpoczęciem upewnij się, że w `appsettings.json` ustawiono:
+
+<pre>
+"TerytPow": "1864"
+"Mode": "UPSERT"
+</pre>
+
+Dla testu zalecany jest tryb `UPSERT`.
+
+W repozytorium znajdują się dwa pliki testowe:
+
+<pre>
 ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/1864-1-bazowy.zip
 ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/1864-2-przyrostowy.zip
-```
+</pre>
 
-oraz pomocniczy skrypt SQL:
+Test wykonaj w następującej kolejności:
 
-```text
-~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
-```
+1. import pliku bazowego `1864-1-bazowy.zip`;
+2. import pliku przyrostowego `1864-2-przyrostowy.zip`.
 
-Pliki testowe dotyczą powiatu o kodzie:
-
-```text
-1864
-```
-
-Dlatego przed ich użyciem upewnij się, że w `appsettings.json` ustawiono:
-
-```json
-"TerytPow": "1864", // Po testach wprowadź TERYT Twojego powiatu
-```
-
-### 10.1. Test importu bazowego
+#### 10.1.1. Import pliku bazowego
 
 Skopiuj plik bazowy do katalogu `input`:
 
@@ -403,13 +450,13 @@ Nadaj właściciela:
 sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/input/1864-1-bazowy.zip
 ```
 
-Sprawdź, czy plik znajduje się w katalogu `input`:
+Sprawdź zawartość katalogu `input`:
 
 ```bash
 sudo ls -la /opt/gugik/rcn-importer/input
 ```
 
-Uruchom aplikację jako użytkownik `rcn-importer` i wyświetl zwrócony kod zakończenia:
+Uruchom aplikację:
 
 ```bash
 sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
@@ -417,64 +464,29 @@ EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
 
-Po zakończeniu działania aplikacji zostanie wyświetlony zwrócony kod, np.:
+Prawidłowy wynik:
 
-```text
+<pre>
 Kod zakończenia RCN Importer: 0
-```
+</pre>
 
 Kod `0` oznacza poprawne zakończenie importu.
 
-> **Ważne**
->
-> Kod zakończenia należy odczytać bezpośrednio po uruchomieniu aplikacji. Zmienna `$?` zawiera kod zakończenia ostatnio wykonanego polecenia, dlatego jest od razu zapisywana do zmiennej `EXIT_CODE`.
+Po poprawnym imporcie plik:
 
-Po zakończeniu sprawdź katalogi robocze:
+<pre>
+1864-1-bazowy.zip
+</pre>
 
-```bash
-sudo ls -la /opt/gugik/rcn-importer/processed
-sudo ls -la /opt/gugik/rcn-importer/error
-sudo ls -la /opt/gugik/rcn-importer/artifacts
-sudo ls -la /opt/gugik/rcn-importer/logs
-```
+powinien zostać przeniesiony do katalogu:
 
-Po poprawnym imporcie plik `1864-1-bazowy.zip` powinien trafić do katalogu `processed`.
+<pre>
+/opt/gugik/rcn-importer/processed
+</pre>
 
-Jeżeli plik trafił do katalogu `error`, sprawdź logi aplikacji:
+#### 10.1.2. Import pliku przyrostowego
 
-```bash
-sudo ls -lht /opt/gugik/rcn-importer/logs
-```
-
-### 10.2. Sprawdzenie danych w bazie
-
-Do repozytorium dołączony jest plik `count.sql`, który pozwala szybko sprawdzić liczbę załadowanych obiektów.
-
-Plik znajduje się w repozytorium:
-
-```text
-~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
-```
-
-Wykonaj:
-
-```bash
-sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
-```
-
-W tym przypadku plik `count.sql` jest odczytywany przez aktualnie zalogowanego użytkownika, natomiast polecenia SQL są wykonywane w bazie `rcn` przez użytkownika PostgreSQL `postgres`.
-
-Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie.
-
-> **Ważne**
->
-> Nie używaj w tym przypadku parametru `-f` ze ścieżką do pliku znajdującego się w `~/RCN`.
->
-> Polecenie `psql` jest uruchamiane jako użytkownik systemowy `postgres`, który może nie mieć dostępu do katalogu domowego administratora. Przekierowanie `<` powoduje, że plik `count.sql` odczytuje aktualnie zalogowany użytkownik, a jego zawartość jest przekazywana do `psql`.
-
-### 10.3. Test importu przyrostowego
-
-Po poprawnym imporcie pliku bazowego możesz przetestować import przyrostowy.
+Import pliku przyrostowego wykonaj **dopiero po poprawnym zakończeniu importu pliku bazowego**.
 
 Skopiuj plik przyrostowy do katalogu `input`:
 
@@ -488,15 +500,13 @@ Nadaj właściciela:
 sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/input/1864-2-przyrostowy.zip
 ```
 
-Sprawdź, czy plik znajduje się w katalogu `input`:
+Sprawdź zawartość katalogu `input`:
 
 ```bash
 sudo ls -la /opt/gugik/rcn-importer/input
 ```
 
-Przed uruchomieniem upewnij się, że wybrany w `appsettings.json` tryb `Mode` odpowiada sposobowi, w jaki chcesz wykonać test.
-
-Uruchom importer jako użytkownik `rcn-importer` i wyświetl zwrócony kod zakończenia:
+Uruchom ponownie aplikację:
 
 ```bash
 sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
@@ -504,19 +514,27 @@ EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
 
-Po zakończeniu działania aplikacji zostanie wyświetlony zwrócony kod, np.:
+Prawidłowy wynik:
 
-```text
+<pre>
 Kod zakończenia RCN Importer: 0
-```
+</pre>
 
-Kod `0` oznacza poprawne zakończenie importu.
+Po poprawnym imporcie plik:
 
-> **Ważne**
->
-> Kod zakończenia należy odczytać bezpośrednio po uruchomieniu aplikacji. Zmienna `$?` zawiera kod zakończenia ostatnio wykonanego polecenia, dlatego jest od razu zapisywana do zmiennej `EXIT_CODE`.
+<pre>
+1864-2-przyrostowy.zip
+</pre>
 
-Po zakończeniu sprawdź katalogi robocze:
+powinien zostać przeniesiony do katalogu:
+
+<pre>
+/opt/gugik/rcn-importer/processed
+</pre>
+
+#### 10.1.3. Sprawdzenie wyniku testu
+
+Sprawdź katalogi robocze aplikacji:
 
 ```bash
 sudo ls -la /opt/gugik/rcn-importer/processed
@@ -525,23 +543,128 @@ sudo ls -la /opt/gugik/rcn-importer/artifacts
 sudo ls -la /opt/gugik/rcn-importer/logs
 ```
 
-Po poprawnym imporcie plik `1864-2-przyrostowy.zip` powinien trafić do katalogu `processed`.
-
-Jeżeli plik trafił do katalogu `error`, sprawdź logi aplikacji:
+Jeżeli którykolwiek plik trafił do katalogu `error`, sprawdź logi:
 
 ```bash
 sudo ls -lht /opt/gugik/rcn-importer/logs
 ```
 
-Następnie ponownie sprawdź liczbę danych w bazie:
+Do repozytorium dołączony jest również plik `count.sql` umożliwiający sprawdzenie liczby zaimportowanych obiektów:
+
+<pre>
+~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
+</pre>
+
+Wykonaj:
 
 ```bash
 sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
 ```
 
-> **Ważne**
->
-> Pliki `1864-1-bazowy.zip` i `1864-2-przyrostowy.zip` są plikami testowymi dołączonymi do repozytorium. W środowisku docelowym do katalogu `input` należy przekazywać właściwe pliki GML/ZIP zawierające dane RCN danego powiatu.
+Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie.
+
+### 10.2. Wariant B — import danych własnego powiatu
+
+Jeżeli nie chcesz korzystać z danych testowych, możesz od razu wykonać pierwszy import danych własnego powiatu.
+
+Przed rozpoczęciem upewnij się, że w `appsettings.json`:
+
+- `TerytPow` zawiera właściwy kod TERYT Twojego powiatu;
+- `Mode` został świadomie wybrany zgodnie z zasadami opisanymi w punkcie 7.3;
+- ustawione jest poprawne połączenie z bazą danych.
+
+Przykładowa wartość:
+
+<pre>
+"TerytPow": "XXXX"
+</pre>
+
+gdzie `XXXX` oznacza właściwy kod TERYT powiatu.
+
+> **Ważne:** Kod `TerytPow` musi odpowiadać powiatowi, którego dane znajdują się w pliku przeznaczonym do importu.
+
+#### 10.2.1. Skopiowanie własnego pliku
+
+Skopiuj plik GML lub ZIP zawierający dane RCN Twojego powiatu do katalogu:
+
+<pre>
+/opt/gugik/rcn-importer/input
+</pre>
+
+Przykładowo, jeżeli plik `dane_rcn.zip` znajduje się w katalogu domowym administratora, wykonaj:
+
+```bash
+sudo cp ~/dane_rcn.zip /opt/gugik/rcn-importer/input/
+```
+
+> Zastąp `dane_rcn.zip` rzeczywistą nazwą pliku przeznaczonego do importu.
+
+Nadaj użytkownikowi `rcn-importer` własność skopiowanego pliku:
+
+```bash
+sudo chown rcn-importer:rcn-importer /opt/gugik/rcn-importer/input/dane_rcn.zip
+```
+
+Sprawdź, czy plik znajduje się w katalogu `input`:
+
+```bash
+sudo ls -la /opt/gugik/rcn-importer/input
+```
+
+#### 10.2.2. Uruchomienie importu
+
+Uruchom aplikację:
+
+```bash
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+EXIT_CODE=$?
+echo "Kod zakończenia RCN Importer: $EXIT_CODE"
+```
+
+Prawidłowy wynik:
+
+<pre>
+Kod zakończenia RCN Importer: 0
+</pre>
+
+Kod `0` oznacza poprawne zakończenie importu.
+
+#### 10.2.3. Sprawdzenie wyniku importu
+
+Sprawdź katalogi robocze:
+
+```bash
+sudo ls -la /opt/gugik/rcn-importer/processed
+sudo ls -la /opt/gugik/rcn-importer/error
+sudo ls -la /opt/gugik/rcn-importer/artifacts
+sudo ls -la /opt/gugik/rcn-importer/logs
+```
+
+Po poprawnym imporcie plik powinien zostać przeniesiony z katalogu `input` do:
+
+<pre>
+/opt/gugik/rcn-importer/processed
+</pre>
+
+Jeżeli plik trafił do:
+
+<pre>
+/opt/gugik/rcn-importer/error
+</pre>
+
+sprawdź logi aplikacji:
+
+```bash
+sudo ls -lht /opt/gugik/rcn-importer/logs
+```
+
+Sprawdź również dane zapisane w bazie:
+
+```bash
+sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-ladowania-danych-z-gml/gml/count.sql
+```
+
+Liczba obiektów będzie zależna od zawartości pliku z danymi własnego powiatu.
 
 ## 11. Automatyczne uruchamianie — systemd timer
 
