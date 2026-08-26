@@ -207,7 +207,7 @@ Jeżeli z bazą `rcn` ma łączyć się:
 
 administrator PostgreSQL musi skonfigurować nasłuch serwera PostgreSQL, `pg_hba.conf` oraz ewentualną zaporę sieciową.
 
-### 9.1. Sprawdzenie aktualnego nasłuchu
+### 8.1. Sprawdzenie aktualnego nasłuchu
 
 Sprawdź, na jakich adresach PostgreSQL nasłuchuje na porcie `5432`:
 
@@ -226,7 +226,7 @@ PostgreSQL przyjmuje połączenia tylko z lokalnej maszyny.
 
 Jeżeli baza RCN ma być dostępna z innego komputera, np. z serwera MapServer lub komputera administratora, należy skonfigurować nasłuch PostgreSQL.
 
-### 9.2. Konfiguracja nasłuchu PostgreSQL
+### 8.2. Konfiguracja nasłuchu PostgreSQL
 
 Edytuj plik:
 
@@ -260,7 +260,7 @@ Enter
 Ctrl+X
 </pre>
 
-### 9.3. `pg_hba.conf` --- dostęp MapServera do bazy danych
+### 8.3. `pg_hba.conf` --- dostęp MapServera do bazy danych
 
 MapServer może działać:
 
@@ -269,7 +269,7 @@ MapServer może działać:
 
 Sposób konfiguracji zależy od tego, gdzie działa MapServer.
 
-#### 9.3.1. MapServer i PostgreSQL działają na tym samym serwerze
+#### 8.3.1. MapServer i PostgreSQL działają na tym samym serwerze
 
 Jeżeli MapServer działa na **tym samym serwerze Debian co PostgreSQL**,
 nie musisz udostępniać bazy danych w sieci tylko na potrzeby MapServera.
@@ -320,12 +320,12 @@ host    rcn    ms_rcn    127.0.0.1/32    scram-sha-256
 >
 > Połączenie może być realizowane lokalnie przez `127.0.0.1`.
 
-#### 9.3.2. MapServer działa na innym serwerze
+#### 8.3.2. MapServer działa na innym serwerze
 
 Jeżeli MapServer działa na **innym serwerze niż PostgreSQL**, musisz
 zezwolić serwerowi MapServer na połączenie z bazą `rcn` przez sieć.
 
-##### 9.3.2.1. Ustal adres IP serwera MapServer
+##### 8.3.2.1. Ustal adres IP serwera MapServer
 
 Sprawdź adres IP serwera, na którym działa MapServer.
 
@@ -339,7 +339,7 @@ Przykład:
 >
 > W swoim środowisku użyj rzeczywistego adresu IP serwera MapServer.
 
-##### 9.3.2.2. Otwórz plik `pg_hba.conf`
+##### 8.3.2.2. Otwórz plik `pg_hba.conf`
 
 Na serwerze Debian, na którym działa PostgreSQL, wykonaj:
 
@@ -347,7 +347,7 @@ Na serwerze Debian, na którym działa PostgreSQL, wykonaj:
 sudo nano /etc/postgresql/18/main/pg_hba.conf
 ```
 
-##### 9.3.2.3. Dodaj wpis dla MapServera
+##### 8.3.2.3. Dodaj wpis dla MapServera
 
 Na końcu pliku dodaj:
 
@@ -372,7 +372,7 @@ host    rcn    ms_rcn    192.168.1.50/32    scram-sha-256
 Maska `/32` oznacza, że dostęp zostanie przyznany tylko temu jednemu
 adresowi IPv4.
 
-##### 9.3.2.4. Zapisz plik
+##### 8.3.2.4. Zapisz plik
 
 W edytorze `nano` naciśnij kolejno:
 
@@ -382,7 +382,7 @@ Enter
 Ctrl+X
 </pre>
 
-##### 9.3.2.5. Sprawdź `listen_addresses`
+##### 8.3.2.5. Sprawdź `listen_addresses`
 
 Ponieważ MapServer działa na innym serwerze, PostgreSQL musi nasłuchiwać
 na interfejsie sieciowym dostępnym dla MapServera.
@@ -390,7 +390,7 @@ na interfejsie sieciowym dostępnym dla MapServera.
 Skonfiguruj nasłuch zgodnie z punktem **10.2. Konfiguracja nasłuchu
 PostgreSQL**.
 
-##### 9.3.2.6. Sprawdź firewall
+##### 8.3.2.6. Sprawdź firewall
 
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall,
 zezwól na połączenie:
@@ -416,10 +416,7 @@ MapServer.
 > Dla MapServera działającego na innym serwerze podaj jego konkretny
 > adres IP z maską `/32`.
 
-Po zapisaniu zmian przejdź do punktu **10.5. Zastosowanie zmian
-konfiguracji PostgreSQL**.
-
-### 9.4. `pg_hba.conf` — dostęp administratora z DBeavera
+### 8.4. `pg_hba.conf` — dostęp administratora z DBeavera
 
 Jeżeli chcesz połączyć się z bazą danych `rcn` z własnego komputera za pomocą programu **DBeaver**, należy dopuścić adres IP tego komputera w konfiguracji PostgreSQL.
 
@@ -472,7 +469,7 @@ Ctrl+X
 
 > **Ważne:** nie należy bez potrzeby zezwalać na dostęp z dowolnego adresu, np. przez zastosowanie `0.0.0.0/0`. Najbezpieczniej dopuścić konkretny adres IP komputera z DBeaverem za pomocą maski `/32`.
 
-### 9.5. Zastosowanie zmian konfiguracji PostgreSQL
+### 8.5. Zastosowanie zmian konfiguracji PostgreSQL
 
 Jeżeli zmieniono parametr `listen_addresses`, wykonaj restart klastra PostgreSQL:
 
@@ -498,7 +495,7 @@ Jeżeli zmieniono wyłącznie `pg_hba.conf`, wystarczy przeładować konfiguracj
 sudo pg_ctlcluster 18 main reload
 ```
 
-### 9.6. Zapora sieciowa
+### 8.6. Zapora sieciowa
 
 Jeżeli na serwerze lub w infrastrukturze sieciowej działa firewall, port:
 
@@ -510,7 +507,7 @@ musi być dostępny z adresu MapServera lub komputera administratora.
 
 Nie należy otwierać portu `5432` dla całego Internetu lub nieograniczonej sieci, jeżeli nie jest to wymagane.
 
-### 9.7. Test połączenia
+### 8.7. Test połączenia
 
 Z innego komputera można sprawdzić dostępność portu PostgreSQL:
 
@@ -537,7 +534,7 @@ User:     ms_rcn
 Dostęp użytkownika `ms_rcn` jest ograniczony do wymaganych widoków materializowanych przeznaczonych do publikacji danych przez MapServer.
 
 
-## 10. Weryfikacja poprawności instalacji
+## 9. Weryfikacja poprawności instalacji
 
 Po zakończeniu instalacji wykonaj poniższe polecenia kontrolne.
 
@@ -545,7 +542,7 @@ Polecenia w tej sekcji **nie wykonują ponownie instalacji i nie
 modyfikują bazy danych**. Służą wyłącznie do sprawdzenia, czy
 wcześniejsze etapy przebiegły prawidłowo.
 
-### 11.1. Sprawdź, czy PostgreSQL działa
+### 9.1. Sprawdź, czy PostgreSQL działa
 
 Wykonaj:
 
@@ -569,7 +566,7 @@ Status: online
 Jeżeli klaster `18/main` ma status `online`, PostgreSQL jest
 uruchomiony.
 
-### 11.2. Sprawdź wersję PostgreSQL
+### 9.2. Sprawdź wersję PostgreSQL
 
 Wykonaj:
 
@@ -583,7 +580,7 @@ Powinna zostać wyświetlona wersja PostgreSQL 18, np.:
 psql (PostgreSQL) 18.x
 </pre>
 
-### 11.3. Sprawdź, czy istnieje baza `rcn`
+### 9.3. Sprawdź, czy istnieje baza `rcn`
 
 Wykonaj:
 
@@ -599,7 +596,7 @@ rcn
 
 Jeżeli polecenie nie zwróci żadnej wartości, baza `rcn` nie istnieje.
 
-### 11.4. Sprawdź PostGIS
+### 9.4. Sprawdź PostGIS
 
 Wykonaj:
 
@@ -615,7 +612,7 @@ Powinien zostać wyświetlony numer wersji PostGIS, np.:
 
 Oznacza to, że rozszerzenie PostGIS jest dostępne w bazie `rcn`.
 
-### 11.5. Sprawdź schemat `uslugi_rcn`
+### 9.5. Sprawdź schemat `uslugi_rcn`
 
 Wykonaj:
 
@@ -632,7 +629,7 @@ uslugi_rcn
 Jeżeli polecenie nie zwróci żadnej wartości, struktura RCN nie została
 prawidłowo zaimportowana.
 
-### 11.6. Sprawdź tabele w schemacie `uslugi_rcn`
+### 9.6. Sprawdź tabele w schemacie `uslugi_rcn`
 
 Wykonaj:
 
@@ -646,7 +643,7 @@ Powinna zostać wyświetlona lista tabel znajdujących się w schemacie
 Brak tabel może oznaczać, że import struktury bazy nie został wykonany
 prawidłowo.
 
-### 11.7. Sprawdź widoki materializowane dla MapServera
+### 9.7. Sprawdź widoki materializowane dla MapServera
 
 Wykonaj:
 
@@ -697,7 +694,7 @@ Są to widoki wykorzystywane przez MapServer do publikacji danych RCN.
 > Obecność widoku `mv_powiaty` **nie oznacza błędu konfiguracji** i nie
 > wymaga żadnych dodatkowych działań.
 
-### 11.8. Sprawdź użytkownika `ms_rcn`
+### 9.8. Sprawdź użytkownika `ms_rcn`
 
 Wykonaj:
 
@@ -714,7 +711,7 @@ ms_rcn
 Jeżeli polecenie nie zwróci żadnej wartości, użytkownik `ms_rcn` nie
 został utworzony.
 
-### 11.9. Sprawdź uprawnienia użytkownika `ms_rcn`
+### 9.9. Sprawdź uprawnienia użytkownika `ms_rcn`
 
 Sprawdź możliwość połączenia z bazą:
 
@@ -761,7 +758,7 @@ Prawidłowy wynik powinien zawierać:
 
 Wartość `t` oznacza, że użytkownik posiada wymagane uprawnienie.
 
-### 11.10. Sprawdź, gdzie PostgreSQL nasłuchuje
+### 9.10. Sprawdź, gdzie PostgreSQL nasłuchuje
 
 Wykonaj:
 
@@ -782,7 +779,7 @@ nasłuchiwać na odpowiednim interfejsie sieciowym.
 Szczegółowa konfiguracja dostępu sieciowego została opisana w punkcie
 **10**.
 
-### 11.11. Wynik weryfikacji
+### 9.11. Wynik weryfikacji
 
 Instalację bazy danych RCN można uznać za prawidłowo zakończoną, jeżeli:
 
@@ -805,10 +802,7 @@ Instalację bazy danych RCN można uznać za prawidłowo zakończoną, jeżeli:
 Jeżeli wszystkie powyższe testy zakończyły się prawidłowo, **Etap 1 ---
 instalacja i przygotowanie bazy danych RCN --- został zakończony**.
 
-Możesz przejść do **Etapu 2 --- instalacji i konfiguracji aplikacji RCN
-Importer**.
-
-### 12.1. Sprawdzenie listy klastrów PostgreSQL
+### 10.1. Sprawdzenie listy klastrów PostgreSQL
 
 ``` bash
 pg_lsclusters
