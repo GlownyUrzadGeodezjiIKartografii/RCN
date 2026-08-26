@@ -247,13 +247,13 @@ RCN/
 
 **Przy pierwszym wdrożeniu wykonuj etapy dokładnie w tej kolejności:**
 
-``` text
+<pre>
 1. Przygotowanie bazy danych
              ↓
 2. Instalacja RCN Importer i załadowanie danych GML
              ↓
 3. Konfiguracja MapServera i uruchomienie publikacji
-```
+</pre>
 
 > **Ważne**
 >
@@ -337,7 +337,7 @@ i zasilonej danymi w Etapie 2.
 
 # Schemat działania rozwiązania
 
-``` text
+<pre>
           pliki GML z danymi RCN
                     │
                     ▼
@@ -360,7 +360,7 @@ i zasilonej danymi w Etapie 2.
                     │
                     ▼
           publikacja danych RCN
-```
+</pre>
 
 ------------------------------------------------------------------------
 
