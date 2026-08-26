@@ -362,22 +362,6 @@ Przy pustym katalogu `input` kod `5` oznacza brak plików wejściowych, a nie aw
 >
 > Kod zakończenia należy odczytać bezpośrednio po uruchomieniu aplikacji. Zmienna `$?` zawiera kod zakończenia ostatnio wykonanego polecenia, dlatego jest od razu zapisywana do zmiennej `EXIT_CODE`.
 
-Nie należy wcześniej wykonywać polecenia:
-
-```bash
-cd /opt/gugik/rcn-importer
-```
-
-Zwykły użytkownik administracyjny może nie mieć prawa wejścia do katalogu aplikacji. Przejście do katalogu roboczego oraz uruchomienie aplikacji wykonywane są dlatego bezpośrednio jako użytkownik `rcn-importer`.
-
-W przypadku problemów z uruchomieniem sprawdź właściciela i uprawnienia:
-
-```bash
-sudo ls -ld /opt/gugik/rcn-importer
-sudo ls -l /opt/gugik/rcn-importer/rcn-importer-1.0
-sudo ls -l /opt/gugik/rcn-importer/appsettings.json
-```
-
 ## 10. Pierwszy import testowy
 
 W repozytorium znajdują się przygotowane pliki testowe:
