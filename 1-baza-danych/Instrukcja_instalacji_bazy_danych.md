@@ -91,8 +91,6 @@ Uruchom skrypt:
 ./01_przygotowanie_bazy_rcn.sh
 ```
 
-Skrypt nie usuwa istniejącej bazy.
-
 Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
 ## 5. Ustawienie hasła użytkownika PostgreSQL `postgres`
