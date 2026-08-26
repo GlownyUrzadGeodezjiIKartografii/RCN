@@ -256,7 +256,7 @@ RCN/
 
 ------------------------------------------------------------------------
 
-# Etap 1 --- przygotowanie bazy danych RCN
+# Etap 1 - przygotowanie bazy danych RCN
 
 ### Od czego zacząć?
 
