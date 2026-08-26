@@ -14,19 +14,6 @@
 
 Na serwerze nie trzeba instalować .NET Runtime. Aplikacja wykonuje jeden cykl importu i kończy pracę; nie działa stale jako daemon.
 
-## Wymagania sprzętowe
-
-Dla środowiska produkcyjnego, w którym na jednej maszynie uruchomione są PostgreSQL/PostGIS, RCN Importer oraz MapServer, zalecana jest następująca minimalna konfiguracja:
-
-- **procesor:** 4 rdzenie `x86_64/amd64`,
-- **pamięć RAM:** 8 GB,
-- **dysk:** SSD, co najmniej 20 GB wolnego miejsca,
-- **sieć:** połączenie 1 Gb/s.
-
-Wymagana przestrzeń dyskowa może być większa w zależności od wielkości bazy RCN, liczby przechowywanych plików GML/ZIP, logów oraz sposobu wykonywania kopii zapasowych.
-
-W przypadku rozdzielenia PostgreSQL/PostGIS, RCN Importera i MapServera na osobne maszyny wymagania sprzętowe należy dostosować do roli i przewidywanego obciążenia poszczególnych serwerów.
-
 ## 1. Założenia przed rozpoczęciem
 
 Przed rozpoczęciem Etapu 2 muszą być spełnione następujące warunki:
