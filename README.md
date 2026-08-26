@@ -277,7 +277,7 @@ Etap obejmuje między innymi:
 
 ### Od czego zacząć?
 
-Otwórz:
+Otwórz [instrukcję instalacji bazy dnaych](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/1-baza-danych/1-Instrukcja_instalacji_RCN_Linux_Debian.md)
 
 ``` text
 1-baza-danych/1-Instrukcja_instalacji_RCN_Linux_Debian.md
