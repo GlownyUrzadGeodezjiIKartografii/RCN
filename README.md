@@ -221,8 +221,7 @@ repozytorium zdalnym oraz że nie ma zmian do zatwierdzenia.
 
 Po aktualizacji repozytorium nie ma potrzeby ponownego wykonywania
 zakończonych etapów wdrożenia, chyba że instrukcja dotycząca konkretnej
-aktualizacji wyraźnie tego wymaga. Przejdź do właściwego katalogu etapu
-i postępuj zgodnie z jego aktualną instrukcją.
+aktualizacji wyraźnie tego wymaga.
 
 ------------------------------------------------------------------------
 
