@@ -238,12 +238,10 @@ i postępuj zgodnie z jego aktualną instrukcją.
 Repozytorium zostało podzielone na trzy główne katalogi odpowiadające
 kolejnym etapom wdrożenia:
 
-``` text
 RCN/
 ├── 1-baza-danych/
 ├── 2-aplikacja-do-ladowania-danych-z-gml/
 └── 3-konfiguracja-uslugi/
-```
 
 **Przy pierwszym wdrożeniu wykonuj etapy dokładnie w tej kolejności:**
 
