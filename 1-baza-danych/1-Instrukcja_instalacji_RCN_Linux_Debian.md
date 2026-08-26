@@ -433,17 +433,56 @@ konfiguracji PostgreSQL**.
 
 ### 10.4. `pg_hba.conf` — dostęp administratora z DBeavera
 
-Jeżeli administrator chce połączyć się z bazą z własnego komputera, np. przez DBeaver, jego adres IP również musi być dopuszczony.
+Jeżeli chcesz połączyć się z bazą danych `rcn` z własnego komputera za pomocą programu **DBeaver**, należy dopuścić adres IP tego komputera w konfiguracji PostgreSQL.
 
-Przykład dla komputera administratora o adresie `10.0.100.50`:
+Otwórz na serwerze PostgreSQL plik:
+
+```bash
+sudo nano /etc/postgresql/18/main/pg_hba.conf
+```
+
+Na końcu pliku dodaj wpis dla komputera, na którym działa DBeaver.
+
+Przykład dla komputera z DBeaverem o adresie IP `10.0.100.50`:
 
 ```text
 host    rcn    postgres    10.0.100.50/32    scram-sha-256
 ```
 
-Jeżeli do DBeavera zostanie przygotowany osobny użytkownik administracyjny, w miejscu `postgres` należy podać jego nazwę.
+Adres:
 
-Każdy kolejny komputer wymagający bezpośredniego dostępu do PostgreSQL powinien zostać świadomie dopuszczony przez administratora, najlepiej osobnym wpisem `/32`.
+```text
+10.0.100.50
+```
+
+jest przykładowy. Zastąp go rzeczywistym adresem IP komputera, na którym działa DBeaver.
+
+Wpis oznacza:
+
+- `rcn` – baza danych, do której zezwalamy na połączenie,
+- `postgres` – użytkownik PostgreSQL używany do połączenia,
+- `10.0.100.50/32` – adres IP komputera z DBeaverem,
+- `/32` – dostęp jest dozwolony wyłącznie z tego jednego adresu IP,
+- `scram-sha-256` – uwierzytelnianie za pomocą hasła.
+
+Jeżeli DBeaver ma łączyć się przy użyciu innego użytkownika PostgreSQL, zamiast `postgres` wpisz jego nazwę.
+
+Jeżeli dostęp ma być możliwy z kilku komputerów, dodaj osobny wpis dla każdego adresu IP, np.:
+
+```text
+host    rcn    postgres    10.0.100.50/32    scram-sha-256
+host    rcn    postgres    10.0.100.51/32    scram-sha-256
+```
+
+Po wprowadzeniu zmian zapisz plik:
+
+```text
+Ctrl+O
+Enter
+Ctrl+X
+```
+
+> **Ważne:** nie należy bez potrzeby zezwalać na dostęp z dowolnego adresu, np. przez zastosowanie `0.0.0.0/0`. Najbezpieczniej dopuścić konkretny adres IP komputera z DBeaverem za pomocą maski `/32`.
 
 ### 10.5. Zastosowanie zmian konfiguracji PostgreSQL
 
