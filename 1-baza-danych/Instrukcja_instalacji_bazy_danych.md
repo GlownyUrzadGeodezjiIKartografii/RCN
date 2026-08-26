@@ -1146,4 +1146,4 @@ Jeżeli instalacja i weryfikacja bazy danych RCN zakończyły się prawidłowo, 
 
 Przejdź do **Etapu 2 — instalacji aplikacji RCN Importer**:
 
-[Otwórz instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/2-Instrukcja-Instalacji-Aplikacji-RCN-Importer-Linux-Debian.md)
+[Otwórz instrukcję instalacji aplikacji RCN Importer](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/2-aplikacja-do-ladowania-danych-z-gml/Instrukcja-Instalacji-Aplikacji-RCN-Importer.md)
