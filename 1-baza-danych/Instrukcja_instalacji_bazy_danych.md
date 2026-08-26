@@ -95,7 +95,7 @@ Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
 ## 5. Ustawienie hasła użytkownika PostgreSQL `postgres`
 
-Uruchom konsolę PostgreSQL:
+Uruchom:
 
 ```bash
 sudo -u postgres psql
