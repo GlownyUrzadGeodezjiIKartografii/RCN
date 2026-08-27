@@ -114,7 +114,7 @@ Wszystkie pliki należy umieścić w katalogu `/opt/gugik/mapserver/rcn` - poza 
 ```bash
 # Utworzenie katalogu docelowego
 sudo mkdir -p /opt/gugik/mapserver/rcn
-sudo cp -r ~/RCN/setup-deb/* /opt/gugik/mapserver/rcn/
+sudo cp -r ~/RCN/3-konfiguracja-uslugi/setup-deb/* /opt/gugik/mapserver/rcn/
 
 sudo chown -R root:www-data /opt/gugik/mapserver/rcn
 sudo chmod -R u=rwX,g=rX,o= /opt/gugik/mapserver/rcn
@@ -127,7 +127,7 @@ sudo chmod 770 /opt/gugik/mapserver/rcn/logs
 
 ### Zawartość katalogu wdrożeniowego
 
-```
+<pre>
 /opt/gugik/mapserver/rcn/
 ├── rcn.map                  # plik konfiguracyjny usługi MapServera
 ├── common_md.inc            # wspólne definicje metadanych GML (dołączane w rcn.map)
@@ -140,7 +140,7 @@ sudo chmod 770 /opt/gugik/mapserver/rcn/logs
 ├── rcn_budynki.xml          # szablon wyników – warstwa budynków
 ├── rcn_lokale.xml           # szablon wyników – warstwa lokali
 └── logs/                    # podkatalog logów MapServera (do utworzenia)
-```
+</pre>
 
 ---
 
@@ -168,19 +168,19 @@ Poniżej wymienione są one wg kolejności sekcji pliku `rcn.map` wraz z objaśn
 
 **Jak pobrać wartości dla parametrów EXTENT i "ows_extent" powiatu z PRG (WFS GUGiK)?**
 
-Należy wyfiltrować właściwy powiat po 4-cyfrowym kodzie TERYT powiatu (`JPT_KOD_JE`) za pomocą polecenia `ogrinfo`. Poniżej przykład dla powiatu warszawskiego zachodniego (`WHERE JPT_KOD_JE='1432'`):
+Należy wyfiltrować właściwy powiat po 4-cyfrowym kodzie TERYT powiatu (`JPT_KOD_JE`) za pomocą polecenia `ogrinfo`. Poniżej przykład dla m. Tarnobrzeg (`WHERE JPT_KOD_JE='1864'`):
 
 ```bash
 ogrinfo -q -dialect SQLite \
-  -sql "SELECT ST_MinX(msGeometry) || ' ' || ST_MinY(msGeometry) || ' ' || ST_MaxX(msGeometry) || ' ' || ST_MaxY(msGeometry) AS bbox FROM 'A02_Granice_powiatow' WHERE JPT_KOD_JE='1432'" \
+  -sql "SELECT ST_MinX(msGeometry) || ' ' || ST_MinY(msGeometry) || ' ' || ST_MaxX(msGeometry) || ' ' || ST_MaxY(msGeometry) AS bbox FROM 'A02_Granice_powiatow' WHERE JPT_KOD_JE='1864'" \
   "WFS:https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WFS/AdministrativeBoundaries" \
   2>/dev/null | grep bbox
 ```
 
 Przykładowy wynik:
-```text
-bbox (String) = 589497.607598 478001.657311 631169.044838 503142.990223
-```
+<pre>
+bbox (String) = 684335.465185 297178.3974 697759.81489 313412.404953
+</pre>
 > Do pliku `rcn.map` należy skopiować wyłącznie wartość **po znaku `=`** (cztery liczby oddzielone spacjami).
 
 #### Metadane usługi - sekcja `WEB.METADATA`
@@ -273,14 +273,14 @@ Mapfile deklaruje jeden format wyjściowy dla `GetFeatureInfo`:
 
 Łańcuch inkludowania XML:
 
-```text
+<pre>
 GetFeatureInfo
- ├── header.xml           ← <GETFEATUREINFO>
+ ├── header.xml           ← &lt;GETFEATUREINFO&gt;
  ├── [resultset layer=budynki] → rcn_budynki.xml ─┐
  ├── [resultset layer=lokale]  → rcn_lokale.xml  ─┼─→ dołączają common_gfi.xml
  ├── [resultset layer=dzialki] → rcn_dzialki.xml ─┘
- └── footer.xml           ← </GETFEATUREINFO>
-```
+ └── footer.xml           ← &lt;/GETFEATUREINFO&gt;
+</pre>
 
 Atrybuty eksponowane w szablonach:
 - wspólne pola (m.in. `tran_*`, `dok_*`, `nier_*`) znajdują się w wydzielonym pliku `common_gfi.xml`, który jest dołączany w szablonach poszczególnych warstw.
@@ -299,9 +299,9 @@ Każdy atrybut w szablonie odpowiada kolumnie w odpowiednim widoku zmaterializow
 
 Plik `Fontset.txt` rejestruje czcionki dostępne dla MapServera:
 
-```
+<pre>
 arial	arial.ttf
-```
+</pre>
 
 Czcionka `arial` jest używana przez warstwę `dzialki` (etykiety numerów działek) oraz `lokale` (etykieta literowa „L").
 
