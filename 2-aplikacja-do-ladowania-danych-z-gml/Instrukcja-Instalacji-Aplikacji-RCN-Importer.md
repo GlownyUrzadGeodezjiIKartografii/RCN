@@ -83,7 +83,7 @@ cd ~/RCN
 git pull --ff-only
 ```
 
-Po aktualizacji wróć do Etapu 2:
+Po aktualizacji wróć do:
 
 ```bash
 cd ~/RCN/2-aplikacja-do-ladowania-danych-z-gml
@@ -158,12 +158,6 @@ rcn-importer-1.0
 appsettings.json
 pozostałe pliki i biblioteki publikacji
 </pre>
-
-> **Ważne**
->
-> Kopiuj cały katalog publikacji. Sam plik `rcn-importer-1.0` nie wystarcza do działania aplikacji.
-
----
 
 ## 6. Przygotowanie katalogów i uprawnień aplikacji
 
@@ -315,7 +309,8 @@ Tryb `UPSERT` jest zalecany dla testu bazowego i późniejszego importu pliku pr
 
 Jeżeli od razu importujesz dane własnego powiatu, wybierz tryb odpowiedni do sposobu przygotowania danych.
 
-**Najbezpieczniejszym wyborem jest `UPSERT`**, ponieważ istniejące rekordy są aktualizowane, a nowe są dodawane bez wcześniejszego usuwania całego zestawu danych powiatu.
+**Najbezpieczniejszym wyborem jest `UPSERT`**, ponieważ istniejące rekordy są aktualizowane, a nowe są dodawane bez wcześniejszego usuwania całego zestawu danych powiatu. 
+Jeśli importowana transakcja z pliku GML jest już w bazie danych zostanie pominięta.
 
 <pre>
 "Mode": "UPSERT"
@@ -370,9 +365,7 @@ Sprawdź również schemat:
 sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn -c "\dt uslugi_rcn.*"
 ```
 
-Jeżeli baza jest zdalna, konfiguracja `listen_addresses`, `pg_hba.conf` i zapory została opisana w Etapie 1.
-
-## 9. Pierwsze uruchomienie bez danych
+## 9. Pierwsze uruchomienie aplikacji bez danych
 
 Aplikację należy uruchamiać jako dedykowany użytkownik systemowy `rcn-importer`.
 
@@ -437,8 +430,6 @@ Test wykonaj w następującej kolejności:
 2. sprawdzenie liczby zaimportowanych obiektów;
 3. import pliku przyrostowego `1864-2-przyrostowy.zip`;
 4. ponowne sprawdzenie liczby obiektów po imporcie przyrostowym.
-
-> **Ważne:** Import pliku przyrostowego wykonaj dopiero po poprawnym zakończeniu importu pliku bazowego.
 
 #### 10.1.1. Import pliku bazowego
 
@@ -524,11 +515,7 @@ Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych 
 
 > **Uwaga:** Jeżeli wynik zostanie wyświetlony w trybie podglądu i nie nastąpi automatyczny powrót do wiersza poleceń, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
 
-Po potwierdzeniu, że dane zostały poprawnie zapisane w bazie, przejdź do importu pliku przyrostowego.
-
 #### 10.1.3. Import pliku przyrostowego
-
-Import pliku przyrostowego wykonaj **dopiero po poprawnym zakończeniu importu pliku bazowego i sprawdzeniu danych w bazie**.
 
 Skopiuj plik przyrostowy do katalogu `input`:
 
@@ -588,12 +575,6 @@ Sprawdź:
 sudo ls -la /opt/gugik/rcn-importer/processed
 ```
 
-Jeżeli plik trafił do katalogu `error`, sprawdź logi aplikacji:
-
-```bash
-sudo ls -lht /opt/gugik/rcn-importer/logs
-```
-
 #### 10.1.4. Sprawdzenie danych po imporcie pliku przyrostowego
 
 Ponownie uruchom `count.sql`:
@@ -603,10 +584,6 @@ sudo -u postgres /usr/lib/postgresql/18/bin/psql -d rcn < ~/RCN/2-aplikacja-do-l
 ```
 
 Po poprawnym wykonaniu powinny zostać wyświetlone liczby obiektów zapisanych w bazie po imporcie pliku przyrostowego.
-
-Porównaj wynik z wartościami uzyskanymi po imporcie pliku bazowego. Pozwala to sprawdzić, czy dane z pliku przyrostowego zostały prawidłowo dodane lub zaktualizowane w bazie.
-
-> **Uwaga:** Jeżeli wynik zostanie wyświetlony w trybie podglądu i nie nastąpi automatyczny powrót do wiersza poleceń, naciśnij `q`, aby zakończyć podgląd i wrócić do terminala.
 
 #### 10.1.5. Końcowa weryfikacja testu
 
@@ -662,8 +639,6 @@ Przykładowa wartość parametru `TerytPow`:
 gdzie `XXXX` oznacza właściwy kod TERYT powiatu.
 
 > **Ważne:** Kod `TerytPow` musi odpowiadać powiatowi, którego dane znajdują się w pliku przeznaczonym do importu.
-
-> **Ważne:** Jeżeli nie masz pewności, którego trybu importu użyć, wybierz `UPSERT`. Tryb `REPLACE` stosuj tylko wtedy, gdy importowany plik zawiera kompletny zestaw danych powiatu i świadomie chcesz zastąpić dotychczasowe dane znajdujące się w bazie.
 
 #### 10.2.1. Skopiowanie własnego pliku
 
