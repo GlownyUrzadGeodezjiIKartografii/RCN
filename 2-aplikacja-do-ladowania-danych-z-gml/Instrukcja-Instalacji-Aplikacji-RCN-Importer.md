@@ -13,7 +13,7 @@
 **Plik wykonywalny:** `rcn-importer-1.0`  
 **Publikacja:** self-contained `linux-x64`
 
-Na serwerze nie trzeba instalować .NET Runtime. Aplikacja wykonuje jeden cykl importu i kończy pracę; nie działa stale jako daemon.
+Na serwerze nie trzeba instalować .NET. Aplikacja uruchamia się na czas importu danych, wykonuje jeden cykl importu, a po jego zakończeniu automatycznie się wyłącza. Nie działa stale w tle na serwerze.
 
 ## 1. Założenia przed rozpoczęciem
 
