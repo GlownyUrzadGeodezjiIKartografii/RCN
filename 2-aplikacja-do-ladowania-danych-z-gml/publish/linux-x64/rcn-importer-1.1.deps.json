@@ -7,7 +7,7 @@
   "targets": {
     ".NETCoreApp,Version=v9.0": {},
     ".NETCoreApp,Version=v9.0/linux-x64": {
-      "rcn-importer-1.0/1.0": {
+      "rcn-importer-1.1/1.1": {
         "dependencies": {
           "GUGiK": "1.0.0",
           "GUGiK.KN.EGiB.Uslugi.Rcn.Application": "1.0.0",
@@ -17,7 +17,7 @@
           "runtimepack.Microsoft.NETCore.App.Runtime.linux-x64": "9.0.15"
         },
         "runtime": {
-          "rcn-importer-1.0.dll": {}
+          "rcn-importer-1.1.dll": {}
         }
       },
       "runtimepack.Microsoft.NETCore.App.Runtime.linux-x64/9.0.15": {
@@ -1521,7 +1521,7 @@
           }
         }
       },
-      "GUGiK.KN.EGiB.Uslugi.Rcn.Database/1.0.0": {
+      "GUGiK.KN.EGiB.Uslugi.Rcn.Database/1.1.0": {
         "dependencies": {
           "EFCore.NamingConventions": "9.0.0",
           "GUGiK": "1.0.0",
@@ -1532,15 +1532,15 @@
         },
         "runtime": {
           "GUGiK.KN.EGiB.Uslugi.Rcn.Database.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
           }
         }
       },
       "GUGiK.KN.EGiB.Uslugi.Rcn.Domain/1.0.0": {
         "dependencies": {
           "GUGiK": "1.0.0",
-          "GUGiK.KN.EGiB.Uslugi.Rcn.Database": "1.0.0",
+          "GUGiK.KN.EGiB.Uslugi.Rcn.Database": "1.1.0",
           "NetTopologySuite": "2.6.0",
           "NetTopologySuite.IO.GeoJSON": "4.0.0",
           "NetTopologySuite.IO.GeoJSON4STJ": "4.0.0"
@@ -1576,7 +1576,7 @@
     }
   },
   "libraries": {
-    "rcn-importer-1.0/1.0": {
+    "rcn-importer-1.1/1.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -2016,7 +2016,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "GUGiK.KN.EGiB.Uslugi.Rcn.Database/1.0.0": {
+    "GUGiK.KN.EGiB.Uslugi.Rcn.Database/1.1.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
