@@ -379,9 +379,9 @@ echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 
 Po zakończeniu działania aplikacji zostanie wyświetlony zwrócony kod, np.:
 
-```text
+<pre>
 Kod zakończenia RCN Importer: 5
-```
+</pre>
 
 Przy pustym katalogu `input` kod `5` oznacza brak plików wejściowych, a nie awarię bazy.
 
