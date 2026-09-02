@@ -9,8 +9,8 @@
 **Rok:** 2026  
 **Technologia:** .NET 9  
 **Typ aplikacji:** aplikacja konsolowa  
-**Wersja:** 1.0  
-**Plik wykonywalny:** `rcn-importer-1.0`  
+**Wersja:** 1.1  
+**Plik wykonywalny:** `rcn-importer-1.1`  
 **Publikacja:** self-contained `linux-x64`
 
 Na serwerze nie trzeba instalować .NET. Aplikacja uruchamia się na czas importu danych, wykonuje jeden cykl importu, a po jego zakończeniu automatycznie się wyłącza. Nie działa stale w tle na serwerze.
@@ -56,7 +56,7 @@ Aktualna struktura tego katalogu jest następująca:
 │   └── count.sql
 ├── publish/
 │   └── linux-x64/
-│       ├── rcn-importer-1.0
+│       ├── rcn-importer-1.1
 │       ├── appsettings.json
 │       └── pozostałe pliki publikacji
 ├── Instrukcja-Instalacji-Aplikacji-RCN-Importer.md
@@ -154,7 +154,7 @@ sudo ls -la /opt/gugik/rcn-importer
 W katalogu powinny znajdować się co najmniej:
 
 <pre>
-rcn-importer-1.0
+rcn-importer-1.1
 appsettings.json
 pozostałe pliki i biblioteki publikacji
 </pre>
@@ -177,7 +177,7 @@ Nadaj wymagane uprawnienia do katalogów i plików:
 
 ```bash
 sudo chmod -R u=rwX,g=rX,o= /opt/gugik/rcn-importer
-sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.0
+sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.1
 sudo chmod 600 /opt/gugik/rcn-importer/appsettings.json
 ```
 
@@ -192,7 +192,7 @@ Docelowo:
 
 <pre>
 /opt/gugik/rcn-importer/
-├── rcn-importer-1.0
+├── rcn-importer-1.1
 ├── appsettings.json
 ├── input/
 ├── processed/
@@ -372,7 +372,7 @@ Aplikację należy uruchamiać jako dedykowany użytkownik systemowy `rcn-import
 Uruchom aplikację:
 
 ```bash
-sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.1'
 EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
@@ -460,7 +460,7 @@ W katalogu powinien znajdować się plik:
 Uruchom aplikację:
 
 ```bash
-sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.1'
 EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
@@ -544,7 +544,7 @@ W katalogu powinien znajdować się plik:
 Uruchom ponownie aplikację:
 
 ```bash
-sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.1'
 EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
@@ -677,7 +677,7 @@ Upewnij się, że w katalogu znajduje się właściwy plik przeznaczony do impor
 Uruchom aplikację:
 
 ```bash
-sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.1'
 EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
@@ -762,7 +762,7 @@ Type=oneshot
 User=rcn-importer
 Group=rcn-importer
 WorkingDirectory=/opt/gugik/rcn-importer
-ExecStart=/opt/gugik/rcn-importer/rcn-importer-1.0
+ExecStart=/opt/gugik/rcn-importer/rcn-importer-1.1
 SuccessExitStatus=5
 NoNewPrivileges=true
 PrivateTmp=true
@@ -876,7 +876,7 @@ Ponownie ustaw właściciela i wymagane uprawnienia:
 ```bash
 sudo chown -R rcn-importer:rcn-importer /opt/gugik/rcn-importer
 sudo chmod -R u=rwX,g=rX,o= /opt/gugik/rcn-importer
-sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.0
+sudo chmod +x /opt/gugik/rcn-importer/rcn-importer-1.1
 sudo chmod 600 /opt/gugik/rcn-importer/appsettings.json
 ```
 
@@ -889,7 +889,7 @@ sudo ls -la /opt/gugik/rcn-importer
 Wykonaj ręczny test aplikacji:
 
 ```bash
-sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.1'
 EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
@@ -957,7 +957,7 @@ sudo ls -la /opt/gugik/rcn-importer
 Sprawdzenie pliku wykonywalnego i konfiguracji:
 
 ```bash
-sudo ls -l /opt/gugik/rcn-importer/rcn-importer-1.0
+sudo ls -l /opt/gugik/rcn-importer/rcn-importer-1.1
 sudo ls -l /opt/gugik/rcn-importer/appsettings.json
 ```
 
@@ -989,7 +989,7 @@ systemctl list-timers --all | grep rcn-importer
 W przypadku ręcznego testu aplikację uruchamiaj jako użytkownik `rcn-importer` i sprawdź zwrócony kod zakończenia:
 
 ```bash
-sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.0'
+sudo -u rcn-importer sh -c 'cd /opt/gugik/rcn-importer && ./rcn-importer-1.1'
 EXIT_CODE=$?
 echo "Kod zakończenia RCN Importer: $EXIT_CODE"
 ```
@@ -1118,7 +1118,7 @@ ls -la ~/RCN
 
 Etap 2 można uznać za zakończony, jeżeli:
 
-- istnieje `/opt/gugik/rcn-importer/rcn-importer-1.0`;
+- istnieje `/opt/gugik/rcn-importer/rcn-importer-1.1`;
 - aplikacja uruchamia się jako użytkownik systemowy `rcn-importer`;
 - `appsettings.json` zawiera poprawne połączenie z bazą danych, właściwy `TerytPow` i świadomie wybrany `Mode`;
 - wykonano co najmniej jeden poprawny import;
