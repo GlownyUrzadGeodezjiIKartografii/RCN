@@ -26,7 +26,7 @@ Nieruchomości\
 **Aplikacja importująca:** RCN Importer\
 **Serwer publikacyjny:** MapServer\
 **Repozytorium:** `GlownyUrzadGeodezjiIKartografii/RCN`\
-**Wersja:** 1.0
+**Wersja:** 1.1
 
 ## Wymagania sprzętowe
 
