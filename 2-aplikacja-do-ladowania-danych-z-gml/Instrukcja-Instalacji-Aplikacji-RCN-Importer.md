@@ -48,7 +48,7 @@ ls -la
 
 Aktualna struktura tego katalogu jest następująca:
 
-```text
+<pre>
 2-aplikacja-do-ladowania-danych-z-gml/
 ├── gml/
 │   ├── 1864-1-bazowy.zip
@@ -63,7 +63,7 @@ Aktualna struktura tego katalogu jest następująca:
 ├── O-Aplikacji-RCN-Importer.md
 ├── reset_instalacji_rcn_importer.md
 └── reset_instalacji_rcn_importer.sh
-```
+</pre>
 
 Znaczenie najważniejszych elementów:
 
