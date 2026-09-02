@@ -572,8 +572,8 @@ importu. Nie należy używać tego katalogu jako archiwum.
 W docelowej instalacji aplikacja działa z katalogu `/opt/gugik/rcn-importer` jako dedykowany użytkownik systemowy `rcn-importer`. Dla wersji opublikowanej jako plik wykonywalny:
 
 ``` bash
-chmod +x rcn-importer-1.0
-sudo -u rcn-importer ./rcn-importer-1.0
+chmod +x rcn-importer-1.1
+sudo -u rcn-importer ./rcn-importer-1.1
 ```
 
 Aplikacja może być również uruchamiana automatycznie przez
