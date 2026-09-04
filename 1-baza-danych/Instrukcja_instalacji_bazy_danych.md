@@ -15,7 +15,7 @@ Pakiet umożliwia instalację PostgreSQL i PostGIS, utworzenie bazy danych `rcn`
 **Baza danych:** PostgreSQL 18  
 **Rozszerzenie przestrzenne:** PostGIS  
 **Schemat bazy danych:** `uslugi_rcn`  
-**Wersja:** 1.1
+**Wersja:** 1.2
 
 # Instalacja i przygotowanie bazy RCN na Debianie
 
