@@ -73,10 +73,25 @@ Skrypt:
 3. dodaje oficjalne repozytorium PostgreSQL PGDG,
 4. instaluje PostgreSQL 18,
 5. instaluje PostGIS dla PostgreSQL 18,
-6. sprawdza lub tworzy klaster `18/main`,
-7. uruchamia PostgreSQL,
-8. sprawdza wersję serwera,
-9. sprawdza dostępność rozszerzenia `postgis`.
+6. instaluje moduł `passwordcheck`,
+7. sprawdza lub tworzy klaster `18/main`,
+8. uruchamia PostgreSQL,
+9. sprawdza wersję serwera,
+10. sprawdza dostępność rozszerzenia `postgis`,
+11. konfiguruje przechowywanie nowych haseł przy użyciu `SCRAM-SHA-256`,
+12. włącza moduł kontroli haseł `passwordcheck`,
+13. ustawia minimalną długość hasła na 12 znaków,
+14. prosi administratora o ustawienie hasła użytkownika PostgreSQL `postgres`,
+15. sprawdza, czy podane hasło spełnia wymagania bezpieczeństwa,
+16. ustawia hasło użytkownika `postgres`.
+
+> **WAŻNE – USTAWIENIE HASŁA UŻYTKOWNIKA `postgres`**
+>
+> Podczas wykonywania skryptu `00_instalacja_postgresql_postgis.sh` zostaniesz poproszony o ustawienie hasła dla użytkownika PostgreSQL `postgres`.
+>
+> Hasło nie jest wyświetlane podczas wpisywania.
+>
+> Skrypt nie zaakceptuje hasła, które nie spełnia określonych wymagań bezpieczeństwa.
 
 Typowe ścieżki dla tej instalacji:
 
@@ -102,40 +117,41 @@ Uruchom skrypt:
 
 Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
-## 5. Ustawienie hasła użytkownika PostgreSQL `postgres`
+## 5. Hasło użytkownika PostgreSQL `postgres`
 
-Użytkownik `postgres` posiada uprawnienia administracyjne do serwera PostgreSQL, dlatego należy zabezpieczyć go **silnym i unikalnym hasłem**.
-
-Uruchom konsolę PostgreSQL:
+Hasło użytkownika administracyjnego PostgreSQL `postgres` jest ustawiane podczas wykonywania skryptu:
 
 ```bash
-sudo -u postgres psql
+./00_instalacja_postgresql_postgis.sh
 ```
 
-Następnie ustaw hasło dla użytkownika `postgres`:
-
-```text
-\password postgres
-```
-
-Wprowadź nowe hasło, a następnie wpisz je ponownie w celu potwierdzenia.
+Podczas instalacji skrypt poprosi o dwukrotne wprowadzenie nowego hasła. Hasło nie jest wyświetlane w terminalu podczas wpisywania.
 
 ### Wymagania dotyczące hasła
 
-Ustawiając hasło:
+Skrypt wymaga, aby hasło:
 
-- użyj **silnego i odpowiednio długiego hasła**,
-- stosuj kombinację małych i wielkich liter, cyfr oraz znaków specjalnych,
-- nie używaj haseł domyślnych ani łatwych do odgadnięcia, np. `postgres`, `admin`, `password`,
-- nie używaj tego samego hasła w innych systemach lub usługach,
-- nie umieszczaj hasła w dokumentacji, repozytorium Git ani innych publicznie dostępnych miejscach,
-- przechowuj hasło w bezpiecznym miejscu, zgodnie z zasadami bezpieczeństwa obowiązującymi w organizacji.
+- miało co najmniej **12 znaków**,
+- zawierało co najmniej jedną małą literę,
+- zawierało co najmniej jedną wielką literę,
+- zawierało co najmniej jedną cyfrę,
+- zawierało co najmniej jeden znak specjalny.
 
-Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
+Jeżeli hasło nie spełnia powyższych wymagań lub podane dwukrotnie hasła nie są identyczne, hasło nie zostanie ustawione i skrypt poprosi o jego ponowne wprowadzenie.
 
-```text
-\q
-```
+Dodatkowo podczas instalacji PostgreSQL konfigurowane są mechanizmy bezpieczeństwa haseł:
+
+- nowe hasła są przechowywane przy użyciu `SCRAM-SHA-256`,
+- włączany jest moduł `passwordcheck`,
+- minimalna długość hasła jest ustawiana na 12 znaków.
+
+Niezależnie od wymagań technicznych należy:
+
+- stosować **unikalne hasło**,
+- nie używać haseł domyślnych ani łatwych do odgadnięcia,
+- nie używać tego samego hasła w innych systemach lub usługach,
+- nie umieszczać hasła w dokumentacji, repozytorium Git ani innych publicznie dostępnych miejscach,
+- przechowywać hasło w bezpiecznym miejscu, zgodnie z zasadami bezpieczeństwa obowiązującymi w organizacji.
 
 > **WAŻNE – ZAPISZ HASŁO UŻYTKOWNIKA `postgres`**
 >
