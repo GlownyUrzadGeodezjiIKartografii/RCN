@@ -104,19 +104,32 @@ Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
 
 ## 5. Ustawienie hasła użytkownika PostgreSQL `postgres`
 
-Uruchom:
+Użytkownik `postgres` posiada uprawnienia administracyjne do serwera PostgreSQL, dlatego należy zabezpieczyć go **silnym i unikalnym hasłem**.
+
+Uruchom konsolę PostgreSQL:
 
 ```bash
 sudo -u postgres psql
 ```
 
-Następnie wprowadź:
+Następnie ustaw hasło dla użytkownika `postgres`:
 
 ```text
 \password postgres
 ```
 
-Podaj nowe hasło, a następnie wpisz je ponownie w celu potwierdzenia.
+Wprowadź nowe hasło, a następnie wpisz je ponownie w celu potwierdzenia.
+
+### Wymagania dotyczące hasła
+
+Ustawiając hasło:
+
+- użyj **silnego i odpowiednio długiego hasła**,
+- stosuj kombinację małych i wielkich liter, cyfr oraz znaków specjalnych,
+- nie używaj haseł domyślnych ani łatwych do odgadnięcia, np. `postgres`, `admin`, `password`,
+- nie używaj tego samego hasła w innych systemach lub usługach,
+- nie umieszczaj hasła w dokumentacji, repozytorium Git ani innych publicznie dostępnych miejscach,
+- przechowuj hasło w bezpiecznym miejscu, zgodnie z zasadami bezpieczeństwa obowiązującymi w organizacji.
 
 Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
 
@@ -128,10 +141,9 @@ Po prawidłowym ustawieniu hasła zakończ pracę z konsolą PostgreSQL:
 >
 > Zapisz ustawione hasło i przechowuj je w bezpiecznym miejscu.
 >
-> **To samo hasło będzie potrzebne podczas konfiguracji aplikacji RCN Importer w Etapie 2 w pliku `appsettings.json`.**
+> Hasło będzie potrzebne podczas konfiguracji aplikacji **RCN Importer** w **Etapie 2**.
 >
 > PostgreSQL nie umożliwia późniejszego odczytania ustawionego hasła. W przypadku jego utraty konieczne będzie ustawienie nowego.
->
 
 ## 6. Import struktury
 
