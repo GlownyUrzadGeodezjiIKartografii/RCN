@@ -155,18 +155,17 @@ Uruchom skrypt:
 
 Jeżeli schemat `uslugi_rcn` już istnieje, import jest pomijany i wykonywana jest weryfikacja.
 
-
 ## 7. Użytkownik PostgreSQL dla MapServera
 
-Po utworzeniu struktury bazy należy skonfigurować oddzielnego użytkownika PostgreSQL przeznaczonego wyłącznie dla MapServera.
+Po utworzeniu struktury bazy danych należy skonfigurować **oddzielnego użytkownika PostgreSQL przeznaczonego wyłącznie do połączenia MapServera z bazą RCN**.
 
 Użytkownik:
 
-<pre>
+```text
 ms_rcn
-</pre>
+```
 
-ma otrzymać tylko:
+powinien działać zgodnie z **zasadą minimalnych uprawnień** i otrzymać wyłącznie uprawnienia niezbędne do publikacji danych przez MapServer:
 
 - `CONNECT` do bazy `rcn`,
 - `USAGE` na schemat `uslugi_rcn`,
@@ -175,7 +174,9 @@ ma otrzymać tylko:
   - `uslugi_rcn.mv_budynki`,
   - `uslugi_rcn.mv_lokale`.
 
-Użytkownik `ms_rcn` nie powinien otrzymywać praw do zapisu danych ani modyfikowania struktury bazy.
+Użytkownik `ms_rcn` **nie powinien posiadać uprawnień do zapisu, usuwania lub modyfikowania danych ani do zmiany struktury bazy danych**.
+
+### Uruchomienie konfiguracji
 
 Uruchom:
 
@@ -183,20 +184,50 @@ Uruchom:
 ./03_konfiguracja_uzytkownika_mapserver.sh
 ```
 
-Przy pierwszym uruchomieniu skrypt poprosi o hasło dla użytkownika `ms_rcn`.
+Przy pierwszym uruchomieniu skrypt poprosi o ustawienie hasła dla użytkownika `ms_rcn`.
+
+### Wymagania dotyczące hasła
+
+Ustawiając hasło dla użytkownika `ms_rcn`:
+
+- użyj **silnego i odpowiednio długiego hasła**,
+- stosuj kombinację małych i wielkich liter, cyfr oraz znaków specjalnych,
+- nie używaj haseł domyślnych ani łatwych do odgadnięcia,
+- nie używaj tego samego hasła w innych systemach lub usługach,
+- nie umieszczaj hasła w dokumentacji, repozytorium Git ani innych publicznie dostępnych miejscach,
+- przechowuj hasło w bezpiecznym miejscu, zgodnie z zasadami bezpieczeństwa obowiązującymi w organizacji.
 
 > **WAŻNE – ZAPISZ HASŁO UŻYTKOWNIKA `ms_rcn`**
 >
-> Hasło podane w tym kroku należy **zapisać i przechowywać w bezpiecznym miejscu**.
+> Hasło ustawione w tym kroku należy **zapisać i przechowywać w bezpiecznym miejscu**.
 >
-> Hasło będzie potrzebne w **Etapie 3 podczas konfiguracji połączenia MapServera z bazą danych RCN**.
+> Będzie ono potrzebne w **Etapie 3 podczas konfiguracji połączenia MapServera z bazą danych RCN**.
 >
 > PostgreSQL nie umożliwia późniejszego odczytania ustawionego hasła. W przypadku jego utraty konieczne będzie ustawienie nowego.
->
 
-Jeżeli użytkownik `ms_rcn` już istnieje, skrypt nie zmienia jego hasła, ale ponownie ustawia wymagane uprawnienia. Jest to istotne po ponownym utworzeniu bazy `rcn`.
+### Ponowne uruchomienie skryptu
 
-Użytkownik administracyjny `postgres` pozostaje w systemie. Jest nadal wykorzystywany do przygotowania bazy, importu struktury oraz operacji administracyjnych. MapServer powinien natomiast korzystać z ograniczonego użytkownika `ms_rcn`.
+Jeżeli użytkownik `ms_rcn` już istnieje, skrypt **nie zmienia jego hasła**, ale ponownie nadaje wymagane uprawnienia.
+
+Jest to szczególnie istotne po ponownym utworzeniu bazy `rcn` lub odtworzeniu jej struktury, ponieważ pozwala przywrócić wymagane uprawnienia użytkownika MapServera.
+
+### Rozdzielenie kont administracyjnych i usługowych
+
+Użytkownik administracyjny `postgres` pozostaje w systemie i jest wykorzystywany wyłącznie do czynności wymagających podwyższonych uprawnień, takich jak:
+
+- przygotowanie bazy danych,
+- instalacja i aktualizacja jej struktury,
+- wykonywanie operacji administracyjnych.
+
+**MapServer nie powinien łączyć się z bazą danych przy użyciu użytkownika `postgres`.**
+
+Do połączenia MapServera z bazą `rcn` należy używać wyłącznie dedykowanego użytkownika:
+
+```text
+ms_rcn
+```
+
+Takie rozdzielenie kont ogranicza skutki ewentualnego ujawnienia danych dostępowych MapServera i jest zgodne z zasadą nadawania wyłącznie niezbędnych uprawnień.
 
 ## 8. Dostęp sieciowy do PostgreSQL — MapServer, DBeaver i inne komputery
 
