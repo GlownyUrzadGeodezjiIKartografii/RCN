@@ -106,8 +106,42 @@ Stan klastrów można sprawdzić:
 ```bash
 pg_lsclusters
 ```
+## 4. Zasady dotyczące hasła użytkownika PostgreSQL `postgres`
 
-## 4. Przygotowanie bazy `rcn`
+Podczas instalacji PostgreSQL, opisanej w punkcie 3, ustawiane jest hasło użytkownika administracyjnego `postgres`.
+
+### Wymagania dotyczące hasła
+
+Hasło musi:
+
+- mieć co najmniej **12 znaków**,
+- zawierać co najmniej jedną małą literę,
+- zawierać co najmniej jedną wielką literę,
+- zawierać co najmniej jedną cyfrę,
+- zawierać co najmniej jeden znak specjalny,
+- nie zawierać nazwy użytkownika `postgres`.
+
+Hasło jest wprowadzane dwukrotnie w celu potwierdzenia i nie jest wyświetlane w terminalu podczas wpisywania.
+
+Jeżeli hasło nie spełnia wymagań bezpieczeństwa lub podane dwukrotnie hasła nie są identyczne, nie zostanie ono zaakceptowane.
+
+PostgreSQL jest dodatkowo skonfigurowany w taki sposób, aby:
+
+- nowe hasła były przechowywane przy użyciu `SCRAM-SHA-256`,
+- aktywny był moduł `passwordcheck`,
+- minimalna długość hasła kontrolowana przez moduł `passwordcheck` wynosiła 12 znaków.
+
+> **WAŻNE – ZAPISZ HASŁO UŻYTKOWNIKA `postgres`**
+>
+> Ustawione hasło należy zapisać i przechowywać w bezpiecznym miejscu, zgodnie z zasadami bezpieczeństwa obowiązującymi w organizacji.
+>
+> Hasło będzie potrzebne podczas konfiguracji aplikacji **RCN Importer** w **Etapie 2**.
+>
+> Nie należy umieszczać hasła w dokumentacji, repozytorium Git ani innych publicznie dostępnych miejscach.
+>
+> PostgreSQL nie umożliwia późniejszego odczytania ustawionego hasła. W przypadku jego utraty konieczne będzie ustawienie nowego.
+
+## 5. Przygotowanie bazy `rcn`
 
 Uruchom skrypt:
 
@@ -116,50 +150,6 @@ Uruchom skrypt:
 ```
 
 Jeżeli baza `rcn` nie istnieje, zostanie utworzona.
-
-## 5. Hasło użytkownika PostgreSQL `postgres`
-
-Hasło użytkownika administracyjnego PostgreSQL `postgres` jest ustawiane podczas wykonywania skryptu:
-
-```bash
-./00_instalacja_postgresql_postgis.sh
-```
-
-Podczas instalacji skrypt poprosi o dwukrotne wprowadzenie nowego hasła. Hasło nie jest wyświetlane w terminalu podczas wpisywania.
-
-### Wymagania dotyczące hasła
-
-Skrypt wymaga, aby hasło:
-
-- miało co najmniej **12 znaków**,
-- zawierało co najmniej jedną małą literę,
-- zawierało co najmniej jedną wielką literę,
-- zawierało co najmniej jedną cyfrę,
-- zawierało co najmniej jeden znak specjalny.
-
-Jeżeli hasło nie spełnia powyższych wymagań lub podane dwukrotnie hasła nie są identyczne, hasło nie zostanie ustawione i skrypt poprosi o jego ponowne wprowadzenie.
-
-Dodatkowo podczas instalacji PostgreSQL konfigurowane są mechanizmy bezpieczeństwa haseł:
-
-- nowe hasła są przechowywane przy użyciu `SCRAM-SHA-256`,
-- włączany jest moduł `passwordcheck`,
-- minimalna długość hasła jest ustawiana na 12 znaków.
-
-Niezależnie od wymagań technicznych należy:
-
-- stosować **unikalne hasło**,
-- nie używać haseł domyślnych ani łatwych do odgadnięcia,
-- nie używać tego samego hasła w innych systemach lub usługach,
-- nie umieszczać hasła w dokumentacji, repozytorium Git ani innych publicznie dostępnych miejscach,
-- przechowywać hasło w bezpiecznym miejscu, zgodnie z zasadami bezpieczeństwa obowiązującymi w organizacji.
-
-> **WAŻNE – ZAPISZ HASŁO UŻYTKOWNIKA `postgres`**
->
-> Zapisz ustawione hasło i przechowuj je w bezpiecznym miejscu.
->
-> Hasło będzie potrzebne podczas konfiguracji aplikacji **RCN Importer** w **Etapie 2**.
->
-> PostgreSQL nie umożliwia późniejszego odczytania ustawionego hasła. W przypadku jego utraty konieczne będzie ustawienie nowego.
 
 ## 6. Import struktury
 
