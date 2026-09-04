@@ -11,6 +11,8 @@ PG_BIN="/usr/lib/postgresql/${PG_MAJOR}/bin"
 PG_DATA="/var/lib/postgresql/${PG_MAJOR}/main"
 PG_CLUSTER="main"
 
+MIN_PASSWORD_LENGTH=12
+
 info()  { printf '\n[INFO] %s\n' "$*"; }
 ok()    { printf '[OK]   %s\n' "$*"; }
 warn()  { printf '[UWAGA] %s\n' "$*"; }
@@ -27,7 +29,8 @@ echo "============================================================"
 # Weryfikacja systemu
 # ============================================================
 
-[[ -r /etc/os-release ]] || error "Nie mozna odczytac /etc/os-release."
+[[ -r /etc/os-release ]] \
+  || error "Nie mozna odczytac /etc/os-release."
 
 # shellcheck disable=SC1091
 source /etc/os-release
@@ -188,8 +191,6 @@ info "Konfiguracja polityki bezpieczenstwa hasel PostgreSQL..."
 
 PASSWORDCHECK_LIB="${PG_BIN%/bin}/lib/passwordcheck.so"
 
-# Jezeli modul passwordcheck nie jest dostepny,
-# zostanie podjeta proba jego doinstalowania.
 if [[ ! -f "${PASSWORDCHECK_LIB}" ]]; then
 
     warn "Nie znaleziono modulu passwordcheck."
@@ -216,7 +217,7 @@ sudo -u postgres "${PG_BIN}/psql" \
   -c "ALTER SYSTEM SET password_encryption = 'scram-sha-256';"
 
 # ============================================================
-# Wlaczenie passwordcheck
+# Konfiguracja modulu passwordcheck
 # ============================================================
 
 info "Konfiguracja modulu passwordcheck..."
@@ -246,6 +247,10 @@ else
     ok "Modul passwordcheck jest juz skonfigurowany."
 fi
 
+# ============================================================
+# Restart PostgreSQL
+# ============================================================
+
 info "Restart PostgreSQL po konfiguracji kontroli hasel..."
 
 sudo pg_ctlcluster \
@@ -262,7 +267,7 @@ info "Ustawianie minimalnej dlugosci hasla..."
 sudo -u postgres "${PG_BIN}/psql" \
   -d postgres \
   -v ON_ERROR_STOP=1 \
-  -c "ALTER SYSTEM SET passwordcheck.min_password_length = 12;"
+  -c "ALTER SYSTEM SET passwordcheck.min_password_length = ${MIN_PASSWORD_LENGTH};"
 
 sudo -u postgres "${PG_BIN}/psql" \
   -d postgres \
@@ -283,12 +288,22 @@ PASSWORD_ENCRYPTION="$(
     -c "SHOW password_encryption;"
 )"
 
-MIN_PASSWORD_LENGTH="$(
+PASSWORD_LENGTH_SETTING="$(
   sudo -u postgres "${PG_BIN}/psql" \
     -d postgres \
     -Atq \
     -v ON_ERROR_STOP=1 \
     -c "SELECT setting
+        FROM pg_settings
+        WHERE name = 'passwordcheck.min_password_length';"
+)"
+
+PASSWORD_LENGTH_UNIT="$(
+  sudo -u postgres "${PG_BIN}/psql" \
+    -d postgres \
+    -Atq \
+    -v ON_ERROR_STOP=1 \
+    -c "SELECT unit
         FROM pg_settings
         WHERE name = 'passwordcheck.min_password_length';"
 )"
@@ -304,16 +319,102 @@ SHARED_LIBRARIES="$(
 [[ "${PASSWORD_ENCRYPTION}" == "scram-sha-256" ]] \
   || error "Nie udalo sie ustawic password_encryption = scram-sha-256."
 
-[[ "${MIN_PASSWORD_LENGTH}" == "12" ]] \
-  || error "Nie udalo sie ustawic minimalnej dlugosci hasla na 12."
+[[ "${PASSWORD_LENGTH_SETTING}" == "${MIN_PASSWORD_LENGTH}" ]] \
+  || error "Nie udalo sie ustawic minimalnej dlugosci hasla na ${MIN_PASSWORD_LENGTH}."
+
+[[ "${PASSWORD_LENGTH_UNIT}" == "B" ]] \
+  || error "Niepoprawna jednostka passwordcheck.min_password_length."
 
 [[ "${SHARED_LIBRARIES}" == *"passwordcheck"* ]] \
   || error "Modul passwordcheck nie zostal poprawnie zaladowany."
 
 ok "Polityka bezpieczenstwa hasel PostgreSQL zostala skonfigurowana."
-ok "Minimalna dlugosc nowego hasla: 12 znakow."
+ok "Minimalna dlugosc nowego hasla: ${MIN_PASSWORD_LENGTH} znakow."
 ok "Nowe hasla beda przechowywane przy uzyciu SCRAM-SHA-256."
 ok "Modul passwordcheck jest aktywny."
+
+# ============================================================
+# Ustawienie silnego hasla uzytkownika postgres
+# ============================================================
+
+echo
+echo "============================================================"
+echo " Ustawienie hasla uzytkownika PostgreSQL postgres"
+echo "============================================================"
+echo
+echo " Haslo musi:"
+echo "   - miec co najmniej ${MIN_PASSWORD_LENGTH} znakow,"
+echo "   - zawierac co najmniej jedna mala litere,"
+echo "   - zawierac co najmniej jedna wielka litere,"
+echo "   - zawierac co najmniej jedna cyfre,"
+echo "   - zawierac co najmniej jeden znak specjalny."
+echo
+echo " Haslo nie bedzie wyswietlane podczas wpisywania."
+echo
+
+while true; do
+
+    read -r -s -p "Podaj nowe haslo dla uzytkownika postgres: " POSTGRES_PASSWORD
+    echo
+
+    read -r -s -p "Powtorz haslo: " POSTGRES_PASSWORD_CONFIRM
+    echo
+
+    if [[ "${POSTGRES_PASSWORD}" != "${POSTGRES_PASSWORD_CONFIRM}" ]]; then
+        warn "Podane hasla nie sa identyczne. Sprobuj ponownie."
+        echo
+        continue
+    fi
+
+    if (( ${#POSTGRES_PASSWORD} < MIN_PASSWORD_LENGTH )); then
+        warn "Haslo musi miec co najmniej ${MIN_PASSWORD_LENGTH} znakow."
+        echo
+        continue
+    fi
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [a-z] ]]; then
+        warn "Haslo musi zawierac co najmniej jedna mala litere."
+        echo
+        continue
+    fi
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [A-Z] ]]; then
+        warn "Haslo musi zawierac co najmniej jedna wielka litere."
+        echo
+        continue
+    fi
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [0-9] ]]; then
+        warn "Haslo musi zawierac co najmniej jedna cyfre."
+        echo
+        continue
+    fi
+
+    if [[ "${POSTGRES_PASSWORD}" =~ ^[[:alnum:]]+$ ]]; then
+        warn "Haslo musi zawierac co najmniej jeden znak specjalny."
+        echo
+        continue
+    fi
+
+    break
+done
+
+# Escapowanie apostrofow na potrzeby SQL.
+POSTGRES_PASSWORD_SQL="${POSTGRES_PASSWORD//\'/\'\'}"
+
+info "Ustawianie hasla uzytkownika postgres..."
+
+printf "ALTER ROLE postgres PASSWORD '%s';\n" "${POSTGRES_PASSWORD_SQL}" \
+  | sudo -u postgres "${PG_BIN}/psql" \
+      -d postgres \
+      -v ON_ERROR_STOP=1 \
+      >/dev/null
+
+unset POSTGRES_PASSWORD
+unset POSTGRES_PASSWORD_CONFIRM
+unset POSTGRES_PASSWORD_SQL
+
+ok "Haslo uzytkownika postgres zostalo ustawione."
 
 # ============================================================
 # Koniec instalacji
@@ -328,12 +429,14 @@ echo " PostgreSQL ${PG_MAJOR} i PostGIS zostaly zainstalowane."
 echo
 echo " Skonfigurowano zabezpieczenia hasel PostgreSQL:"
 echo "   - aktywowano modul passwordcheck,"
-echo "   - minimalna dlugosc nowego hasla: 12 znakow,"
+echo "   - minimalna dlugosc hasla: ${MIN_PASSWORD_LENGTH} znakow,"
+echo "   - wymagane sa mala i wielka litera, cyfra oraz znak specjalny,"
 echo "   - nowe hasla sa przechowywane przy uzyciu SCRAM-SHA-256."
 echo
-echo " Administrator powinien stosowac silne i unikalne hasla"
-echo " zgodnie z zasadami bezpieczenstwa obowiazujacymi"
-echo " w organizacji."
+echo " Haslo administratora postgres zostalo ustawione."
+echo
+echo " Zapisz haslo i przechowuj je w bezpiecznym miejscu."
+echo " Bedzie ono potrzebne w kolejnych etapach konfiguracji RCN."
 echo
 echo "============================================================"
 echo
