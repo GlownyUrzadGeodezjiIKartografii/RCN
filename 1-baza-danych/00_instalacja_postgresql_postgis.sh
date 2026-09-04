@@ -188,8 +188,7 @@ info "Konfiguracja polityki bezpieczenstwa hasel PostgreSQL..."
 
 PASSWORDCHECK_LIB="${PG_BIN%/bin}/lib/passwordcheck.so"
 
-# Sprawdzenie dostepnosci modulu passwordcheck.
-# Jezeli z jakiegos powodu modul nie jest dostepny,
+# Jezeli modul passwordcheck nie jest dostepny,
 # zostanie podjeta proba jego doinstalowania.
 if [[ ! -f "${PASSWORDCHECK_LIB}" ]]; then
 
@@ -247,7 +246,6 @@ else
     ok "Modul passwordcheck jest juz skonfigurowany."
 fi
 
-# Modul passwordcheck wymaga restartu PostgreSQL.
 info "Restart PostgreSQL po konfiguracji kontroli hasel..."
 
 sudo pg_ctlcluster \
@@ -290,7 +288,9 @@ MIN_PASSWORD_LENGTH="$(
     -d postgres \
     -Atq \
     -v ON_ERROR_STOP=1 \
-    -c "SHOW passwordcheck.min_password_length;"
+    -c "SELECT setting
+        FROM pg_settings
+        WHERE name = 'passwordcheck.min_password_length';"
 )"
 
 SHARED_LIBRARIES="$(
