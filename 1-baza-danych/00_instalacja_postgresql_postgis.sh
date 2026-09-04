@@ -217,7 +217,7 @@ sudo -u postgres "${PG_BIN}/psql" \
   -c "ALTER SYSTEM SET password_encryption = 'scram-sha-256';"
 
 # ============================================================
-# Konfiguracja modulu passwordcheck
+# Wlaczenie modulu passwordcheck
 # ============================================================
 
 info "Konfiguracja modulu passwordcheck..."
@@ -259,6 +259,20 @@ sudo pg_ctlcluster \
   restart
 
 # ============================================================
+# Sprawdzenie po restarcie
+# ============================================================
+
+if ! pg_lsclusters --no-header 2>/dev/null \
+  | awk -v ver="${PG_MAJOR}" -v cluster="${PG_CLUSTER}" \
+      '$1==ver && $2==cluster {print $4}' \
+  | grep -qx online; then
+
+    error "Klaster PostgreSQL ${PG_MAJOR}/${PG_CLUSTER} nie uruchomil sie po restarcie."
+fi
+
+ok "Klaster PostgreSQL ${PG_MAJOR}/${PG_CLUSTER} jest online."
+
+# ============================================================
 # Minimalna dlugosc hasla
 # ============================================================
 
@@ -280,7 +294,7 @@ sudo -u postgres "${PG_BIN}/psql" \
 
 info "Weryfikacja konfiguracji bezpieczenstwa hasel..."
 
-PASSWORD_ENCRYPTION="$(
+PASSWORD_ENCRYPTION_DB="$(
   sudo -u postgres "${PG_BIN}/psql" \
     -d postgres \
     -Atq \
@@ -288,27 +302,27 @@ PASSWORD_ENCRYPTION="$(
     -c "SHOW password_encryption;"
 )"
 
-PASSWORD_LENGTH_SETTING="$(
+MIN_PASSWORD_LENGTH_DB="$(
   sudo -u postgres "${PG_BIN}/psql" \
     -d postgres \
     -Atq \
     -v ON_ERROR_STOP=1 \
-    -c "SELECT setting
+    -c "SELECT setting::integer
         FROM pg_settings
         WHERE name = 'passwordcheck.min_password_length';"
 )"
 
-PASSWORD_LENGTH_UNIT="$(
+PASSWORD_LENGTH_UNIT_DB="$(
   sudo -u postgres "${PG_BIN}/psql" \
     -d postgres \
     -Atq \
     -v ON_ERROR_STOP=1 \
-    -c "SELECT unit
+    -c "SELECT COALESCE(unit, '')
         FROM pg_settings
         WHERE name = 'passwordcheck.min_password_length';"
 )"
 
-SHARED_LIBRARIES="$(
+SHARED_LIBRARIES_DB="$(
   sudo -u postgres "${PG_BIN}/psql" \
     -d postgres \
     -Atq \
@@ -316,22 +330,26 @@ SHARED_LIBRARIES="$(
     -c "SHOW shared_preload_libraries;"
 )"
 
-[[ "${PASSWORD_ENCRYPTION}" == "scram-sha-256" ]] \
+[[ "${PASSWORD_ENCRYPTION_DB}" == "scram-sha-256" ]] \
   || error "Nie udalo sie ustawic password_encryption = scram-sha-256."
 
-[[ "${PASSWORD_LENGTH_SETTING}" == "${MIN_PASSWORD_LENGTH}" ]] \
+[[ -n "${MIN_PASSWORD_LENGTH_DB}" ]] \
+  || error "Nie mozna odczytac parametru passwordcheck.min_password_length."
+
+[[ "${MIN_PASSWORD_LENGTH_DB}" -eq "${MIN_PASSWORD_LENGTH}" ]] \
   || error "Nie udalo sie ustawic minimalnej dlugosci hasla na ${MIN_PASSWORD_LENGTH}."
 
-[[ "${PASSWORD_LENGTH_UNIT}" == "B" ]] \
-  || error "Niepoprawna jednostka passwordcheck.min_password_length."
-
-[[ "${SHARED_LIBRARIES}" == *"passwordcheck"* ]] \
+[[ "${SHARED_LIBRARIES_DB}" == *"passwordcheck"* ]] \
   || error "Modul passwordcheck nie zostal poprawnie zaladowany."
 
 ok "Polityka bezpieczenstwa hasel PostgreSQL zostala skonfigurowana."
 ok "Minimalna dlugosc nowego hasla: ${MIN_PASSWORD_LENGTH} znakow."
 ok "Nowe hasla beda przechowywane przy uzyciu SCRAM-SHA-256."
 ok "Modul passwordcheck jest aktywny."
+
+if [[ -n "${PASSWORD_LENGTH_UNIT_DB}" ]]; then
+    ok "Jednostka parametru minimalnej dlugosci hasla: ${PASSWORD_LENGTH_UNIT_DB}."
+fi
 
 # ============================================================
 # Ustawienie silnego hasla uzytkownika postgres
@@ -354,11 +372,18 @@ echo
 
 while true; do
 
+    POSTGRES_PASSWORD=""
+    POSTGRES_PASSWORD_CONFIRM=""
+
     read -r -s -p "Podaj nowe haslo dla uzytkownika postgres: " POSTGRES_PASSWORD
     echo
 
     read -r -s -p "Powtorz haslo: " POSTGRES_PASSWORD_CONFIRM
     echo
+
+    # --------------------------------------------------------
+    # Sprawdzenie zgodnosci hasel
+    # --------------------------------------------------------
 
     if [[ "${POSTGRES_PASSWORD}" != "${POSTGRES_PASSWORD_CONFIRM}" ]]; then
         warn "Podane hasla nie sa identyczne. Sprobuj ponownie."
@@ -366,32 +391,64 @@ while true; do
         continue
     fi
 
+    # --------------------------------------------------------
+    # Minimalna dlugosc
+    # --------------------------------------------------------
+
     if (( ${#POSTGRES_PASSWORD} < MIN_PASSWORD_LENGTH )); then
         warn "Haslo musi miec co najmniej ${MIN_PASSWORD_LENGTH} znakow."
         echo
         continue
     fi
 
-    if [[ ! "${POSTGRES_PASSWORD}" =~ [a-z] ]]; then
+    # --------------------------------------------------------
+    # Mala litera
+    # --------------------------------------------------------
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [[:lower:]] ]]; then
         warn "Haslo musi zawierac co najmniej jedna mala litere."
         echo
         continue
     fi
 
-    if [[ ! "${POSTGRES_PASSWORD}" =~ [A-Z] ]]; then
+    # --------------------------------------------------------
+    # Wielka litera
+    # --------------------------------------------------------
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [[:upper:]] ]]; then
         warn "Haslo musi zawierac co najmniej jedna wielka litere."
         echo
         continue
     fi
 
-    if [[ ! "${POSTGRES_PASSWORD}" =~ [0-9] ]]; then
+    # --------------------------------------------------------
+    # Cyfra
+    # --------------------------------------------------------
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [[:digit:]] ]]; then
         warn "Haslo musi zawierac co najmniej jedna cyfre."
         echo
         continue
     fi
 
-    if [[ "${POSTGRES_PASSWORD}" =~ ^[[:alnum:]]+$ ]]; then
+    # --------------------------------------------------------
+    # Znak specjalny
+    # --------------------------------------------------------
+
+    if [[ ! "${POSTGRES_PASSWORD}" =~ [^[:alnum:]] ]]; then
         warn "Haslo musi zawierac co najmniej jeden znak specjalny."
+        echo
+        continue
+    fi
+
+    # --------------------------------------------------------
+    # Haslo nie powinno zawierac nazwy konta
+    # --------------------------------------------------------
+
+    POSTGRES_PASSWORD_LOWER="${POSTGRES_PASSWORD,,}"
+
+    if [[ "${POSTGRES_PASSWORD_LOWER}" == *"postgres"* ]]; then
+        warn "Haslo nie moze zawierac nazwy uzytkownika 'postgres'."
         echo
         continue
     fi
@@ -399,12 +456,18 @@ while true; do
     break
 done
 
-# Escapowanie apostrofow na potrzeby SQL.
-POSTGRES_PASSWORD_SQL="${POSTGRES_PASSWORD//\'/\'\'}"
+# ============================================================
+# Ustawienie hasla w PostgreSQL
+# ============================================================
 
 info "Ustawianie hasla uzytkownika postgres..."
 
-printf "ALTER ROLE postgres PASSWORD '%s';\n" "${POSTGRES_PASSWORD_SQL}" \
+# Apostrof w haśle musi zostać podwojony dla literału SQL.
+POSTGRES_PASSWORD_SQL="${POSTGRES_PASSWORD//\'/\'\'}"
+
+# Haslo nie jest przekazywane jako argument polecenia psql.
+# Polecenie SQL trafia do psql przez standardowe wejscie.
+printf "ALTER ROLE postgres WITH PASSWORD '%s';\n" "${POSTGRES_PASSWORD_SQL}" \
   | sudo -u postgres "${PG_BIN}/psql" \
       -d postgres \
       -v ON_ERROR_STOP=1 \
@@ -413,8 +476,35 @@ printf "ALTER ROLE postgres PASSWORD '%s';\n" "${POSTGRES_PASSWORD_SQL}" \
 unset POSTGRES_PASSWORD
 unset POSTGRES_PASSWORD_CONFIRM
 unset POSTGRES_PASSWORD_SQL
+unset POSTGRES_PASSWORD_LOWER
 
 ok "Haslo uzytkownika postgres zostalo ustawione."
+
+# ============================================================
+# Weryfikacja ustawienia hasla
+# ============================================================
+
+info "Weryfikacja ustawienia hasla uzytkownika postgres..."
+
+POSTGRES_PASSWORD_SET="$(
+  sudo -u postgres "${PG_BIN}/psql" \
+    -d postgres \
+    -Atq \
+    -v ON_ERROR_STOP=1 \
+    -c "SELECT CASE
+          WHEN rolpassword IS NOT NULL
+           AND rolpassword LIKE 'SCRAM-SHA-256$%'
+          THEN 't'
+          ELSE 'f'
+        END
+        FROM pg_authid
+        WHERE rolname = 'postgres';"
+)"
+
+[[ "${POSTGRES_PASSWORD_SET}" == "t" ]] \
+  || error "Haslo uzytkownika postgres nie zostalo zapisane jako SCRAM-SHA-256."
+
+ok "Haslo uzytkownika postgres jest zapisane przy uzyciu SCRAM-SHA-256."
 
 # ============================================================
 # Koniec instalacji
