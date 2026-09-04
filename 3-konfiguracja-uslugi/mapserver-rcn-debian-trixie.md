@@ -1,3 +1,4 @@
+# Etap 3
 # Konfiguracja Usługi WMS/WFS Rejestru Cen Nieruchomości (RCN)
 
 Dokument zawierający zestaw kroków do uruchomienia przykładowej powiatowej usługi WMS/WFS RCN za pomocą narzędzi OpenSource MapServer, Apache HTTP Server skierowany dla administratora środowiska Linux Debian.  
@@ -198,6 +199,17 @@ bbox (String) = 684335.465185 297178.3974 697759.81489 313412.404953
 | `ows_inspire_mpoc_email` | Oficjalny adres e-mail urzędu |
 | `wms_inspire_resourcelocator` | Publiczny URL Capabilities usługi WMS *(uzupełnić i odkomentować przy publikacji)* |
 | `wfs_inspire_resourcelocator` | Publiczny URL Capabilities usługi WFS *(uzupełnić i odkomentować przy publikacji)* |
+| `wfs_inspire_dsid_code` | Numer porządkowy identyfikatora zbioru danych EZIUDP (np. 5612) |
+
+**Jak pobrać wartość dla parametru "wfs_inspire_dsid_code"?**
+
+Wartość tę można wyciągnąć bezpośrednio z API EZIUDP, podając 4-cyfrowy kod TERYT powiatu. Poniższe polecenie filtruje odpowiedź JSON i zwraca na ekran sam identyfikator. Poniżej przykład dla Poniżej przykład dla m. Tarnobrzeg (`teryt=1864`):
+
+```bash
+curl -s "https://integracja.gugik.gov.pl/eziudp/api.php?zbior=rcn&teryt=1864" \
+  | grep -oP '"numer"\s*:\s*"\K[^"]+'
+```
+> Zwróconą wartość (np. `5612`) należy wkleić do pliku `rcn.map`.
 
 **<p align="center">Dane kontaktowe urzędu</p>**
 
@@ -455,22 +467,23 @@ Jeżeli usługa nie odpowiada, rzuca wyjątki, zwraca pusty obraz lub działa wy
 | 5 | `WEB.METADATA` | `ows_inspire_mpoc_email` | E-mail urzędu |
 | 6 | `WEB.METADATA` | `wms_inspire_resourcelocator` | Publiczny URL Capabilities usługi WMS *(uzupełnić i odkomentować przy publikacji)* |
 | 7 | `WEB.METADATA` | `wfs_inspire_resourcelocator` | Publiczny URL Capabilities usługi WFS *(uzupełnić i odkomentować przy publikacji)* |
-| 8 | `WEB.METADATA` | `ows_contactorganization` | Pełna nazwa urzędu |
-| 9 | `WEB.METADATA` | `ows_contactperson` | Imię i nazwisko osoby kontaktowej *(opcjonalne)* |
-| 10 | `WEB.METADATA` | `ows_stateorprovince` | Województwo |
-| 11 | `WEB.METADATA` | `ows_address` | Ulica i numer |
-| 12 | `WEB.METADATA` | `ows_city` | Miejscowość |
-| 13 | `WEB.METADATA` | `ows_postcode` | Kod pocztowy |
-| 14 | `WEB.METADATA` | `ows_contactelectronicmailaddress` | E-mail urzędu |
-| 15 | `WEB.METADATA` | `ows_contactvoicetelephone` | Numer telefonu |
-| 16 | `WEB.METADATA` | `ows_hoursofservice` | Godziny pracy |
-| 17 | `WEB.METADATA` | `wms_attribution_title` | Nazwa powiatu *(opcjonalne)* |
-| 18 | `WEB.METADATA` | `wms_attribution_onlineresource` | URL strony starostwa *(opcjonalne)* |
-| 19 | `WEB.METADATA` | `wms_attribution_logourl_href` | URL herbu powiatu *(opcjonalne)* |
-| 20 | `LAYER` – dzialki | `CONNECTION` | Parametry połączenia PostgreSQL |
-| 21 | `LAYER` – dzialki | `EXTENT` + `ows_extent` | Zasięg warstwy działek |
-| 22 | `LAYER` – budynki | `CONNECTION` | Parametry połączenia PostgreSQL |
-| 23 | `LAYER` – budynki | `EXTENT` + `ows_extent` | Zasięg warstwy budynków |
-| 24 | `LAYER` – lokale | `CONNECTION` | Parametry połączenia PostgreSQL |
-| 25 | `LAYER` – lokale | `EXTENT` + `ows_extent` | Zasięg warstwy lokali |
+| 8 | `WEB.METADATA` | `wfs_inspire_dsid_code` | Numer porządkowy identyfikatora zbioru danych EZIUDP |
+| 9 | `WEB.METADATA` | `ows_contactorganization` | Pełna nazwa urzędu |
+| 10 | `WEB.METADATA` | `ows_contactperson` | Imię i nazwisko osoby kontaktowej *(opcjonalne)* |
+| 11 | `WEB.METADATA` | `ows_stateorprovince` | Województwo |
+| 12 | `WEB.METADATA` | `ows_address` | Ulica i numer |
+| 13 | `WEB.METADATA` | `ows_city` | Miejscowość |
+| 14 | `WEB.METADATA` | `ows_postcode` | Kod pocztowy |
+| 15 | `WEB.METADATA` | `ows_contactelectronicmailaddress` | E-mail urzędu |
+| 16 | `WEB.METADATA` | `ows_contactvoicetelephone` | Numer telefonu |
+| 17 | `WEB.METADATA` | `ows_hoursofservice` | Godziny pracy |
+| 18 | `WEB.METADATA` | `wms_attribution_title` | Nazwa powiatu *(opcjonalne)* |
+| 19 | `WEB.METADATA` | `wms_attribution_onlineresource` | URL strony starostwa *(opcjonalne)* |
+| 20 | `WEB.METADATA` | `wms_attribution_logourl_href` | URL herbu powiatu *(opcjonalne)* |
+| 21 | `LAYER` – dzialki | `CONNECTION` | Parametry połączenia PostgreSQL |
+| 22 | `LAYER` – dzialki | `EXTENT` + `ows_extent` | Zasięg warstwy działek |
+| 23 | `LAYER` – budynki | `CONNECTION` | Parametry połączenia PostgreSQL |
+| 24 | `LAYER` – budynki | `EXTENT` + `ows_extent` | Zasięg warstwy budynków |
+| 25 | `LAYER` – lokale | `CONNECTION` | Parametry połączenia PostgreSQL |
+| 26 | `LAYER` – lokale | `EXTENT` + `ows_extent` | Zasięg warstwy lokali |
 
