@@ -30,6 +30,8 @@ MAP
             "ows_inspire_metadatadate" "2026-08-04" # np. modyfikacja metadanych
             # "wms_inspire_resourcelocator" "[PRZY_PUBLIKACJI_WPISZ_DOCELOWY_ADRES_URL_USŁUGI]?SERVICE=WMS&REQUEST=GetCapabilities"
             # "wfs_inspire_resourcelocator" "[PRZY_PUBLIKACJI_WPISZ_DOCELOWY_ADRES_URL_USŁUGI]?SERVICE=WFS&REQUEST=GetCapabilities"
+            "wfs_inspire_dsid_ns" "PL.PZGiK"
+            "wfs_inspire_dsid_code" "[WPISZ_NUMER_PORZĄDKOWY_IDENTYFIKATORA_ZBIORU_DANYCH_EZIUDP_NP_5612]"
             "ows_inspire_keyword" "infoMapAccessService"
 
             "ows_keywordlist" "Rejestr Cen Nieruchomości,RCN,ceny nieruchomości,transakcje"
@@ -164,7 +166,7 @@ LAYER
         "gml_bud_vat_alias" "BUD_VAT"
         "gml_bud_info_alias" "BUD_INFO"
         "gml_bud_adres_alias" "BUD_ADRES"
-        "gml_GEOMETRIA_type" "polygon"
+        "gml_GEOMETRIA_type" "multipolygon"
         "wfs_use_default_extent_for_getfeature" "false"
     END            
 END
