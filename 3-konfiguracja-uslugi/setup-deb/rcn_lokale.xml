@@ -2,7 +2,6 @@
 	<LOKAL>
 		[include src="common_gfi.xml"]
 		<LOK_ID_LOKALU>[lok_id_lokalu]</LOK_ID_LOKALU>
-		<LOK_NR_LOKALU>[lok_nr_lokalu]</LOK_NR_LOKALU>
 		<LOK_FUNKCJA>[lok_funkcja]</LOK_FUNKCJA>
 		<LOK_LICZBA_IZB>[lok_liczba_izb]</LOK_LICZBA_IZB>
 		<LOK_NR_KOND>[lok_nr_kond]</LOK_NR_KOND>

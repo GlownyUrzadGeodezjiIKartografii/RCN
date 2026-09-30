@@ -300,8 +300,8 @@ Atrybuty eksponowane w szablonach:
 | Szablon | Atrybuty specyficzne |
 |---|---|
 | `rcn_dzialki` | `dzi_id_dzialki`, `dzi_nr_dzialki`, `dzi_przezn_wmpzp`, `dzi_pow_ewid`, `dzi_sposob_uzyt`, `dzi_cena_brutto`, `dzi_vat`, `dzi_info`, `dzi_adres` |
-| `rcn_budynki` | `bud_id_budynku`, `bud_nr_budynku`, `bud_rodzaj`, `bud_pow_uzyt`, `bud_cena_brutto`, `bud_vat`, `bud_info`, `bud_adres` |
-| `rcn_lokale` | `lok_id_lokalu`, `lok_nr_lokalu`, `lok_funkcja`, `lok_liczba_izb`, `lok_nr_kond`, `lok_pow_uzyt`, `lok_pow_przyn`, `lok_cena_brutto`, `lok_vat`, `lok_info`, `lok_adres` |
+| `rcn_budynki` | `bud_id_budynku`, `bud_rodzaj`, `bud_pow_uzyt`, `bud_cena_brutto`, `bud_vat`, `bud_info`, `bud_adres` |
+| `rcn_lokale` | `lok_id_lokalu`, `lok_funkcja`, `lok_liczba_izb`, `lok_nr_kond`, `lok_pow_uzyt`, `lok_pow_przyn`, `lok_cena_brutto`, `lok_vat`, `lok_info`, `lok_adres` |
 
 Każdy atrybut w szablonie odpowiada kolumnie w odpowiednim widoku zmaterializowanym.
 
