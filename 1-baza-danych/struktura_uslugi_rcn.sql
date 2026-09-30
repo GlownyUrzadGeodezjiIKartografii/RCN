@@ -1078,7 +1078,7 @@ CREATE TABLE uslugi_rcn.transakcja (
     start_obiekt timestamp(0) with time zone DEFAULT CURRENT_TIMESTAMP,
     iip_przestrzen_nazw text,
     iip_lokalny_id text,
-    iip_wersja_id text,
+    iip_wersja_id timestamp(0) without time zone,
     oznaczenie_transakcji text,
     rodzaj_transakcji smallint,
     rodzaj_rynku smallint,
@@ -1087,7 +1087,7 @@ CREATE TABLE uslugi_rcn.transakcja (
     cena_brutto double precision,
     kwota_vat double precision,
     dok_oznaczenie text,
-    dok_data_sporz timestamp with time zone,
+    dok_data_sporz date,
     dok_tworca text
 );
 
