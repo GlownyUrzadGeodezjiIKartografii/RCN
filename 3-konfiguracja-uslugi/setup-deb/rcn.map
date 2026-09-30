@@ -106,7 +106,7 @@ LAYER
     
     METADATA
         INCLUDE "common_md.inc"
-        "ows_title" "działki"
+        "ows_title" "Działki"
         "ows_extent" "171698.709735 133223.349644 861895.762914 797228.497229" # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
         "gml_include_items" "all"
         "gml_exclude_items" "dzi_centroid"
@@ -150,7 +150,7 @@ LAYER
     
     METADATA
         INCLUDE "common_md.inc"
-        "ows_title" "budynki"
+        "ows_title" "Budynki"
         "ows_extent" "171698.709735 133223.349644 861895.762914 797228.497229" # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
         "gml_include_items" "all"
         "gml_exclude_items" "bud_centroid"
@@ -205,7 +205,7 @@ LAYER
 
     METADATA
         INCLUDE "common_md.inc"
-        "ows_title" "lokale"
+        "ows_title" "Lokale"
         "ows_extent" "171698.709735 133223.349644 861895.762914 797228.497229" # DO MODYFIKACJI NA FAKTYCZNY ZAKRES PRZESTRZENNY POWIATU
         "gml_include_items" "all"
         "gml_optional_items" "tran_rodzaj_rynku,tran_vat,nier_pow_gruntu,nier_opis,nier_cena_brutto,nier_vat,lok_liczba_izb,lok_nr_kond,lok_pow_przyn,lok_cena_brutto,lok_vat,lok_info,lok_adres"
