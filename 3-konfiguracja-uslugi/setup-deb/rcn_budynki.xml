@@ -2,7 +2,6 @@
 	<BUDYNEK>
 		[include src="common_gfi.xml"]
 		<BUD_ID_BUDYNKU>[bud_id_budynku]</BUD_ID_BUDYNKU>
-		<BUD_NR_BUDYNKU>[bud_nr_budynku]</BUD_NR_BUDYNKU>
 		<BUD_RODZAJ>[bud_rodzaj]</BUD_RODZAJ>
 		<BUD_POW_UZYT>[bud_pow_uzyt]</BUD_POW_UZYT>
 		<BUD_CENA_BRUTTO>[bud_cena_brutto]</BUD_CENA_BRUTTO>
