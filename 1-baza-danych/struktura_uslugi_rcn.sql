@@ -3,10 +3,10 @@
 -- Utworzony przez Główny Urząd Geodezji i Kartografii
 -- Rok: 2026
 -- Autor: Szymon Szczerba
--- Wersja: 1.1
+-- Wersja: 1.2
 --
 
--- Started on 2026-09-02 20:23:15
+-- Started on 2026-09-29 11:32:00
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1276,7 +1276,6 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_budynki AS
     n.cena_brutto AS nier_cena_brutto,
     n.kwota_vat AS nier_vat,
     b.id_budynku AS bud_id_budynku,
-    b.nr_budynku AS bud_nr_budynku,
     COALESCE(s_rb.nazwa, (b.rodzaj_budynku)::text) AS bud_rodzaj,
     b.powa_uzytkowa AS bud_pow_uzyt,
     b.cena_brutto AS bud_cena_brutto,
@@ -1430,7 +1429,6 @@ CREATE MATERIALIZED VIEW uslugi_rcn.mv_lokale AS
     n.cena_brutto AS nier_cena_brutto,
     n.kwota_vat AS nier_vat,
     l.id_lokalu AS lok_id_lokalu,
-    l.nr_lokalu AS lok_nr_lokalu,
     COALESCE(s_fl.nazwa, (l.funkcja_budynku)::text) AS lok_funkcja,
     l.liczba_izb AS lok_liczba_izb,
     l.nr_kondygnacji AS lok_nr_kond,
@@ -3099,14 +3097,6 @@ CREATE INDEX mv_budynki_ix_bud_id ON uslugi_rcn.mv_budynki USING btree (bud_id_b
 
 
 --
--- TOC entry 4520 (class 1259 OID 71705539)
--- Name: mv_budynki_ix_bud_nr; Type: INDEX; Schema: uslugi_rcn; Owner: -
---
-
-CREATE INDEX mv_budynki_ix_bud_nr ON uslugi_rcn.mv_budynki USING btree (bud_nr_budynku);
-
-
---
 -- TOC entry 4521 (class 1259 OID 71705535)
 -- Name: mv_budynki_ix_dok_data; Type: INDEX; Schema: uslugi_rcn; Owner: -
 --
@@ -3232,14 +3222,6 @@ CREATE INDEX mv_lokale_ix_dok_data ON uslugi_rcn.mv_lokale USING btree (dok_data
 --
 
 CREATE INDEX mv_lokale_ix_lok_id ON uslugi_rcn.mv_lokale USING btree (lok_id_lokalu);
-
-
---
--- TOC entry 4505 (class 1259 OID 71705484)
--- Name: mv_lokale_ix_lok_nr; Type: INDEX; Schema: uslugi_rcn; Owner: -
---
-
-CREATE INDEX mv_lokale_ix_lok_nr ON uslugi_rcn.mv_lokale USING btree (lok_nr_lokalu);
 
 
 --
@@ -3892,4 +3874,107 @@ INSERT INTO uslugi_rcn.powiat (id, start_obiekt, teryt, serwis_rcn, geometria, s
 SELECT pg_catalog.setval('uslugi_rcn.powiat_id_seq', 380, true);
 
 
--- Completed on 2026-09-02 20:23:16
+-- INSERT funkcja_lokalu
+INSERT INTO uslugi_rcn.funkcja_lokalu (kod,nazwa) VALUES
+	 (1,'mieszkalna'),
+	 (2,'handlowoUslugowa'),
+	 (3,'biurowa'),
+	 (4,'produkcyjna'),
+	 (5,'garaz'),
+	 (6,'inna');
+
+
+-- INSERT przeznaczenie_wmpzp
+INSERT INTO uslugi_rcn.przeznaczenie_wmpzp (kod,nazwa) VALUES
+	 ('BP','brakMPZPLubWZ'),
+	 ('MN','budownictwoMieszkanioweJednorodzinne'),
+	 ('MW','budownictwoMieszkanioweWielorodzinne'),
+	 ('U','terenZabudowyUslugowej'),
+	 ('US','terenSportuIRekreacji'),
+	 ('R','terenRolniczy'),
+	 ('RU','terenObslugiProdukcjiWGospodarstwachRolnych'),
+	 ('RM','terenZabudowyZagrodowejGospodarstwRolnych'),
+	 ('P','terenObiektowProdukcyjnychSkladowIMagazynow'),
+	 ('PG','obszarITerenGorniczy');
+INSERT INTO uslugi_rcn.przeznaczenie_wmpzp (kod,nazwa) VALUES
+	 ('ZN','terenZieleniObjetyFormaOchronyPrzyrody'),
+	 ('ZL','las'),
+	 ('ZP','terenZieleniUrzadzonej'),
+	 ('ZD','terenOgrodowDzialkowych'),
+	 ('ZC','cmentarz'),
+	 ('WM','terenWodPowierzchniowychMorskich'),
+	 ('WS','terenWodPowierzchniowychSrodladowych'),
+	 ('KD','terenDrogPublicznych'),
+	 ('KDW','terenDrogWewnetrznych'),
+	 ('KW','terenKomunikacjiWodnejSzlakWodny');
+INSERT INTO uslugi_rcn.przeznaczenie_wmpzp (kod,nazwa) VALUES
+	 ('TIT','terenInfrastrukturyTechnicznej'),
+	 ('INN','innyNiewymieniony'),
+	 ('WZ','decyzjaWarunkiZabudowy'),
+	 ('UC','terenRozmieszczeniaDuzychObiektowHandlowych');
+
+
+-- INSERT rodzaj_budynku
+INSERT INTO uslugi_rcn.rodzaj_budynku (kod,nazwa) VALUES
+	 (101,'przemyslowy'),
+	 (102,'transportuILacznosci'),
+	 (103,'handlowoUslugowy'),
+	 (104,'zbiornikiSilosyMagazyny'),
+	 (105,'biurowy'),
+	 (106,'szpitale'),
+	 (107,'oswiatyISportu'),
+	 (108,'gospodarczy'),
+	 (109,'pozostaleNiemieszkalne'),
+	 (110,'mieszkalny');
+
+
+-- INSERT rodzaj_nieruchomosci
+INSERT INTO uslugi_rcn.rodzaj_nieruchomosci (kod,nazwa) VALUES
+	 (1,'nieruchomoscGruntowaNiezabudowana'),
+	 (2,'nieruchomoscGruntowaZabudowana'),
+	 (3,'nieruchomoscBudynkowa'),
+	 (4,'nieruchomoscLokalowa');
+
+
+-- INSERT rodzaj_prawa
+INSERT INTO uslugi_rcn.rodzaj_prawa (kod,nazwa) VALUES
+	 (1,'wlasnoscNieruchomosciGruntowej'),
+	 (2,'uzytkowanieWieczyste'),
+	 (3,'wlasnoscLokaluWrazZPrawemZwiazanym'),
+	 (4,'wlasnoscBudynkuWrazZPrawemZwiazanym');
+
+
+-- INSERT rodzaj_rynku
+INSERT INTO uslugi_rcn.rodzaj_rynku (kod,nazwa) VALUES
+	 (1,'rynekPierwotny'),
+	 (2,'rynekWtorny');
+
+
+-- INSERT rodzaj_transakcji
+INSERT INTO uslugi_rcn.rodzaj_transakcji (kod,nazwa) VALUES
+	 (1,'wolnyRynek'),
+	 (2,'sprzedazBezprzetargowa'),
+	 (3,'sprzedazPrzetargowa'),
+	 (4,'sprzedazWPostepowaniuEgzekucyjnym'),
+	 (5,'sprzedazNaCelPubliczny'),
+	 (6,'sprzedazZBonifikata');
+
+
+-- INSERT sposob_uzytkowania
+INSERT INTO uslugi_rcn.sposob_uzytkowania (kod,nazwa) VALUES
+	 (1,'gruntyRolne'),
+	 (2,'gruntyLesne'),
+	 (3,'gruntyZabudowaneIZurbanizowane'),
+	 (4,'terenyKomunikacyjne'),
+	 (5,'inne');
+
+
+-- INSERT strona_transakcji
+INSERT INTO uslugi_rcn.strona_transakcji (kod,nazwa) VALUES
+	 (1,'skarbPanstwa'),
+	 (2,'jednostkaSamorzaduTerytorialnego'),
+	 (3,'osobaFizyczna'),
+	 (4,'osobaPrawna');
+
+
+-- Completed on 2026-09-29 11:40:01
