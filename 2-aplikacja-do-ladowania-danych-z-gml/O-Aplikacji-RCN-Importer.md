@@ -11,7 +11,7 @@ Nieruchomości (RCN) z plików GML lub ZIP do bazy PostgreSQL/PostGIS.
 **Rok:** 2026\
 **Technologia:** .NET 9\
 **Typ aplikacji:** aplikacja konsolowa  
-**Wersja:** 1.0  
+**Wersja:** 1.2  
 
 Aplikacja jest przeznaczona do cyklicznego lub ręcznego zasilania bazy
 RCN. Jedno uruchomienie programu przetwarza wszystkie obsługiwane pliki
@@ -572,8 +572,8 @@ importu. Nie należy używać tego katalogu jako archiwum.
 W docelowej instalacji aplikacja działa z katalogu `/opt/gugik/rcn-importer` jako dedykowany użytkownik systemowy `rcn-importer`. Dla wersji opublikowanej jako plik wykonywalny:
 
 ``` bash
-chmod +x rcn-importer-1.1
-sudo -u rcn-importer ./rcn-importer-1.1
+chmod +x rcn-importer-1.2
+sudo -u rcn-importer ./rcn-importer-1.2
 ```
 
 Aplikacja może być również uruchamiana automatycznie przez
