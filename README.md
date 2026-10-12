@@ -314,6 +314,23 @@ i zasilonej danymi w Etapie 2.
 
 ------------------------------------------------------------------------
 
+## Etap 4 - ustawienie adresu URL usługi RCN
+
+Otwórz [instrukcję ustawienia URL usługi RCN (`serwis_rcn`)](https://github.com/GlownyUrzadGeodezjiIKartografii/RCN/blob/main/4-ustawienie-adresu-URL-usługi-RCN/Instrukcja_ustawienia_adresu_URL.md)
+
+Po uruchomieniu usługi RCN należy zapisać jej adres URL w bazie danych.
+
+Etap obejmuje:
+- połączenie z bazą danych RCN,
+- ustawienie adresu URL usługi dla właściwego powiatu,
+- weryfikację poprawności zapisanej konfiguracji.
+
+Konfigurację można wykonać za pomocą DBeaver lub terminala Bash w systemie Linux.
+
+Po zakończeniu tego etapu w bazie danych powinien być zapisany prawidłowy adres URL usługi RCN dla danego powiatu.
+
+------------------------------------------------------------------------
+
 # Schemat działania rozwiązania
 
 <pre>
