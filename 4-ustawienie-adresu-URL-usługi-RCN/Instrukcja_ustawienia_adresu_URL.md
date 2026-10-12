@@ -69,6 +69,6 @@ SELECT * FROM uslugi_rcn.mv_lokale LIMIT 10;
 SELECT * FROM uslugi_rcn.mv_powiaty LIMIT 10;
 ```
 
-Jeżeli w bazie znajdują się dane powiatu `1864`, sprawdź, czy dla jego obiektów pole `serwis_rcn` zawiera ustawiony adres URL usługi.
+Jeżeli w bazie znajdują się dane dla wskazanego powiatu, sprawdź, czy w widokach zmaterializowanych pole `serwis_rcn` zawiera ustawiony wcześniej adres URL usługi RCN.
 
 **Uwaga:** zapytania z LIMIT 10 wyświetlają maksymalnie 10 rekordów z każdego widoku zmaterializowanego, spośród danych załadowanych do bazy RCN.
