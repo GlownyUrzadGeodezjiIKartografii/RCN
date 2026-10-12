@@ -14,8 +14,8 @@ Można to zrobić za pomocą **DBeaver** lub **Bash (Linux)**.
 
 ```sql
 UPDATE uslugi_rcn.powiat
-SET serwis_rcn = 'ADRES_URL'
-WHERE teryt = '1864';
+SET serwis_rcn = 'https://rcn.powiat.pl' -- Wpisz adres URL usługi RCN
+WHERE teryt = '1864';                    -- Wpisz właściwy kod TERYT
 ```
 
 ### Sposób 2 – Bash (Linux)
@@ -31,13 +31,13 @@ sudo -u postgres psql -d rcn
 
 ```sql
 UPDATE uslugi_rcn.powiat
-SET serwis_rcn = 'ADRES_URL'
-WHERE teryt = '1864';
+SET serwis_rcn = 'https://rcn.powiat.pl' -- Wpisz adres URL usługi RCN
+WHERE teryt = '1864';                    -- Wpisz właściwy kod TERYT
 ```
 
 4. Zakończ pracę z konsolą PostgreSQL poleceniem `\q`.
 
-**W obu przypadkach** zastąp `ADRES_URL` rzeczywistym adresem usługi RCN, a `1864` właściwym kodem TERYT powiatu. W DBeaver zatwierdź transakcję, jeśli automatyczne zatwierdzanie jest wyłączone.
+**W obu przypadkach** zastąp `ADRES_URL` rzeczywistym adresem usługi RCN, a `1864` właściwym kodem TERYT. W DBeaver zatwierdź transakcję, jeśli automatyczne zatwierdzanie jest wyłączone.
 
 ## 2. Odświeżenie widoków
 
@@ -57,7 +57,7 @@ Sprawdź zapisany adres URL:
 ```sql
 SELECT teryt, serwis_rcn
 FROM uslugi_rcn.powiat
-WHERE teryt = '1864';
+WHERE teryt = '1864';                    -- Wpisz właściwy kod TERYT
 ```
 
 Następnie sprawdź dane w widokach:
